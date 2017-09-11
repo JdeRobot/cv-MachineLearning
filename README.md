@@ -3,7 +3,7 @@ This program tries to provide all necesary tools for visual machine learning. It
 
 # Installation:
 ```sh
-$ cd OpenCV_ML_Tool/src
+$ cd src
 $ qmake .
 $ make
 ```

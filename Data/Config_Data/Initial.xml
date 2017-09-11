@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<num_bar>8</num_bar>
+<show_graphics>1</show_graphics>
+<save_clasif>1</save_clasif>
+<save_data>1</save_data>
+<save_other>0</save_other>
+<read>0</read>
+<ifreduc>0</ifreduc>
+<Colors>
+  255. 0. 0. 0. 0. 255. 0. 0. 0. 0. 255. 0. 255. 255. 0. 0. 0. 255. 255.
+  0. 255. 0. 255. 0. 127. 0. 0. 0. 0. 127. 0. 0. 0. 0. 127. 0. 127. 127.
+  0. 0. 0. 127. 127. 0. 127. 0. 127. 0. 127. 127. 127. 0. 64. 0. 0. 0.
+  0. 64. 0. 0. 0. 0. 64. 0. 64. 64. 0. 0. 64. 0. 64. 0. 0. 64. 64. 0.
+  64. 64. 64. 0. 191. 0. 0. 0. 0. 191. 0. 0. 0. 0. 191. 0. 191. 191. 0.
+  0. 191. 0. 191. 0. 0. 191. 191. 0. 191. 191. 191. 0. 0. 0. 0. 0.</Colors>
+<Tipo_Des>SURF</Tipo_Des>
+<Tipo_Ext>SURF</Tipo_Ext>
+<Parametro>1000.</Parametro>
+<Win_Size>
+  64 128</Win_Size>
+<Block_Stride>
+  8 8</Block_Stride>
+<Win_Sigma>-1.</Win_Sigma>
+<Threshold_L2hys>2.0000000000000001e-01</Threshold_L2hys>
+<Gamma_Correction>1</Gamma_Correction>
+<Nlevels>64</Nlevels>
+<ID>9999</ID>
+<Hist_tam_celda>1.</Hist_tam_celda>
+<KNN_k>1</KNN_k>
+<KNN_regression>0</KNN_regression>
+<Cascada_Tam>
+  24 24</Cascada_Tam>
+<Cascada_NumPos>1000</Cascada_NumPos>
+<Cascada_NumNeg>1000</Cascada_NumNeg>
+<Cascada_Mode>BASIC</Cascada_Mode>
+<Cascada_NumStage>10</Cascada_NumStage>
+<Cascada_MinHitRate>9.9500000476837158e-01</Cascada_MinHitRate>
+<Cascada_MaxFalseAlarmRate>5.0000000000000000e-01</Cascada_MaxFalseAlarmRate>
+<Cascada_WeightTrimRate>9.4999998807907104e-01</Cascada_WeightTrimRate>
+<Cascada_MaxWeakCount>2</Cascada_MaxWeakCount>
+<Cascada_MaxDepth>1</Cascada_MaxDepth>
+<Cascada_Bt>GAB</Cascada_Bt>
+<Cascada_PrecalcValBufSize>512</Cascada_PrecalcValBufSize>
+<Cascada_PrecalcidxBufSize>512</Cascada_PrecalcidxBufSize>
+<si_entrenar>1</si_entrenar>
+<Neuronal_Method>1</Neuronal_Method>
+<Neuronal_Function>1</Neuronal_Function>
+<Neuronal_bp_dw_scale>1.0000000000000001e-01</Neuronal_bp_dw_scale>
+<Neuronal_bp_moment_scale>1.0000000000000001e-01</Neuronal_bp_moment_scale>
+<Neuronal_rp_dw0>1.0000000000000001e-01</Neuronal_rp_dw0>
+<Neuronal_rp_dw_max>50.</Neuronal_rp_dw_max>
+<Neuronal_rp_dw_min>1.1920928955078125e-07</Neuronal_rp_dw_min>
+<Neuronal_rp_dw_minus>5.0000000000000000e-01</Neuronal_rp_dw_minus>
+<Neuronal_rp_dw_plus>1.2000000000000000e+00</Neuronal_rp_dw_plus>
+<Neuronal_fparam1>0.</Neuronal_fparam1>
+<Neuronal_fparam2>0.</Neuronal_fparam2>
+<SVM_train>0</SVM_train>
+<SVM_Type>101</SVM_Type>
+<SVM_kernel_type>2</SVM_kernel_type>
+<SVM_class_weights type_id="opencv-matrix">
+  <rows>0</rows>
+  <cols>0</cols>
+  <dt>u</dt>
+  <data></data></SVM_class_weights>
+<SVM_degree>1.0000000000000000e-02</SVM_degree>
+<SVM_coef0>0.</SVM_coef0>
+<SVM_nu>1.0000000000000001e-05</SVM_nu>
+<RTrees_max_depth>5</RTrees_max_depth>
+<RTrees_min_sample_count>10</RTrees_min_sample_count>
+<RTrees_regression_accuracy>0.</RTrees_regression_accuracy>
+<RTrees_use_surrogates>0</RTrees_use_surrogates>
+<RTrees_max_categories>10</RTrees_max_categories>
+<RTrees_cv_folds>0</RTrees_cv_folds>
+<RTrees_use_1se_rule>0</RTrees_use_1se_rule>
+<RTrees_truncate_pruned_tree>0</RTrees_truncate_pruned_tree>
+<RTrees_calc_var_importance>0</RTrees_calc_var_importance>
+<RTrees_native_vars>0</RTrees_native_vars>
+<DTrees_max_depth>2147483647</DTrees_max_depth>
+<DTrees_min_sample_count>10</DTrees_min_sample_count>
+<DTrees_regression_accuracy>9.9999997764825821e-03</DTrees_regression_accuracy>
+<DTrees_use_surrogates>1</DTrees_use_surrogates>
+<DTrees_max_categories>10</DTrees_max_categories>
+<DTrees_cv_folds>10</DTrees_cv_folds>
+<DTrees_use_1se_rule>1</DTrees_use_1se_rule>
+<DTrees_truncate_pruned_tree>1</DTrees_truncate_pruned_tree>
+<Boosting_boost_type>1</Boosting_boost_type>
+<Boosting_weak_count>100</Boosting_weak_count>
+<Boosting_weight_trim_rate>9.4999999999999996e-01</Boosting_weight_trim_rate>
+<Boosting_max_depth>1</Boosting_max_depth>
+<Boosting_use_surrogates>0</Boosting_use_surrogates>
+<GBT_loss_function_type>0</GBT_loss_function_type>
+<GBT_weak_count>200</GBT_weak_count>
+<GBT_shrinkage>8.0000001192092896e-01</GBT_shrinkage>
+<GBT_subsample_portion>9.9999997764825821e-03</GBT_subsample_portion>
+<GBT_max_depth>3</GBT_max_depth>
+<GBT_use_surrogates>0</GBT_use_surrogates>
+<EM_nclusters>5</EM_nclusters>
+<EM_covMatType>1</EM_covMatType>
+<ERTrees_max_depth>5</ERTrees_max_depth>
+<ERTrees_min_sample_count>10</ERTrees_min_sample_count>
+<ERTrees_regression_accuracy>0.</ERTrees_regression_accuracy>
+<ERTrees_use_surrogates>0</ERTrees_use_surrogates>
+<ERTrees_max_categories>10</ERTrees_max_categories>
+<ERTrees_cv_folds>0</ERTrees_cv_folds>
+<ERTrees_use_1se_rule>0</ERTrees_use_1se_rule>
+<ERTrees_truncate_pruned_tree>0</ERTrees_truncate_pruned_tree>
+<ERTrees_calc_var_importance>0</ERTrees_calc_var_importance>
+<ERTrees_native_vars>0</ERTrees_native_vars>
+</opencv_storage>

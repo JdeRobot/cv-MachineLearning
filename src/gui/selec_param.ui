@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Selec_Param</class>
+ <widget class="QMainWindow" name="Selec_Param">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Selección de Parámetro</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QRadioButton" name="Hist_tam_celda">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>141</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hist_tam_celda</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="KNN_k">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>115</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>KNN_k</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_bp_dw_scale">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_bp_dw_scale</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_bp_moment_scale">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>251</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_bp_moment_scale</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_fparam1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>211</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_fparam1</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_fparam2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>170</y>
+      <width>191</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_fparam2</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_rp_dw0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>171</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_rp_dw0</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_rp_dw_max">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_rp_dw_max</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_rp_dw_min">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>260</y>
+      <width>181</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_rp_dw_min</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_rp_dw_minus">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>290</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_rp_dw_minus</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Neuronal_rp_dw_plus">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>320</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Neuronal_rp_dw_plus</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_degree">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>350</y>
+      <width>161</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_degree</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_gamma">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>380</y>
+      <width>141</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_gamma</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_coef0">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>410</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_coef0</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_C">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>440</y>
+      <width>115</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_C</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_nu">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>470</y>
+      <width>115</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_nu</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="SVM_p">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>500</y>
+      <width>115</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SVM_p</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_cv_folds">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>170</y>
+      <width>161</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_cv_folds</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_max_categories">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>200</y>
+      <width>211</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_max_categories</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_max_depth">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>230</y>
+      <width>181</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_max_depth</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_min_sample_count">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>260</y>
+      <width>231</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_min_sample_count</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_native_vars">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>290</y>
+      <width>181</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_native_vars</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RTrees_regression_accuracy">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>320</y>
+      <width>231</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>RTrees_regression_accuracy</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DTrees_cv_folds">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>20</y>
+      <width>151</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DTrees_cv_folds</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DTrees_max_categories">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>50</y>
+      <width>211</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DTrees_max_categories</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DTrees_max_depth">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>80</y>
+      <width>181</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DTrees_max_depth</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DTrees_min_sample_count">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>110</y>
+      <width>231</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DTrees_min_sample_count</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="DTrees_regression_accuracy">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>140</y>
+      <width>241</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>DTrees_regression_accuracy</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Boosting_max_depth">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>350</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Boosting_max_depth</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="Boosting_weak_count">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>380</y>
+      <width>201</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Boosting_weak_count</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="EM_nclusters">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>410</y>
+      <width>141</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>EM_nclusters</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Aceptar">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>500</y>
+      <width>96</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Aceptar</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>240</y>
+      <width>211</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Representación</string>
+    </property>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>21</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Y</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_29">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>72</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="X">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>40</y>
+       <width>101</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Parámetro</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VP</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FP</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TAR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TRR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FAR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FRR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PPV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>NPV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FDR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>F1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>INFORMEDNESS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MARKEDNESS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>EXP_ERROR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LR_NEG</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LR_POS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DOR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ACC</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PREVALENCE</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QComboBox" name="Y">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>80</y>
+       <width>101</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Parámetro</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VP</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FP</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FN</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TAR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>TRR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FAR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FRR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PPV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>NPV</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>FDR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>F1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>INFORMEDNESS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MARKEDNESS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>EXP_ERROR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LR_NEG</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LR_POS</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>DOR</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ACC</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>PREVALENCE</string>
+      </property>
+     </item>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Conf_SC_Vali</class>
+ <widget class="QMainWindow" name="Conf_SC_Vali">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>525</width>
+    <height>443</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>525</width>
+    <height>443</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Configuración SuperCrossValidation</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>571</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Clasificadores</string>
+    </property>
+    <widget class="QCheckBox" name="Distancias">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Distancias</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="Histograma">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Histograma</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="KNN">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>KNN</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="GAUSS">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>171</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Bayesiano (GAUSS)</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="Neuronal">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Neuronal</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="EM">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>197</y>
+       <width>211</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Expectation Maximization</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="Boosting">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>120</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Boosting</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="GBT">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>160</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>GBTrees</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="ERT">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>240</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>ERTrees</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="RTrees">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>40</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RTrees</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="DTrees">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>80</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>DTrees</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="SVM">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>240</y>
+       <width>115</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>SVM</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="Iniciar_2">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>350</y>
+      <width>98</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Aceptar</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>525</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

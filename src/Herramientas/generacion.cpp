@@ -2308,7 +2308,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                                     a=a-'0';
                                 if(a==0)
                                     a=-1.0;
-                                Ptr<Tracker> tracker = Tracker::create("TLD");
+                                Ptr<TrackerTLD> tracker = TrackerTLD::create();
                                 Rect bb;
                                 bb.x=p_x;
                                 bb.y=p_y;
@@ -2409,7 +2409,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                                         bb.width=tam_x;
                                         bb.height=tam_y;
                                         trackers[pos].release();
-                                        Ptr<Tracker> tracker = Tracker::create("TLD");
+                                        Ptr<TrackerTLD> tracker = TrackerTLD::create();
                                         tracker->init(frame,bb);
                                         trackers[pos]=tracker;
                                         Posiciones[pos]=bb;
@@ -3602,7 +3602,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                     a=a-'0';
                                 if(a==0)
                                     a=-1.0;
-                                Ptr<Tracker> tracker = Tracker::create("TLD");
+                                Ptr<TrackerTLD> tracker = TrackerTLD::create();
                                 Rect bb;
                                 bb.x=p_x;
                                 bb.y=p_y;
@@ -3703,7 +3703,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                         bb.width=tam_x;
                                         bb.height=tam_y;
                                         trackers[pos].release();
-                                        Ptr<Tracker> tracker = Tracker::create("TLD");
+                                        Ptr<TrackerTLD> tracker = TrackerTLD::create();
                                         tracker->init(frame,bb);
                                         trackers[pos]=tracker;
                                         Posiciones[pos]=bb;

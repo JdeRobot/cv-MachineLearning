@@ -1,4 +1,4 @@
-# colab-inaki
+# MachineLearning-OpenCV
 This tool provides an application to test different Machine Learning algorithms over images. It uses OpenCV library functions. 
 
 # Installation:

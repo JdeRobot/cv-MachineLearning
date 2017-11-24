@@ -25,10 +25,10 @@
 #define CON_MULTI_H
 
 #include <QMainWindow>
-#include <Clasificadores/multiclasificador.h>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "gui/mainwindow.h"
+#include "../Clasificadores/multiclasificador.h"
+#include "mainwindow.h"
 
 using namespace MLT;
 

@@ -25,7 +25,7 @@
 #define MULTICLASIFICADOR_H
 
 #include <dirent.h>
-#include "Clasificadores/Clasificadores.h"
+#include "../Clasificadores/Clasificadores.h"
 
 
 using namespace std;

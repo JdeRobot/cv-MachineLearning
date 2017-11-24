@@ -26,7 +26,7 @@
 
 #include <QMainWindow>
 #include <opencv2/opencv.hpp>
-#include "gui/mainwindow.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class Conf_KNN;

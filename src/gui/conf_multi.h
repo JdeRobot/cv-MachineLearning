@@ -27,8 +27,8 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QMessageBox>
-#include "gui/mainwindow.h"
-#include "Clasificadores/multiclasificador.h"
+#include "mainwindow.h"
+#include "../Clasificadores/multiclasificador.h"
 
 using namespace MLT;
 

@@ -25,8 +25,8 @@
 #define CLASIFICADOR_H
 
 #include <opencv2/opencv.hpp>
-#include "Herramientas/auxiliares.h"
-#include "Herramientas/dimensionalidad.h"
+#include "../Herramientas/auxiliares.h"
+#include "../Herramientas/dimensionalidad.h"
 #ifdef GUI
 #include <ui_mainwindow.h>
 #endif

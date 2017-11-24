@@ -25,9 +25,9 @@
 #define OPTIMIZACION_H
 
 #include <opencv2/opencv.hpp>
-#include <Herramientas/analisis.h>
-#include <Herramientas/auxiliares.h>
-#include <Clasificadores/multiclasificador.h>
+#include "analisis.h"
+#include "auxiliares.h"
+#include "../Clasificadores/multiclasificador.h"
 #ifdef GUI
 #include <ui_mainwindow.h>
 #endif

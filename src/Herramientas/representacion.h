@@ -26,8 +26,8 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <Herramientas/auxiliares.h>
-#include <Herramientas/analisis.h>
+#include "auxiliares.h"
+#include "analisis.h"
 #ifdef GUI
 #include <QApplication>
 #endif

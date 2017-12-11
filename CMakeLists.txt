@@ -8,12 +8,18 @@ if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
 endif()
 
+##CMake will search packages in /usr/local first. This avoids ROS OpenCV package.
+set(CMAKE_PREFIX_PATH /usr/local)
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(JdeRobot REQUIRED)
 find_package(OpenCV REQUIRED)
+
+message(STATUS "OpenCV library status:")
+message(STATUS "    version: ${OpenCV_VERSION}")
+message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

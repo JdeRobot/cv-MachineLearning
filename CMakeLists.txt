@@ -8,15 +8,12 @@ if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
 endif()
 
-find_package(
-	JdeRobot REQUIRED	
-	OpenCV REQUIRED
-)
-find_package(
-	Qt5Widgets REQUIRED
-	Qt5Core REQUIRED
-	Qt5Gui REQUIRED
-)
+
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(JdeRobot REQUIRED)
+find_package(OpenCV REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

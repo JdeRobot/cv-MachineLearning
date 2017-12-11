@@ -25,7 +25,7 @@
 #define CLUSTERING_H
 
 #include <opencv2/opencv.hpp>
-#include <Herramientas/auxiliares.h>
+#include "auxiliares.h"
 
 using namespace std;
 using namespace cv;

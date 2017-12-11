@@ -25,8 +25,8 @@
 #define DIMENSIONALIDAD_H
 
 #include <opencv2/opencv.hpp>
-#include <Herramientas/auxiliares.h>
-#include <Herramientas/generacion.h>
+#include "auxiliares.h"
+#include "generacion.h"
 
 using namespace std;
 using namespace cv;

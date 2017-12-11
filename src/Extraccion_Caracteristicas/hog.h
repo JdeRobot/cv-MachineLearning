@@ -24,7 +24,7 @@
 #ifndef HOG_H
 #define HOG_H
 
-#include "Herramientas/auxiliares.h"
+#include "../Herramientas/auxiliares.h"
 #include "descriptor.h"
 
 using namespace std;

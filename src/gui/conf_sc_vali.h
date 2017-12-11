@@ -25,7 +25,7 @@
 #define CONF_SC_VALI_H
 
 #include <QMainWindow>
-#include "gui/mainwindow.h"
+#include "mainwindow.h"
 
 using namespace MLT;
 

@@ -25,12 +25,12 @@
 #define BUSQUEDA_H
 
 #include <opencv2/opencv.hpp>
-#include <Herramientas/auxiliares.h>
-#include <Herramientas/dimensionalidad.h>
-#include <Clasificadores/Clasificadores.h>
-#include <Clasificadores/multiclasificador.h>
-#include "Extraccion_Caracteristicas/Caracteristicas.h"
-#include "Clasificadores/miclasificador.h"
+#include "auxiliares.h"
+#include "dimensionalidad.h"
+#include "../Clasificadores/Clasificadores.h"
+#include "../Clasificadores/multiclasificador.h"
+#include "../Extraccion_Caracteristicas/Caracteristicas.h"
+#include "../Clasificadores/miclasificador.h"
 
 using namespace std;
 using namespace cv;

@@ -31,29 +31,29 @@
 #include <qfiledialog.h>
 #include "ui_mainwindow.h"
 
-#include "gui/conf_hog.h"
-#include "gui/config_pc.h"
+#include "conf_hog.h"
+#include "config_pc.h"
 
-#include "gui/conf_histograma.h"
-#include "gui/conf_knn.h"
-#include "gui/conf_svm.h"
-#include "gui/conf_haar.h"
-#include "gui/conf_neuronal.h"
-#include "gui/conf_rtrees.h"
+#include "conf_histograma.h"
+#include "conf_knn.h"
+#include "conf_svm.h"
+#include "conf_haar.h"
+#include "conf_neuronal.h"
+#include "conf_rtrees.h"
 //#include "conf_ertrees.h"
-#include "gui/conf_dtrees.h"
-#include "gui/conf_em.h"
+#include "conf_dtrees.h"
+#include "conf_em.h"
 //#include "conf_gb.h"
-#include "gui/conf_boosting.h"
+#include "conf_boosting.h"
 
-#include "gui/conf_parametros.h"
-#include "gui/con_multi.h"
-#include "gui/conf_multi.h"
-#include "gui/conf_sc_vali.h"
-#include "gui/selec_param.h"
+#include "conf_parametros.h"
+#include "con_multi.h"
+#include "conf_multi.h"
+#include "conf_sc_vali.h"
+#include "selec_param.h"
 
-#include "ClasificationSystem.h"
-#include "Clasificadores/miclasificador.h"
+#include "../ClasificationSystem.h"
+#include "../Clasificadores/miclasificador.h"
 
 #include <fstream>
 #include <opencv2/opencv.hpp>

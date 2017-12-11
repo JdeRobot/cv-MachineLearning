@@ -25,7 +25,7 @@
 #define CONF_RTREES_H
 
 #include <QMainWindow>
-#include "gui/mainwindow.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class Conf_RTrees;

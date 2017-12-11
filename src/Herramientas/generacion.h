@@ -26,9 +26,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
-#include <Herramientas/auxiliares.h>
 #include <fstream>
 #include <iostream>
+#include "auxiliares.h"
 
 #ifdef GUI
 #include <ui_mainwindow.h>

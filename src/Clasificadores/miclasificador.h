@@ -25,7 +25,8 @@
 #define MICLASIFICADOR_H
 
 #include "clasificador.h"
-#include "Extraccion_Caracteristicas/Caracteristicas.h"
+#include "../Extraccion_Caracteristicas/Caracteristicas.h"
+#include "../Extraccion_Caracteristicas/hog.h"
 #include "Clasificadores.h"
 
 

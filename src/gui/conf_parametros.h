@@ -25,7 +25,7 @@
 #define CONF_PARAMETROS_H
 
 #include <QMainWindow>
-#include "Herramientas/optimizacion.h"
+#include "../Herramientas/optimizacion.h"
 
 using namespace MLT;
 

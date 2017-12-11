@@ -24,7 +24,7 @@
 #ifndef BASIC_TRANSFORMATIONS_H
 #define BASIC_TRANSFORMATIONS_H
 
-#include "Herramientas/auxiliares.h"
+#include "../Herramientas/auxiliares.h"
 #include "descriptor.h"
 
 namespace MLT {

@@ -36,7 +36,6 @@ en el que se debe poner el tamaño de las muestras (ventana_o_x ventana_o_y, y e
 */
 
 #include "miclasificador.h"
-#include "Extraccion_Caracteristicas/hog.h"
 
 
 MLT::MiClasificador::MiClasificador(string Nombre){

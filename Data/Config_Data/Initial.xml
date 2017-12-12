@@ -81,7 +81,7 @@
 <DTrees_regression_accuracy>9.9999997764825821e-03</DTrees_regression_accuracy>
 <DTrees_use_surrogates>1</DTrees_use_surrogates>
 <DTrees_max_categories>10</DTrees_max_categories>
-<DTrees_cv_folds>10</DTrees_cv_folds>
+<DTrees_cv_folds>0</DTrees_cv_folds>
 <DTrees_use_1se_rule>1</DTrees_use_1se_rule>
 <DTrees_truncate_pruned_tree>1</DTrees_truncate_pruned_tree>
 <Boosting_boost_type>1</Boosting_boost_type>

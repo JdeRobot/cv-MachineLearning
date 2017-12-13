@@ -10,8 +10,9 @@ Besides it is necessary to install QT libraries.
 For a correct performance it is necessary to build OpenCV library with Qt Backend support.
 
 ```sh
-$ cd src
-$ qmake .
+$ mkdir build
+$ cd build
+$ cmake ..
 $ make
 ```
 

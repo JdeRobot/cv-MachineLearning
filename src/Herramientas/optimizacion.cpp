@@ -70,13 +70,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     vector<float> result;
     if(id_clasificador==DISTANCIAS){
         Clasificador_Distancias D("Validation");
-#ifdef GUI
+/*#ifdef GUI
     D.progreso=progreso;
     D.max_progreso=max_progreso;
     D.base_progreso=base_progreso;
     D.total_progreso=total_progreso;
     D.window=window;
-#endif
+#endif*/
         e=D.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Distancias"<<endl;
@@ -90,13 +90,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     }
     else if(id_clasificador==GAUSSIANO){
         Clasificador_Gaussiano G("Validation");
-#ifdef GUI
+/*#ifdef GUI
     G.progreso=progreso;
     G.max_progreso=max_progreso;
     G.base_progreso=base_progreso;
     G.total_progreso=total_progreso;
     G.window=window;
-#endif
+#endif*/
         e=G.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Gaussiano"<<endl;
@@ -130,13 +130,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
 //    }
     else if(id_clasificador==HISTOGRAMA){
         Clasificador_Histograma H("Validation",parame.Hist_tam_celda);
-#ifdef GUI
+/*#ifdef GUI
     H.progreso=progreso;
     H.max_progreso=max_progreso;
     H.base_progreso=base_progreso;
     H.total_progreso=total_progreso;
     H.window=window;
-#endif
+#endif*/
         e=H.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
@@ -150,13 +150,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     }
     else if(id_clasificador==KNN){
         Clasificador_KNN K("Validation",parame.KNN_k, parame.KNN_regression);
-#ifdef GUI
+/*#ifdef GUI
     K.progreso=progreso;
     K.max_progreso=max_progreso;
     K.base_progreso=base_progreso;
     K.total_progreso=total_progreso;
     K.window=window;
-#endif
+#endif*/
         e=K.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_KNN"<<endl;
@@ -172,13 +172,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         Clasificador_Neuronal N("Validation", parame.Neuronal_layerSize, parame.Neuronal_Method, parame.Neuronal_Function, parame.Neuronal_bp_dw_scale,
                                 parame.Neuronal_bp_moment_scale, parame.Neuronal_rp_dw0, parame.Neuronal_rp_dw_max, parame.Neuronal_rp_dw_min,
                                 parame.Neuronal_rp_dw_minus, parame.Neuronal_rp_dw_plus, parame.Neuronal_fparam1, parame.Neuronal_fparam2);
-#ifdef GUI
+/*#ifdef GUI
     N.progreso=progreso;
     N.max_progreso=max_progreso;
     N.base_progreso=base_progreso;
     N.total_progreso=total_progreso;
     N.window=window;
-#endif
+#endif*/
         e=N.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Neuronal"<<endl;
@@ -193,13 +193,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     else if(id_clasificador==C_SVM){
         Clasificador_SVM S("Validation",parame.SVM_train, parame.SVM_Type, parame.SVM_kernel_type, parame.SVM_class_weights, parame.SVM_degree,
                            parame.SVM_gamma, parame.SVM_coef0, parame.SVM_C,parame.SVM_nu, parame.SVM_p);
-#ifdef GUI
+/*#ifdef GUI
     S.progreso=progreso;
     S.max_progreso=max_progreso;
     S.base_progreso=base_progreso;
     S.total_progreso=total_progreso;
     S.window=window;
-#endif
+#endif*/
         e=S.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_SVM"<<endl;
@@ -215,13 +215,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         Clasificador_RTrees T("Validation",parame.RTrees_max_depth, parame.RTrees_min_sample_count, parame.RTrees_regression_accuracy,
                              parame.RTrees_use_surrogates, parame.RTrees_max_categories, parame.RTrees_cv_folds, parame.RTrees_use_1se_rule,
                              parame.RTrees_truncate_pruned_tree, parame.RTrees_priors,parame.RTrees_calc_var_importance, parame.RTrees_native_vars);
-#ifdef GUI
+/*#ifdef GUI
     T.progreso=progreso;
     T.max_progreso=max_progreso;
     T.base_progreso=base_progreso;
     T.total_progreso=total_progreso;
     T.window=window;
-#endif
+#endif*/
         e=T.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree"<<endl;
@@ -238,13 +238,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         Clasificador_DTrees T2("Validation",parame.DTrees_max_depth, parame.DTrees_min_sample_count, parame.DTrees_regression_accuracy,
                                parame.DTrees_use_surrogates, parame.DTrees_max_categories, parame.DTrees_cv_folds, parame.DTrees_use_1se_rule,
                                parame.DTrees_truncate_pruned_tree, parame.DTrees_priors);
-#ifdef GUI
+/*#ifdef GUI
     T2.progreso=progreso;
     T2.max_progreso=max_progreso;
     T2.base_progreso=base_progreso;
     T2.total_progreso=total_progreso;
     T2.window=window;
-#endif
+#endif*/
         e=T2.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree2"<<endl;
@@ -258,13 +258,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     }
     else if(id_clasificador==BOOSTING){
         Clasificador_Boosting B("Validation",parame.Boosting_boost_type,parame.Boosting_weak_count,parame.Boosting_weight_trim_rate,parame.Boosting_max_depth,parame.Boosting_use_surrogates,parame.Boosting_priors);
-#ifdef GUI
+/*#ifdef GUI
     B.progreso=progreso;
     B.max_progreso=max_progreso;
     B.base_progreso=base_progreso;
     B.total_progreso=total_progreso;
     B.window=window;
-#endif
+#endif*/
         e=B.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Boosting"<<endl;
@@ -298,13 +298,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
 //    }
     else if(id_clasificador==EXP_MAX){
         Clasificador_EM E("Validation",parame.EM_nclusters, parame.EM_covMatType);
-#ifdef GUI
+/*#ifdef GUI
     E.progreso=progreso;
     E.max_progreso=max_progreso;
     E.base_progreso=base_progreso;
     E.total_progreso=total_progreso;
     E.window=window;
-#endif
+#endif*/
         e=E.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_EM"<<endl;
@@ -453,13 +453,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(D);
-#ifdef GUI
+/*#ifdef GUI
     D->progreso=progreso;
     D->max_progreso=max_progreso;
     D->base_progreso=base_progreso;
     D->total_progreso=total_progreso;
     D->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==GAUSSIANO){
             Clasificador_Gaussiano *G=new Clasificador_Gaussiano(Nombres[i]);
@@ -469,13 +469,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(G);
-#ifdef GUI
+/*#ifdef GUI
     G->progreso=progreso;
     G->max_progreso=max_progreso;
     G->base_progreso=base_progreso;
     G->total_progreso=total_progreso;
     G->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==HISTOGRAMA){
             Clasificador_Histograma *H=new Clasificador_Histograma(Nombres[i],parame.Hist_tam_celda);
@@ -485,13 +485,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(H);
-#ifdef GUI
+/*#ifdef GUI
     H->progreso=progreso;
     H->max_progreso=max_progreso;
     H->base_progreso=base_progreso;
     H->total_progreso=total_progreso;
     H->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==KNN){
             Clasificador_KNN *K=new Clasificador_KNN(Nombres[i],parame.KNN_k, parame.KNN_regression);
@@ -501,13 +501,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(K);
-#ifdef GUI
+/*#ifdef GUI
     K->progreso=progreso;
     K->max_progreso=max_progreso;
     K->base_progreso=base_progreso;
     K->total_progreso=total_progreso;
     K->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==NEURONAL){
             Clasificador_Neuronal *N=new Clasificador_Neuronal(Nombres[i],parame.Neuronal_layerSize, parame.Neuronal_Method, parame.Neuronal_Function, parame.Neuronal_bp_dw_scale,
@@ -519,13 +519,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(N);
-#ifdef GUI
+/*#ifdef GUI
     N->progreso=progreso;
     N->max_progreso=max_progreso;
     N->base_progreso=base_progreso;
     N->total_progreso=total_progreso;
     N->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==C_SVM){
             Clasificador_SVM *S=new Clasificador_SVM(Nombres[i],parame.SVM_train, parame.SVM_Type, parame.SVM_kernel_type, parame.SVM_class_weights, parame.SVM_degree,
@@ -536,13 +536,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(S);
-#ifdef GUI
+/*#ifdef GUI
     S->progreso=progreso;
     S->max_progreso=max_progreso;
     S->base_progreso=base_progreso;
     S->total_progreso=total_progreso;
     S->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==RTREES){
             Clasificador_RTrees *T=new Clasificador_RTrees(Nombres[i],parame.RTrees_max_depth, parame.RTrees_min_sample_count, parame.RTrees_regression_accuracy,
@@ -554,13 +554,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(T);
-#ifdef GUI
+/*#ifdef GUI
     T->progreso=progreso;
     T->max_progreso=max_progreso;
     T->base_progreso=base_progreso;
     T->total_progreso=total_progreso;
     T->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==DTREES){
             Clasificador_DTrees *T2=new Clasificador_DTrees(Nombres[i],parame.DTrees_max_depth, parame.DTrees_min_sample_count, parame.DTrees_regression_accuracy,
@@ -572,13 +572,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(T2);
-#ifdef GUI
+/*#ifdef GUI
     T2->progreso=progreso;
     T2->max_progreso=max_progreso;
     T2->base_progreso=base_progreso;
     T2->total_progreso=total_progreso;
     T2->window=window;
-#endif
+#endif*/
 
         }
         if(id_clasif[i]==BOOSTING){
@@ -589,13 +589,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(B);
-#ifdef GUI
+/*#ifdef GUI
     B->progreso=progreso;
     B->max_progreso=max_progreso;
     B->base_progreso=base_progreso;
     B->total_progreso=total_progreso;
     B->window=window;
-#endif
+#endif*/
         }
         if(id_clasif[i]==EXP_MAX){
             Clasificador_EM *E=new Clasificador_EM(Nombres[i],parame.EM_nclusters, parame.EM_covMatType);
@@ -605,13 +605,13 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
                 return 1;
             }
             clasificadores.push_back(E);
-#ifdef GUI
+/*#ifdef GUI
     E->progreso=progreso;
     E->max_progreso=max_progreso;
     E->base_progreso=base_progreso;
     E->total_progreso=total_progreso;
     E->window=window;
-#endif
+#endif*/
 
         }
     }
@@ -793,13 +793,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_Histograma H("Cross_Validation",inicio.Hist_tam_celda);
-#ifdef GUI
+/*#ifdef GUI
     H.progreso=progreso;
     H.max_progreso=max_progreso;
     H.base_progreso=base_progreso;
     H.total_progreso=total_progreso;
     H.window=window;
-#endif
+#endif*/
                 e=H.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
@@ -850,13 +850,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_KNN KNN("Cross_Validation",inicio.KNN_k,inicio.KNN_regression);
-#ifdef GUI
+/*#ifdef GUI
     KNN.progreso=progreso;
     KNN.max_progreso=max_progreso;
     KNN.base_progreso=base_progreso;
     KNN.total_progreso=total_progreso;
     KNN.window=window;
-#endif
+#endif*/
                 e=KNN.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_KNN"<<endl;
@@ -909,13 +909,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_Neuronal Neur("Cross_Validation",param.Neuronal_layerSize, param.Neuronal_Method, param.Neuronal_Function, param.Neuronal_bp_dw_scale, param.Neuronal_bp_moment_scale, param.Neuronal_rp_dw0, param.Neuronal_rp_dw_max, param.Neuronal_rp_dw_min, param.Neuronal_rp_dw_minus, param.Neuronal_rp_dw_plus, param.Neuronal_fparam1, param.Neuronal_fparam2);
-#ifdef GUI
+/*#ifdef GUI
     Neur.progreso=progreso;
     Neur.max_progreso=max_progreso;
     Neur.base_progreso=base_progreso;
     Neur.total_progreso=total_progreso;
     Neur.window=window;
-#endif
+#endif*/
                 e=Neur.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Neuronal"<<endl;
@@ -1010,13 +1010,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_SVM SVM("Cross_Validation",1, param.SVM_Type, param.SVM_kernel_type, param.SVM_class_weights, param.SVM_degree, param.SVM_gamma, param.SVM_coef0, param.SVM_C, param.SVM_nu, param.SVM_p);
-#ifdef GUI
+/*#ifdef GUI
     SVM.progreso=progreso;
     SVM.max_progreso=max_progreso;
     SVM.base_progreso=base_progreso;
     SVM.total_progreso=total_progreso;
     SVM.window=window;
-#endif
+#endif*/
                 e=SVM.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_SVM"<<endl;
@@ -1094,13 +1094,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_RTrees Trees("Cross_Validation",param.RTrees_max_depth, param.RTrees_min_sample_count, param.RTrees_regression_accuracy, param.RTrees_use_surrogates, param.RTrees_max_categories, param.RTrees_cv_folds, param.RTrees_use_1se_rule, param.RTrees_truncate_pruned_tree, param.RTrees_priors,param.RTrees_calc_var_importance, param.RTrees_native_vars);
-#ifdef GUI
+/*#ifdef GUI
     Trees.progreso=progreso;
     Trees.max_progreso=max_progreso;
     Trees.base_progreso=base_progreso;
     Trees.total_progreso=total_progreso;
     Trees.window=window;
-#endif
+#endif*/
                 e=Trees.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_RTrees"<<endl;
@@ -1178,13 +1178,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_DTrees DT("Cross_Validation",param.DTrees_max_depth, param.DTrees_min_sample_count, param.DTrees_regression_accuracy, param.DTrees_use_surrogates, param.DTrees_max_categories, param.DTrees_cv_folds, param.DTrees_use_1se_rule, param.DTrees_truncate_pruned_tree, param.DTrees_priors);
-#ifdef GUI
+/*#ifdef GUI
     DT.progreso=progreso;
     DT.max_progreso=max_progreso;
     DT.base_progreso=base_progreso;
     DT.total_progreso=total_progreso;
     DT.window=window;
-#endif
+#endif*/
                 e=DT.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_DTrees"<<endl;
@@ -1256,13 +1256,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_Boosting B("Cross_Validation",param.Boosting_boost_type,param.Boosting_weak_count,param.Boosting_weight_trim_rate,param.Boosting_max_depth,param.Boosting_use_surrogates,param.Boosting_priors);
-#ifdef GUI
+/*#ifdef GUI
     B.progreso=progreso;
     B.max_progreso=max_progreso;
     B.base_progreso=base_progreso;
     B.total_progreso=total_progreso;
     B.window=window;
-#endif
+#endif*/
                 e=B.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Boosting"<<endl;
@@ -1387,13 +1387,13 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
             cv::Mat Total_Confusion=Mat::zeros(num_etiq,num_etiq,CV_32FC1);
             for(int i=0; i<Num_Folds; i++){
                 Clasificador_EM E("Validation",inicio.EM_nclusters, inicio.EM_covMatType);
-#ifdef GUI
+/*#ifdef GUI
     E.progreso=progreso;
     E.max_progreso=max_progreso;
     E.base_progreso=base_progreso;
     E.total_progreso=total_progreso;
     E.window=window;
-#endif
+#endif*/
                 e=E.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_EM"<<endl;

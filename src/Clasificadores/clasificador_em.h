@@ -34,27 +34,17 @@ namespace MLT {
     public:
         Clasificador_EM(string Nombre="", int nclusters=ml::EM::DEFAULT_NCLUSTERS, int covMatType=ml::EM::COV_MAT_DIAGONAL);
         ~Clasificador_EM();
+
         int Parametrizar(int nclusters, int covMatType);
+
         int Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true);
         int Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read);
-        int Save_Data();
-        int Read_Data();
-
-        int numero_etiquetas,ventana_x,ventana_y,ventana_o_x,ventana_o_y,tipo_dato;
-        string nombre;
-
-    #ifdef GUI
-        int progreso;
-        int max_progreso;
-        int base_progreso;
-        int total_progreso;
-
-        Ui::MainWindow *window;
-    #endif
+        int SaveData() override;
+        int ReadData() override;
 
     private:
-        void Entrenamiento(Mat trainingDataMat, Mat labelsMat);
-        float Clasificacion(Mat Data);
+        void Entrenamiento(Mat trainingDataMat, Mat labelsMat) override;
+        float Clasificacion(Mat Data) override;
 
         bool negativa;
 

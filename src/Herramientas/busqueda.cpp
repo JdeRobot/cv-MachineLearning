@@ -23,14 +23,14 @@
 
 #include "busqueda.h"
 
-MLT::Busqueda::Busqueda(Clasificador *clasificador, int Tipo_Descriptor, Descriptor *descriptor, MultiClasificador::Multi_type *multitipo){
+MLT::Busqueda::Busqueda(Clasificador *clasificador, int Tipo_Descriptor, Descriptor *descriptor, MultiClasificador::Multi_type */*multitipo*/){
 
     this->clasificador=clasificador;
-    numero_etiquetas=clasificador->numero_etiquetas;
-    ventana_x=clasificador->ventana_o_x;
-    ventana_y=clasificador->ventana_o_y;
+    numero_etiquetas=clasificador->getNumeroEtiquetas();
+    ventana_x=clasificador->getVentanaOX();
+    ventana_y=clasificador->getVentanaOY();
     tipo_dato=Tipo_Descriptor;
-    tipo=clasificador->tipo_clasificador;
+    tipo=clasificador->getTipoClasificador();
     descrip=descriptor;
 }
 
@@ -74,7 +74,7 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
         }
     }
     else{
-        if(tipo_dato!=clasificador->tipo_dato){
+        if(tipo_dato!=clasificador->getTipoDato()){
             cout<<"ERROR en Textura: El clasificador no se entrenó con este tipo de dato"<<endl;
             return 1;
         }
@@ -342,7 +342,7 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
         }
     }
     else{
-        if(tipo_dato!=clasificador->tipo_dato){
+        if(tipo_dato!=clasificador->getTipoDato()){
             cout<<"ERROR en Posicion: El clasificador no se entrenó con este tipo de dato"<<endl;
             return 1;
         }

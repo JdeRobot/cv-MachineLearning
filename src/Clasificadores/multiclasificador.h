@@ -34,16 +34,16 @@ using namespace cv;
 namespace MLT {
     enum
     {
-        CASCADA=0,
-        VOTACION=1
+        CASCADA     = 0,
+        VOTACION    = 1
     };
 
     enum
     {
-        IGUAL=0,
-        DISTINTO=1,
-        MENOR=2,
-        MAYOR=3
+        IGUAL       = 0,
+        DISTINTO    = 1,
+        MENOR       = 2,
+        MAYOR       = 3
     };
 
     class MultiClasificador{
@@ -54,7 +54,6 @@ namespace MLT {
            vector<float> label_ref;
            vector<float> w_clasif;
         };
-
 
         MultiClasificador(vector<Clasificador*> Clasificadores);
         int Cascada(vector<Mat> Data, vector<int> tipo_regla, vector<float> labels_ref, vector<float> &Labels);

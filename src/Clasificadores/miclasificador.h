@@ -35,23 +35,23 @@ namespace MLT{
     public:
         MiClasificador(string Nombre="");
         ~MiClasificador();
-        int Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true);
-        int Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read);
-        int Save_Data();
-        int Read_Data();
+
+        int Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true) override;
+        int Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read) override;
+        int SaveData() override;
+        int ReadData() override;
 
     private:
-        void Entrenamiento(Mat trainingDataMat, Mat labelsMat);
-        float Clasificacion(Mat Data);
+        void Entrenamiento(Mat trainingDataMat, Mat labelsMat) override;
+        float Clasificacion(Mat Data) override;
         Size tam_imagen;
 
     /*******************************************************************************************/
-        //Pon aqui los clasificadores que utilizarás
-        //Ejemplo:
-        //Clasificador clasif;
-//        Clasificador_ERTrees ERTREES;
-//        Clasificador_SVM SVM;
-
+        // Pon aqui los clasificadores que utilizarás
+        // Ejemplo:
+        // Clasificador clasif;
+        // Clasificador_ERTrees ERTREES;
+        // Clasificador_SVM SVM;
     /*****************************************************************************************/
 
     };

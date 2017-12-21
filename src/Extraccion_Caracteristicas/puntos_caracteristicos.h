@@ -30,14 +30,18 @@
 using namespace std;
 using namespace cv;
 
-namespace MLT {
-    class Puntos_Caracteristicos: public Descriptor{
+namespace MLT
+{
+    class Puntos_Caracteristicos: public Descriptor
+    {
     public:
-        Puntos_Caracteristicos(String DetectorType="SURF", String ExtractorType="SURF", float ParamDetector=1000);
-        int Extract(vector<cv::Mat> Images, vector<cv::Mat> &Descriptores);
-        void Mostrar(vector<Mat> Images);
+        Puntos_Caracteristicos(String detectorType = "SURF", String extractorType = "SURF", float paramDetector = 1000);
+
+        int Extract(vector<cv::Mat> images, vector<cv::Mat>& descriptores) override;
+
+        void Mostrar(vector<Mat> images);
     private:
-        std::vector< vector<cv::KeyPoint> > keypoints_I;
+        std::vector<vector<cv::KeyPoint>> keypointsI;
         cv::String detectorType;
         cv::String extractorType;
         float paramDetector;

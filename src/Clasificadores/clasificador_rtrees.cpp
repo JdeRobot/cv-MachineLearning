@@ -38,7 +38,7 @@ MLT::Clasificador_RTrees::Clasificador_RTrees(string Nombre,int max_depth, int m
 
     Parametrizar(max_depth,min_sample_count,regression_accuracy,use_surrogates,max_categories,cv_folds,use_1se_rule,truncate_pruned_tree,priors,calc_var_importance,native_vars);
     nombre=Nombre;
-    tipo_clasificador=RTREES;
+    tipoClasificador=RTREES;
 }
 
 MLT::Clasificador_RTrees::~Clasificador_RTrees(){}
@@ -84,11 +84,11 @@ int MLT::Clasificador_RTrees::Autotrain(vector<Mat> Data, vector<float> Labels, 
         cout<<"ERROR en Autotrain: si_lda=true o si_pca=true o si_dist=true o si_d_prime=true pero t_reduc es igual o menor a 0"<<endl;
         return 1;
     }
-    ventana_o_x=info.Tam_Orig_X;
-    ventana_o_y=info.Tam_Orig_Y;
-    ventana_x=info.Tam_X;
-    ventana_y=info.Tam_Y;
-    tipo_dato=info.Tipo_Datos;
+    ventanaOX=info.Tam_Orig_X;
+    ventanaOY=info.Tam_Orig_Y;
+    ventanaX=info.Tam_X;
+    ventanaY=info.Tam_Y;
+    tipoDato=info.Tipo_Datos;
     if((reduc.si_dist==true || reduc.si_d_prime==true || reduc.si_lda==true || reduc.si_pca==true)&&(info.si_dist==true || info.si_d_prime==true || info.si_lda==true || info.si_pca==true)){
         cout<<"ERROR en Autotrain: Ya se le ha hecho una reduccion anteriormente a los datos"<<endl;
         return 1;
@@ -96,7 +96,7 @@ int MLT::Clasificador_RTrees::Autotrain(vector<Mat> Data, vector<float> Labels, 
     reduccion=reduc;
     Auxiliares ax;
     bool negativa;
-    numero_etiquetas=ax.numero_etiquetas(Labels,negativa);
+    numeroEtiquetas=ax.numero_etiquetas(Labels,negativa);
     Mat lexic_data;
     int e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
@@ -182,7 +182,7 @@ int MLT::Clasificador_RTrees::Autotrain(vector<Mat> Data, vector<float> Labels, 
         reduccion.tam_reduc=info.Tam_X*info.Tam_Y;
     }
     if(save){
-        e=Save_Data();
+        e=SaveData();
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Save_Data"<<endl;
             return 1;
@@ -194,7 +194,7 @@ int MLT::Clasificador_RTrees::Autotrain(vector<Mat> Data, vector<float> Labels, 
 int MLT::Clasificador_RTrees::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
     int e=0;
     if(read){
-        e=Read_Data();
+        e=ReadData();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
             return 1;
@@ -258,8 +258,8 @@ int MLT::Clasificador_RTrees::Autoclasificacion(vector<Mat> Data, vector<float> 
         float response=Clasificacion(trainingDataMat.row(i));
         Labels.push_back(response);
 #ifdef GUI
-            progreso++;
-            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            _progreso++;
+            _window->progress_Clasificar->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
 #endif
     }
     return 0;
@@ -274,12 +274,12 @@ void MLT::Clasificador_RTrees::Entrenamiento(Mat trainingDataMat, Mat labelsMat)
 float MLT::Clasificador_RTrees::Clasificacion(Mat Data){
     Data.convertTo(Data,CV_32FC1);
     float response=0;
-    if(Data.cols==(ventana_x*ventana_y) || Data.cols==reduccion.tam_reduc)
+    if(Data.cols==(ventanaX*ventanaY) || Data.cols==reduccion.tam_reduc)
         response = TREES->predict(Data);
     return response;
 }
 
-int MLT::Clasificador_RTrees::Save_Data(){
+int MLT::Clasificador_RTrees::SaveData(){
     DIR    *dir_p = opendir ("../Data/Configuracion");
     if(dir_p == NULL) {
         string command = "mkdir ../Data/Configuracion";
@@ -302,12 +302,12 @@ int MLT::Clasificador_RTrees::Save_Data(){
     string g="../Data/Configuracion/"+nombre+"/RTREES2.xml";
     cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
     if(archivo_w.isOpened()){
-        archivo_w<<"ventana_x"<<ventana_x;
-        archivo_w<<"ventana_y"<<ventana_y;
-        archivo_w<<"ventana_o_x"<<ventana_o_x;
-        archivo_w<<"ventana_o_y"<<ventana_o_y;
-        archivo_w<<"numero_etiquetas"<<numero_etiquetas;
-        archivo_w<<"tipo_dato"<<tipo_dato;
+        archivo_w<<"ventana_x"<<ventanaX;
+        archivo_w<<"ventana_y"<<ventanaY;
+        archivo_w<<"ventana_o_x"<<ventanaOX;
+        archivo_w<<"ventana_o_y"<<ventanaOY;
+        archivo_w<<"numero_etiquetas"<<numeroEtiquetas;
+        archivo_w<<"tipo_dato"<<tipoDato;
         archivo_w<<"tam_reduc"<<reduccion.tam_reduc;
         archivo_w<<"lda"<<reduccion.si_lda;
         archivo_w<<"LDA"<<reduccion.LDA;
@@ -334,16 +334,16 @@ int MLT::Clasificador_RTrees::Save_Data(){
     return 0;
 }
 
-int MLT::Clasificador_RTrees::Read_Data(){
+int MLT::Clasificador_RTrees::ReadData(){
     string g="../Data/Configuracion/"+nombre+"/RTREES2.xml";
     cv::FileStorage archivo_r(g,CV_STORAGE_READ);
     if(archivo_r.isOpened()){
-        archivo_r["ventana_x"]>>ventana_x;
-        archivo_r["ventana_y"]>>ventana_y;
-        archivo_r["ventana_o_x"]>>ventana_o_x;
-        archivo_r["ventana_o_y"]>>ventana_o_y;
-        archivo_r["numero_etiquetas"]>>numero_etiquetas;
-        archivo_r["tipo_dato"]>>tipo_dato;
+        archivo_r["ventana_x"]>>ventanaX;
+        archivo_r["ventana_y"]>>ventanaY;
+        archivo_r["ventana_o_x"]>>ventanaOX;
+        archivo_r["ventana_o_y"]>>ventanaOY;
+        archivo_r["numero_etiquetas"]>>numeroEtiquetas;
+        archivo_r["tipo_dato"]>>tipoDato;
         archivo_r["tam_reduc"]>>reduccion.tam_reduc;
         archivo_r["lda"]>>reduccion.si_lda;
         archivo_r["LDA"]>>reduccion.LDA;

@@ -32,48 +32,86 @@
 #endif
 
 namespace MLT {
-enum{
-    DISTANCIAS=0,
-    GAUSSIANO=1,
-    CASCADA_CLAS=2,
-    HISTOGRAMA=3,
-    KNN=4,
-    NEURONAL=5,
-    C_SVM=6,
-    RTREES=7,
-    DTREES=8,
-    BOOSTING=9,
-    EXP_MAX=11,
-    MICLASIFICADOR=33,
-    MULTICLASIFICADOR=100
-};
+    enum
+    {
+        DISTANCIAS          = 0,
+        GAUSSIANO           = 1,
+        CASCADA_CLAS        = 2,
+        HISTOGRAMA          = 3,
+        KNN                 = 4,
+        NEURONAL            = 5,
+        C_SVM               = 6,
+        RTREES              = 7,
+        DTREES              = 8,
+        BOOSTING            = 9,
+        EXP_MAX             = 11,
+        MICLASIFICADOR      = 33,
+        MULTICLASIFICADOR   = 100
+    };
 
     class Clasificador
     {
     public:
-        Clasificador(){}
+        Clasificador() { }
+        virtual ~Clasificador() {}
 
-        int virtual Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true){}
-        int virtual Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){}
-        int virtual Save_Data(){}
-        int virtual Read_Data(){}
+        int virtual Autotrain(vector<Mat> /*data*/, vector<float> /*labels*/, Dimensionalidad::Reducciones /*reduc*/, Generacion::Info_Datos /*info*/, bool /*save*/=true) = 0;
+        int virtual Autoclasificacion(vector<Mat> /*data*/, vector<float>& /*labels*/, bool /*reducir*/, bool /*read*/) = 0;
+        int virtual SaveData() = 0;
+        int virtual ReadData() = 0;
 
+        int getTipoClasificador() const { return tipoClasificador; }
+        int getTipoDato() const { return tipoDato; }
+        int getNumeroEtiquetas() const { return numeroEtiquetas; }
 
-        int tipo_clasificador,numero_etiquetas,ventana_x,ventana_y,ventana_o_x,ventana_o_y,tipo_dato;
+        int getVentanaX() const { return ventanaX; }
+        int getVentanaY() const { return ventanaY; }
+        int getVentanaOX() const { return ventanaOX; }
+        int getVentanaOY() const { return ventanaOX; }
+
+        string getNombre() const { return nombre; }
+
+    private:
+        void virtual Entrenamiento(Mat trainingDataMat, Mat labelsMat) = 0;
+        float virtual Clasificacion(Mat Data) = 0;
+
+    protected:
+        int tipoClasificador;
+        int tipoDato;
+        int numeroEtiquetas;
+
+        int ventanaX;
+        int ventanaY;
+        int ventanaOX;
+        int ventanaOY;
+
         string nombre;
 
     #ifdef GUI
-        int progreso;
-        int max_progreso;
-        int base_progreso;
-        int total_progreso;
+    public:
+        int getProgreso() const { return _progreso; }
+        void setProgreso(int progreso) { _progreso = progreso; }
 
-        Ui::MainWindow *window;
+        int getMaxProgreso() const { return _maxProgreso; }
+        void setMaxProgreso(int maxProgreso) { _maxProgreso = maxProgreso; }
+
+        int getBaseProgreso() const { return _baseProgreso; }
+        void setBaseProgreso(int baseProgreso) { _baseProgreso = baseProgreso; }
+
+        int getTotalProgreso() const { return _totalProgreso; }
+        void setTotalProgreso(int totalProgreso) { _totalProgreso = totalProgreso; }
+
+        Ui::MainWindow* getWindow() const { return _window; }
+        void setWindow(Ui::MainWindow* window) { _window = window; }
+
+    protected:
+        int _progreso;
+        int _maxProgreso;
+        int _baseProgreso;
+        int _totalProgreso;
+
+        Ui::MainWindow *_window;
     #endif
-
-    private:
-        void virtual Entrenamiento(Mat trainingDataMat, Mat labelsMat){}
-        float virtual Clasificacion(Mat Data){}
     };
 }
 

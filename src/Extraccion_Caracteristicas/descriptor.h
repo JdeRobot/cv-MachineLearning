@@ -27,25 +27,31 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-namespace MLT {
-enum{
-    RGB=0,
-    GRAY=1,
-    HOG_DES=2,
-    PUNTOS_CARACTERISTICOS=3,
-    THRESHOLD=4,
-    CANNY=5,
-    SOBEL=6,
-    HSV=7,
-    H_CHANNEL=8,
-    S_CHANNEL=9,
-    V_CHANNEL=10,
-    COLOR_PREDOMINANTE
-};
-    class Descriptor{
+namespace MLT
+{
+    enum
+    {
+        RGB                     = 0,
+        GRAY                    = 1,
+        HOG_DES                 = 2,
+        PUNTOS_CARACTERISTICOS  = 3,
+        THRESHOLD               = 4,
+        CANNY                   = 5,
+        SOBEL                   = 6,
+        HSV                     = 7,
+        H_CHANNEL               = 8,
+        S_CHANNEL               = 9,
+        V_CHANNEL               = 10,
+        COLOR_PREDOMINANTE      = 11
+    };
+
+    class Descriptor
+    {
     public:
-        Descriptor(){}
-        int virtual Extract(std::vector<cv::Mat> Images, std::vector<cv::Mat> &Descriptors){}
+        Descriptor() { }
+        virtual ~Descriptor() { }
+
+        int virtual Extract(std::vector<cv::Mat> /*images*/, std::vector<cv::Mat>& /*descriptors*/) = 0;
     };
 }
 

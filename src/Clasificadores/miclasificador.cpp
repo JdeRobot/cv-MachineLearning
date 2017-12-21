@@ -38,10 +38,11 @@ en el que se debe poner el tamaño de las muestras (ventana_o_x ventana_o_y, y e
 #include "miclasificador.h"
 
 
-MLT::MiClasificador::MiClasificador(string Nombre){
-    nombre=Nombre;
+MLT::MiClasificador::MiClasificador(string nombre)
+{
+    nombre = nombre;
     //Tipo de dato con el que trabaja el clasificador
-    tipo_dato=RGB;
+    tipoDato = RGB;
 }
 
 MLT::MiClasificador::~MiClasificador(){
@@ -53,7 +54,7 @@ MLT::MiClasificador::~MiClasificador(){
   @param Labels: Etiquetas de los datos
   @return Control de errores (0=OK)
 */
-int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float>& labels, bool /*reducir*/, bool /*read*/){
     int e=0;
     Auxiliares ax;
     Mat lexic_data;
@@ -67,7 +68,7 @@ int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float> &Labe
     lexic_data.copyTo(trainingDataMat);
     for(int i=0; i<trainingDataMat.rows; i++){
 #ifdef GUI
-        progreso++;
+        _progreso++;
 
 /*******************************************************************************************/
         //Tu codigo para la barra de cargado de la GUI
@@ -80,7 +81,7 @@ int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float> &Labe
 /*****************************************************************************************/
 #endif
         float response=Clasificacion(trainingDataMat.row(i));
-        Labels.push_back(response);
+        labels.push_back(response);
     }
     return 0;
 }
@@ -90,9 +91,9 @@ float MLT::MiClasificador::Clasificacion(Mat Data){
     Auxiliares aux;
     vector<Mat> Datos;
     int n_channels=-1;
-    if(tipo_dato==RGB)
+    if(tipoDato==RGB)
         n_channels=3;
-    else if(tipo_dato==GRAY || tipo_dato==H_CHANNEL || tipo_dato==S_CHANNEL || tipo_dato==V_CHANNEL)
+    else if(tipoDato==GRAY || tipoDato==H_CHANNEL || tipoDato==S_CHANNEL || tipoDato==V_CHANNEL)
         n_channels=1;
     aux.Lexic2Image(Data,tam_imagen,n_channels,Datos);
     float response=0;
@@ -108,13 +109,13 @@ float MLT::MiClasificador::Clasificacion(Mat Data){
     return response;
 }
 
-int MLT::MiClasificador::Read_Data(){
+int MLT::MiClasificador::ReadData(){
     string g="../Data/Configuracion/"+nombre+"/MiClasificador.xml";
     cv::FileStorage archivo_r(g,CV_STORAGE_READ);
     if(archivo_r.isOpened()){
-        archivo_r["ventana_o_x"]>>ventana_o_x;
-        archivo_r["ventana_o_y"]>>ventana_o_y;
-        archivo_r["numero_etiquetas"]>>numero_etiquetas;
+        archivo_r["ventana_o_x"]>>ventanaOX;
+        archivo_r["ventana_o_y"]>>ventanaOY;
+        archivo_r["numero_etiquetas"]>>numeroEtiquetas;
     }
     else
         return 1;
@@ -130,6 +131,6 @@ int MLT::MiClasificador::Read_Data(){
     return 0;
 }
 
-int MLT::MiClasificador::Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save){}
-int MLT::MiClasificador::Save_Data(){}
-void MLT::MiClasificador::Entrenamiento(Mat trainingDataMat, Mat labelsMat){}
+int MLT::MiClasificador::Autotrain(vector<Mat> /*data*/, vector<float> /*labels*/, Dimensionalidad::Reducciones /*reduc*/, Generacion::Info_Datos /*info*/, bool /*save*/) { return 0; }
+int MLT::MiClasificador::SaveData() { return 0; }
+void MLT::MiClasificador::Entrenamiento(Mat /*trainingDataMat*/, Mat /*labelsMat*/){}

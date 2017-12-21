@@ -27,15 +27,19 @@
 #include "../Herramientas/auxiliares.h"
 #include "descriptor.h"
 
-namespace MLT {
-    class Basic_Transformations: public  Descriptor{
+namespace MLT
+{
+    class Basic_Transformations: public  Descriptor
+    {
     public:
-        Basic_Transformations(int input_type, int output_type);
+        Basic_Transformations(int inputType, int outputType);
         ~Basic_Transformations();
-        int Extract(vector<Mat> Imagenes, vector<Mat> &Descriptores);
+
+        int Extract(vector<Mat> imagenes, vector<Mat>& descriptores) override;
 
     private:
-        int input,output;
+        int input;
+        int output;
     };
 }
 

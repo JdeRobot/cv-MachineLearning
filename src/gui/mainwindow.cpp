@@ -1998,7 +1998,7 @@ void MainWindow::on_Iniciar_2_clicked()
     int e=0;
     if(ui->Tipo_Clasif_2->currentIndex()==1){
         ID=DISTANCIAS;
-        D.nombre=nombre;
+        D.getNombre()=nombre;
         e=D.Parametrizar();
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2007,7 +2007,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==2){
         ID=GAUSSIANO;
-        G.nombre=nombre;
+        G.getNombre()=nombre;
         e=G.Parametrizar();
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2016,7 +2016,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==3){
         ID=HISTOGRAMA;
-        H.nombre=nombre;
+        H.getNombre()=nombre;
         e=H.Parametrizar(Hist_tam_celda);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2025,7 +2025,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==4){
         ID=KNN;
-        K.nombre=nombre;
+        K.getNombre()=nombre;
         e=K.Parametrizar(KNN_k,KNN_regression);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2034,7 +2034,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==5){
         ID=NEURONAL;
-        N.nombre=nombre;
+        N.getNombre()=nombre;
         if(Neuronal_layerSize.rows<3){
             QMessageBox msgBox;
             msgBox.setText("ERROR: No se ha configurado el clasificador adecuadamente");
@@ -2055,7 +2055,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==6){
         ID=C_SVM;
-        S.nombre=nombre;
+        S.getNombre()=nombre;
         e=S.Parametrizar(SVM_train,SVM_Type,SVM_kernel_type,Mat(),SVM_degree,SVM_gamma,SVM_coef0,SVM_C,SVM_nu,SVM_p);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2064,7 +2064,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==7){
         ID=DTREES;
-        DT.nombre=nombre;
+        DT.getNombre()=nombre;
         e=DT.Parametrizar(DTrees_max_depth,DTrees_min_sample_count,DTrees_regression_accuracy,DTrees_use_surrogates,DTrees_max_categories,DTrees_cv_folds,DTrees_use_1se_rule,DTrees_truncate_pruned_tree,DTrees_priors);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2073,7 +2073,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==8){
         ID=RTREES;
-        RT.nombre=nombre;
+        RT.getNombre()=nombre;
         e=RT.Parametrizar(RTrees_max_depth,RTrees_min_sample_count,RTrees_regression_accuracy,RTrees_use_surrogates,RTrees_max_categories,RTrees_cv_folds,RTrees_use_1se_rule,RTrees_truncate_pruned_tree,RTrees_priors,RTrees_calc_var_importance,RTrees_native_vars);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2091,7 +2091,7 @@ void MainWindow::on_Iniciar_2_clicked()
             return;
         }
         ID=BOOSTING;
-        B.nombre=nombre;
+        B.getNombre()=nombre;
         e=B.Parametrizar(Boosting_boost_type,Boosting_weak_count,Boosting_weight_trim_rate,Boosting_max_depth,Boosting_use_surrogates,Boosting_priors);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2100,7 +2100,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==10){
         ID=CASCADA_CLAS;
-        HA.nombre=nombre;
+        HA.getNombre()=nombre;
         e=HA.Parametrizar("HAAR",si_entrenar,Cascada_NumPos,Cascada_NumNeg,Cascada_Mode,Cascada_NumStage,Cascada_MinHitRate,Cascada_MaxFalseAlarmRate,Cascada_WeightTrimRate,Cascada_MaxWeakCount,Cascada_MaxDepth,Cascada_Bt,Cascada_PrecalcValBufSize,Cascada_PrecalcidxBufSize);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2109,7 +2109,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==11){
         ID=CASCADA_CLAS;
-        HA.nombre=nombre;
+        HA.getNombre()=nombre;
         e=HA.Parametrizar("LBP",si_entrenar,Cascada_NumPos,Cascada_NumNeg,Cascada_Mode,Cascada_NumStage,Cascada_MinHitRate,Cascada_MaxFalseAlarmRate,Cascada_WeightTrimRate,Cascada_MaxWeakCount,Cascada_MaxDepth,Cascada_Bt,Cascada_PrecalcValBufSize,Cascada_PrecalcidxBufSize);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2118,7 +2118,7 @@ void MainWindow::on_Iniciar_2_clicked()
     }
     else if(ui->Tipo_Clasif_2->currentIndex()==12){
         ID=EXP_MAX;
-        E.nombre=nombre;
+        E.getNombre()=nombre;
         e=E.Parametrizar(EM_nclusters,EM_covMatType);
         if(e==0){
             Dimensionalidad::Reducciones reduc;
@@ -2199,60 +2199,60 @@ void MainWindow::on_Cargar_3_clicked()
         return;
     }
     if(id==DISTANCIAS){
-        D.nombre=nombre;
-        e=D.Read_Data();
+        D.getNombre()=nombre;
+        e=D.ReadData();
     }
     else if(id==GAUSSIANO){
-        G.nombre=nombre;
-        e=G.Read_Data();
+        G.getNombre()=nombre;
+        e=G.ReadData();
     }
     else if(id==CASCADA_CLAS){
-        HA.nombre=nombre;
-        HA.Read_Data();
+        HA.getNombre()=nombre;
+        HA.ReadData();
     }
     else if(id==HISTOGRAMA){
-        H.nombre=nombre;
-        e=H.Read_Data();
+        H.getNombre()=nombre;
+        e=H.ReadData();
     }
     else if(id==KNN){
-        K.nombre=nombre;
-        e=K.Read_Data();
+        K.getNombre()=nombre;
+        e=K.ReadData();
     }
     else if(id==NEURONAL){
-        N.nombre=nombre;
-        e=N.Read_Data();
+        N.getNombre()=nombre;
+        e=N.ReadData();
     }
     else if(id==C_SVM){
-        S.nombre=nombre;
-        e=S.Read_Data();
+        S.getNombre()=nombre;
+        e=S.ReadData();
     }
     else if(id==RTREES){
-        RT.nombre=nombre;
-        e=RT.Read_Data();
+        RT.getNombre()=nombre;
+        e=RT.ReadData();
     }
     else if(id==DTREES){
-        DT.nombre=nombre;
-        e=DT.Read_Data();
+        DT.getNombre()=nombre;
+        e=DT.ReadData();
     }
     else if(id==BOOSTING){
-        B.nombre=nombre;
-        e=B.Read_Data();
+        B.getNombre()=nombre;
+        e=B.ReadData();
     }
     else if(id==EXP_MAX){
-        E.nombre=nombre;
-        e=E.Read_Data();
+        E.getNombre()=nombre;
+        e=E.ReadData();
     }
 //    else if(id==GBT){
-//        GB.nombre=nombre;
+//        GB.getNombre()=nombre;
 //        e=GB.Read_Data();
 //    }
 //    else if(id==ERTREES){
-//        ER.nombre=nombre;
+//        ER.getNombre()=nombre;
 //        e=ER.Read_Data();
 //    }
     else if(id==MICLASIFICADOR){
-        MC.nombre=nombre;
-        e=MC.Read_Data();
+        MC.getNombre()=nombre;
+        e=MC.ReadData();
     }
     else{
         QMessageBox msgBox;
@@ -2296,115 +2296,115 @@ void MainWindow::on_Iniciar_3_clicked()
     int e=0;
     if(ui->Clasif_Cargado->isChecked()){
         if(ID==DISTANCIAS){
-            D.progreso=0;
-            D.max_progreso=100;
-            D.base_progreso=0;
-            D.total_progreso=IMAGENES.size();
-            D.window=ui;
+            D.setProgreso(0);
+            D.setMaxProgreso(100);
+            D.setBaseProgreso(0);
+            D.setTotalProgreso(IMAGENES.size());
+            D.setWindow(ui);
             e=D.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==GAUSSIANO){
-            G.progreso=0;
-            G.max_progreso=100;
-            G.base_progreso=0;
-            G.total_progreso=IMAGENES.size();
-            G.window=ui;
+            G.setProgreso(0);
+            G.setMaxProgreso(100);
+            G.setBaseProgreso(0);
+            G.setTotalProgreso(IMAGENES.size());
+            G.setWindow(ui);
             e=G.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==CASCADA_CLAS){
-            HA.progreso=0;
-            HA.max_progreso=100;
-            HA.base_progreso=0;
-            HA.total_progreso=IMAGENES.size();
-            HA.window=ui;
+            HA.setProgreso(0);
+            HA.setMaxProgreso(100);
+            HA.setBaseProgreso(0);
+            HA.setTotalProgreso(IMAGENES.size());
+            HA.setWindow(ui);
             e=HA.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==HISTOGRAMA){
-            H.progreso=0;
-            H.max_progreso=100;
-            H.base_progreso=0;
-            H.total_progreso=IMAGENES.size();
-            H.window=ui;
+            H.setProgreso(0);
+            H.setMaxProgreso(100);
+            H.setBaseProgreso(0);
+            H.setTotalProgreso(IMAGENES.size());
+            H.setWindow(ui);
             e=H.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==KNN){
-            K.progreso=0;
-            K.max_progreso=100;
-            K.base_progreso=0;
-            K.total_progreso=IMAGENES.size();
-            K.window=ui;
+            K.setProgreso(0);
+            K.setMaxProgreso(100);
+            K.setBaseProgreso(0);
+            K.setTotalProgreso(IMAGENES.size());
+            K.setWindow(ui);
             e=K.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==NEURONAL){
-            N.progreso=0;
-            N.max_progreso=100;
-            N.base_progreso=0;
-            N.total_progreso=IMAGENES.size();
-            N.window=ui;
+            N.setProgreso(0);
+            N.setMaxProgreso(100);
+            N.setBaseProgreso(0);
+            N.setTotalProgreso(IMAGENES.size());
+            N.setWindow(ui);
             e=N.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==C_SVM){
-            S.progreso=0;
-            S.max_progreso=100;
-            S.base_progreso=0;
-            S.total_progreso=IMAGENES.size();
-            S.window=ui;
+            S.setProgreso(0);
+            S.setMaxProgreso(100);
+            S.setBaseProgreso(0);
+            S.setTotalProgreso(IMAGENES.size());
+            S.setWindow(ui);
             e=S.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==RTREES){
-            RT.progreso=0;
-            RT.max_progreso=100;
-            RT.base_progreso=0;
-            RT.total_progreso=IMAGENES.size();
-            RT.window=ui;
+            RT.setProgreso(0);
+            RT.setMaxProgreso(100);
+            RT.setBaseProgreso(0);
+            RT.setTotalProgreso(IMAGENES.size());
+            RT.setWindow(ui);
             e=RT.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==DTREES){
-            DT.progreso=0;
-            DT.max_progreso=100;
-            DT.base_progreso=0;
-            DT.total_progreso=IMAGENES.size();
-            DT.window=ui;
+            DT.setProgreso(0);
+            DT.setMaxProgreso(100);
+            DT.setBaseProgreso(0);
+            DT.setTotalProgreso(IMAGENES.size());
+            DT.setWindow(ui);
             e=DT.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==BOOSTING){
-            B.progreso=0;
-            B.max_progreso=100;
-            B.base_progreso=0;
-            B.total_progreso=IMAGENES.size();
-            B.window=ui;
+            B.setProgreso(0);
+            B.setMaxProgreso(100);
+            B.setBaseProgreso(0);
+            B.setTotalProgreso(IMAGENES.size());
+            B.setWindow(ui);
             e=B.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else if(ID==EXP_MAX){
-            E.progreso=0;
-            E.max_progreso=100;
-            E.base_progreso=0;
-            E.total_progreso=IMAGENES.size();
-            E.window=ui;
+            E.setProgreso(0);
+            E.setMaxProgreso(100);
+            E.setBaseProgreso(0);
+            E.setTotalProgreso(IMAGENES.size());
+            E.setWindow(ui);
             e=E.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
 //        else if(ID==GBT){
-//            GB.progreso=0;
-//            GB.max_progreso=100;
-//            GB.base_progreso=0;
-//            GB.total_progreso=IMAGENES.size();
-//            GB.window=ui;
+//            GB.setProgreso(0);
+//            GB.setMaxProgreso(100);
+//            GB.setBaseProgreso(0);
+//            GB.setTotalProgreso(IMAGENES.size());
+//            GB.setWindow(ui);
 //            e=GB.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
 //        }
 //        else if(ID==ERTREES){
-//            ER.progreso=0;
-//            ER.max_progreso=100;
-//            ER.base_progreso=0;
-//            ER.total_progreso=IMAGENES.size();
-//            ER.window=ui;
+//            ER.setProgreso(0);
+//            ER.setMaxProgreso(100);
+//            ER.setBaseProgreso(0);
+//            ER.setTotalProgreso(IMAGENES.size());
+//            ER.setWindow(ui);
 //            e=ER.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
 //        }
         else if(ID==MICLASIFICADOR){
-            MC.progreso=0;
-            MC.max_progreso=100;
-            MC.base_progreso=0;
-            MC.total_progreso=IMAGENES.size();
-            MC.window=ui;
+            MC.setProgreso(0);
+            MC.setMaxProgreso(100);
+            MC.setBaseProgreso(0);
+            MC.setTotalProgreso(IMAGENES.size());
+            MC.setWindow(ui);
             e=MC.Autoclasificacion(IMAGENES,resultado,ifreduc,read);
         }
         else{
@@ -2420,57 +2420,57 @@ void MainWindow::on_Iniciar_3_clicked()
         for(uint i=0; i<id_clasificadores.size(); i++){
             if(id_clasificadores[i]==DISTANCIAS){
                 Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==GAUSSIANO){
                 Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==CASCADA_CLAS){
                 Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==HISTOGRAMA){
                 Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==KNN){
                 Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==NEURONAL){
                 Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==C_SVM){
                 Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==RTREES){
                 Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==DTREES){
                 Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==BOOSTING){
                 Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
             else if(id_clasificadores[i]==EXP_MAX){
                 Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
-                clasi->Read_Data();
+                clasi->ReadData();
                 clasificadores.push_back(clasi);
             }
     //        else if(id_clasificadores[i]==GBT){
@@ -2765,7 +2765,7 @@ void MainWindow::on_Clus_Representar_2_clicked()
         vector<Scalar> colores_aciertos;
         bool todo_aciertos=true;
         vector<float> aciertos;
-        for(int i=0; i<resultado.size(); i++){
+        for(size_t i=0; i<resultado.size(); i++){
             if(resultado[i]==LABELS[i])
                 aciertos.push_back(1.);
             else{
@@ -4496,101 +4496,101 @@ void MainWindow::on_Iniciar_6_clicked()
     if(ui->radioPosicion->isChecked()){
         if(ui->Clasif_Cargado_2->isChecked()){
             if(ID==DISTANCIAS){
-                D.progreso=0;
-                D.max_progreso=100;
-                D.base_progreso=0;
-                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                D.window=ui;
+                D.setProgreso(0);
+                D.setMaxProgreso(100);
+                D.setBaseProgreso(0);
+                D.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                D.setWindow(ui);
                 Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==GAUSSIANO){
-                G.progreso=0;
-                G.max_progreso=100;
-                G.base_progreso=0;
-                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                G.window=ui;
+                G.setProgreso(0);
+                G.setMaxProgreso(100);
+                G.setBaseProgreso(0);
+                G.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                G.setWindow(ui);
                 Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==CASCADA_CLAS){
-                HA.progreso=0;
-                HA.max_progreso=100;
-                HA.base_progreso=0;
-                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                HA.window=ui;
+                HA.setProgreso(0);
+                HA.setMaxProgreso(100);
+                HA.setBaseProgreso(0);
+                HA.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                HA.setWindow(ui);
                 Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==HISTOGRAMA){
-                H.progreso=0;
-                H.max_progreso=100;
-                H.base_progreso=0;
-                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                H.window=ui;
+                H.setProgreso(0);
+                H.setMaxProgreso(100);
+                H.setBaseProgreso(0);
+                H.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                H.setWindow(ui);
                 Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==KNN){
-                K.progreso=0;
-                K.max_progreso=100;
-                K.base_progreso=0;
-                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                K.window=ui;
+                K.setProgreso(0);
+                K.setMaxProgreso(100);
+                K.setBaseProgreso(0);
+                K.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                K.setWindow(ui);
                 Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==NEURONAL){
-                N.progreso=0;
-                N.max_progreso=100;
-                N.base_progreso=0;
-                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                N.window=ui;
+                N.setProgreso(0);
+                N.setMaxProgreso(100);
+                N.setBaseProgreso(0);
+                N.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                N.setWindow(ui);
                 Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==C_SVM){
-                S.progreso=0;
-                S.max_progreso=100;
-                S.base_progreso=0;
-                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                S.window=ui;
+                S.setProgreso(0);
+                S.setMaxProgreso(100);
+                S.setBaseProgreso(0);
+                S.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                S.setWindow(ui);
                 Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==RTREES){
-                RT.progreso=0;
-                RT.max_progreso=100;
-                RT.base_progreso=0;
-                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                RT.window=ui;
+                RT.setProgreso(0);
+                RT.setMaxProgreso(100);
+                RT.setBaseProgreso(0);
+                RT.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                RT.setWindow(ui);
                 Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==DTREES){
-                DT.progreso=0;
-                DT.max_progreso=100;
-                DT.base_progreso=0;
-                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                DT.window=ui;
+                DT.setProgreso(0);
+                DT.setMaxProgreso(100);
+                DT.setBaseProgreso(0);
+                DT.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                DT.setWindow(ui);
                 Busqueda bus(&DT,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==BOOSTING){
-                B.progreso=0;
-                B.max_progreso=100;
-                B.base_progreso=0;
-                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                B.window=ui;
+                B.setProgreso(0);
+                B.setMaxProgreso(100);
+                B.setBaseProgreso(0);
+                B.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                B.setWindow(ui);
                 Busqueda bus(&B,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
             else if(ID==EXP_MAX){
-                E.progreso=0;
-                E.max_progreso=100;
-                E.base_progreso=0;
-                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                E.window=ui;
+                E.setProgreso(0);
+                E.setMaxProgreso(100);
+                E.setBaseProgreso(0);
+                E.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                E.setWindow(ui);
                 Busqueda bus(&E,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
@@ -4613,11 +4613,11 @@ void MainWindow::on_Iniciar_6_clicked()
 //                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
 //            }
             else if(ID==MICLASIFICADOR){
-                MC.progreso=0;
-                MC.max_progreso=100;
-                MC.base_progreso=0;
-                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-                MC.window=ui;
+                MC.setProgreso(0);
+                MC.setMaxProgreso(100);
+                MC.setBaseProgreso(0);
+                MC.setTotalProgreso(((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value()));
+                MC.setWindow(ui);
                 Busqueda bus(&MC,tipo_dato,Tipo_Descriptor);
                 e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
             }
@@ -4641,52 +4641,52 @@ void MainWindow::on_Iniciar_6_clicked()
             for(uint i=0; i<id_clasificadores.size(); i++){
                 if(id_clasificadores[i]==DISTANCIAS){
                     Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==GAUSSIANO){
                     Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==CASCADA_CLAS){
                     Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==HISTOGRAMA){
                     Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==KNN){
                     Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==NEURONAL){
                     Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==C_SVM){
                     Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==RTREES){
                     Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==DTREES){
                     Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==BOOSTING){
                     Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
         //        else if(id_clasificadores[i]==GBT){
@@ -4701,7 +4701,7 @@ void MainWindow::on_Iniciar_6_clicked()
         //        }
                 else if(id_clasificadores[i]==EXP_MAX){
                     Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
             }
@@ -4723,103 +4723,103 @@ void MainWindow::on_Iniciar_6_clicked()
         imshow("Imagen",imagen);
         rep.Recuadros(imagen,recuadros,labels_recuadros,Col,mostrar,show_graphics);
     }
-    else if(ui->radioTextura->isChecked()){
+    /*else if(ui->radioTextura->isChecked()){
         if(ui->Clasif_Cargado_2->isChecked()){
             if(ID==DISTANCIAS){
                 D.progreso=0;
-                D.max_progreso=100;
-                D.base_progreso=0;
-                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                D.maxProgreso=100;
+                D.baseProgreso=0;
+                D.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 D.window=ui;
                 Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==GAUSSIANO){
                 G.progreso=0;
-                G.max_progreso=100;
-                G.base_progreso=0;
-                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                G.maxProgreso=100;
+                G.baseProgreso=0;
+                G.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 G.window=ui;
                 Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==CASCADA_CLAS){
                 HA.progreso=0;
-                HA.max_progreso=100;
-                HA.base_progreso=0;
-                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                HA.maxProgreso=100;
+                HA.baseProgreso=0;
+                HA.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 HA.window=ui;
                 Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==HISTOGRAMA){
                 H.progreso=0;
-                H.max_progreso=100;
-                H.base_progreso=0;
-                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                H.maxProgreso=100;
+                H.baseProgreso=0;
+                H.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 H.window=ui;
                 Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==KNN){
                 K.progreso=0;
-                K.max_progreso=100;
-                K.base_progreso=0;
-                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                K.maxProgreso=100;
+                K.baseProgreso=0;
+                K.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 K.window=ui;
                 Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==NEURONAL){
                 N.progreso=0;
-                N.max_progreso=100;
-                N.base_progreso=0;
-                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                N.maxProgreso=100;
+                N.baseProgreso=0;
+                N.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 N.window=ui;
                 Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==C_SVM){
                 S.progreso=0;
-                S.max_progreso=100;
-                S.base_progreso=0;
-                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                S.maxProgreso=100;
+                S.baseProgreso=0;
+                S.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 S.window=ui;
                 Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==RTREES){
                 RT.progreso=0;
-                RT.max_progreso=100;
-                RT.base_progreso=0;
-                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                RT.maxProgreso=100;
+                RT.baseProgreso=0;
+                RT.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 RT.window=ui;
                 Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==DTREES){
                 DT.progreso=0;
-                DT.max_progreso=100;
-                DT.base_progreso=0;
-                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                DT.maxProgreso=100;
+                DT.baseProgreso=0;
+                DT.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 DT.window=ui;
                 Busqueda bus(&DT,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==BOOSTING){
                 B.progreso=0;
-                B.max_progreso=100;
-                B.base_progreso=0;
-                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                B.maxProgreso=100;
+                B.baseProgreso=0;
+                B.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 B.window=ui;
                 Busqueda bus(&B,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
             }
             else if(ID==EXP_MAX){
                 E.progreso=0;
-                E.max_progreso=100;
-                E.base_progreso=0;
-                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                E.maxProgreso=100;
+                E.baseProgreso=0;
+                E.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 E.window=ui;
                 Busqueda bus(&E,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
@@ -4844,9 +4844,9 @@ void MainWindow::on_Iniciar_6_clicked()
 //            }
             else if(ID==MICLASIFICADOR){
                 MC.progreso=0;
-                MC.max_progreso=100;
-                MC.base_progreso=0;
-                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+                MC.maxProgreso=100;
+                MC.baseProgreso=0;
+                MC.totalProgreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
                 MC.window=ui;
                 Busqueda bus(&MC,tipo_dato,Tipo_Descriptor);
                 e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
@@ -4871,57 +4871,57 @@ void MainWindow::on_Iniciar_6_clicked()
             for(uint i=0; i<id_clasificadores.size(); i++){
                 if(id_clasificadores[i]==DISTANCIAS){
                     Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==GAUSSIANO){
                     Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==CASCADA_CLAS){
                     Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==HISTOGRAMA){
                     Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==KNN){
                     Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==NEURONAL){
                     Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==C_SVM){
                     Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==RTREES){
                     Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==DTREES){
                     Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==BOOSTING){
                     Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
                 else if(id_clasificadores[i]==EXP_MAX){
                     Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
-                    clasi->Read_Data();
+                    clasi->ReadData();
                     clasificadores.push_back(clasi);
                 }
         //        else if(id_clasificadores[i]==GBT){
@@ -4969,7 +4969,7 @@ void MainWindow::on_Iniciar_6_clicked()
             QApplication::restoreOverrideCursor();
             return;
         }
-    }
+    }*/
     ui->progress_Clasificar->setValue(100);
     ui->progress_Clasificar->setValue(0);
     QApplication::restoreOverrideCursor();

@@ -39,7 +39,7 @@ Conf_ERTrees::~Conf_ERTrees()
 
 void Conf_ERTrees::on_Aceptar_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
+    MainWindow *window=(MainWindow*) punt;
 //    window->ERTrees_priors=0;
 //    window->ERTrees_calc_var_importance=ui->calc_var_importance->isChecked();
 //    window->ERTrees_cv_folds=ui->cv_folds->value();

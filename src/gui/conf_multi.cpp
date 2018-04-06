@@ -197,9 +197,9 @@ void Conf_Multi::on_reset_2_clicked()
 
 void Conf_Multi::on_Aceptar_2_clicked()
 {
-    MainWindow *window=(MainWindow*) punt;
-    window->id_clasificadores=id_clasificadores;
-    window->Multi_tipo=multi;
-    delete this;
+//    MainWindow *window=(MainWindow*) punt;
+//    window->id_clasificadores=id_clasificadores;
+//    window->Multi_tipo=multi;
+//    delete this;
 }
 

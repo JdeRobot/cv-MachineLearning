@@ -39,7 +39,7 @@ Conf_GB::~Conf_GB()
 
 void Conf_GB::on_pushButton_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
+    MainWindow *window=(MainWindow*) punt;
 //    if(ui->loss_function_type->currentIndex()==0)
 //        window->GBT_loss_function_type=CvGBTrees::SQUARED_LOSS;
 //    else if(ui->loss_function_type->currentIndex()==1)

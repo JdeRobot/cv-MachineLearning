@@ -208,9 +208,9 @@ void Con_Multi::on_reset_clicked()
 
 void Con_Multi::on_Aceptar_clicked()
 {
-    MainWindow *window=(MainWindow*) punt;
-    window->id_clasificadores=id_clasificadores;
-    window->nombres=nombres;
-    window->Multi_tipo=multi;
+//    MainWindow *window=(MainWindow*) punt;
+//    window->id_clasificadores=id_clasificadores;
+//    window->nombres=nombres;
+//    window->Multi_tipo=multi;
     delete this;
 }

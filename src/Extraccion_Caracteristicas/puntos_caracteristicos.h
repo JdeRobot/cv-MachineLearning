@@ -41,7 +41,7 @@ namespace MLT
 
         void Mostrar(vector<Mat> images);
     private:
-        std::vector<vector<cv::KeyPoint>> keypointsI;
+        std::vector<vector<cv::KeyPoint> > keypointsI;
         cv::String detectorType;
         cv::String extractorType;
         float paramDetector;

@@ -48,8 +48,8 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
         }
 #ifdef GUI
             progreso++;
-            window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-            window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     Images=img;
@@ -125,11 +125,11 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
         Archivo_img<<conta.str()<<imag;
         Archivo_recortes<<conta.str()<<imag;
 #ifdef GUI
-        progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Clus->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Dimensionalidad->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        this->progreso++;
+        this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        this->window->v_progress_clustering->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        this->window->v_progress_dimensionality->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     Archivo_i<<"Tipo_Datos"<<info.Tipo_Datos;
@@ -262,9 +262,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                     imagen.convertTo(Imagen,CV_32F);
                     Imagenes.push_back(Imagen);
             #ifdef GUI
-                    progreso++;
-                    window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-                    window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+                    this->progreso++;
+                    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+                    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
             #endif
                 }
             }
@@ -447,8 +447,9 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
             Archivo_img_in.release();
             Archivo_recortes_in.release();
 #ifdef GUI
-        progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+    this->progreso++;
+    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
     }
@@ -511,8 +512,8 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -720,8 +721,8 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -978,8 +979,8 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1304,8 +1305,8 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1681,8 +1682,9 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
                 Archivo_recortes<<nom.str()<<aux;
             }
 #ifdef GUI
-            progreso++;
-            window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            this->progreso++;
+            this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
         separacion=separacion+separacion_clases;
@@ -1906,7 +1908,8 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
         }
 #ifdef GUI
         progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     info.Tipo_Datos=0;
@@ -1984,8 +1987,8 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -2572,8 +2575,8 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,Negativos,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -3076,8 +3079,8 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+        window->v_progress_datamanaging->setValue(0);
+        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());

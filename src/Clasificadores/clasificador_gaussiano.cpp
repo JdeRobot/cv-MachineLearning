@@ -234,8 +234,9 @@ int MLT::Clasificador_Gaussiano::Autoclasificacion(vector<Mat> Data, vector<floa
         float response=Clasificacion(trainingDataMat.row(i));
         Labels.push_back(response);
 #ifdef GUI
-            _progreso++;
-            _window->progress_Clasificar->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
+        this->_progreso++;
+        this->_window->i_progress_classifiers->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
+        this->_window->v_progress_classifiers->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
 #endif
     }
     return 0;

@@ -141,12 +141,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::update(){
+
+}
+
 void MainWindow::on_v_tool_activated(int index)
 {
     if(index==2)
-        ui->v_config_tool->setEnabled(true);
+        this->ui->v_config_tool->setEnabled(true);
     else
-        ui->v_config_tool->setEnabled(false);
+        this->ui->v_config_tool->setEnabled(false);
     if (index==1 || index==4){
         this->ui->v_datapath->setEnabled(true);
         this->ui->v_toolButton->setEnabled(true);
@@ -157,7 +161,92 @@ void MainWindow::on_v_tool_activated(int index)
     }
 }
 
+void MainWindow::on_v_toolButton_clicked()
+{
+    QString filename= QFileDialog::getExistingDirectory(
+                this,
+                tr("CHOOSE FOLDER"),
+                QDir::currentPath()+"/../Data/Imagenes/");
+    this->ui->v_datapath->setText(filename);
+}
+
 void MainWindow::on_v_run_datamanaging_clicked()
 {
+    if(this->ui->v_tool->currentIndex()!=0){
+        if(this->ui->v_tool->currentIndex()==1){
+//            ui->progress_Clasificar->setValue(1);
+//            ui->progress_generar->setValue(1);
+//            ui->progress_Cargar->setValue(1);
+//            ui->progress_Clus->setValue(1);
+//            ui->progress_Dimensionalidad->setValue(1);
+            this->ui->v_progress_datamanaging->setValue(1);
+
+            QString path=this->ui->v_datapath->displayText();
+            bool negative;
+            string ref;
+
+            Running run;
+            int er=run.load_dataset(path, ref, negative,this->LABELS,this->IMAGENES);
+            if(er==1){
+                QMessageBox msgBox;
+                msgBox.setText("ERROR: The folder has not the expected structure");
+                msgBox.exec();
+                return;
+            }
+
+            if(er==2){
+                QMessageBox msgBox;
+                msgBox.setText("ERROR: Data could not be loaded");
+                msgBox.exec();
+//                this->ui->progress_Clasificar->setValue(100);
+//                this->ui->progress_Clasificar->setValue(0);
+//                this->ui->progress_generar->setValue(100);
+//                this->ui->progress_generar->setValue(0);
+//                this->ui->progress_Cargar->setValue(100);
+//                this->ui->progress_Cargar->setValue(0);
+//                this->ui->progress_Clus->setValue(100);
+//                this->ui->progress_Clus->setValue(0);
+//                this->ui->progress_Dimensionalidad->setValue(100);
+//                this-> ui->progress_Dimensionalidad->setValue(0);
+                this->ui->v_progress_datamanaging->setValue(100);
+                this->ui->v_progress_datamanaging->setValue(0);
+
+                return;
+            }
+            this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+            this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+            this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+
+//            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
+//            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
+//            ui->progress_Clasificar->setValue(100);
+//            ui->progress_Clasificar->setValue(0);
+//            ui->progress_generar->setValue(100);
+//            ui->progress_generar->setValue(0);
+//            ui->progress_Cargar->setValue(100);
+//            ui->progress_Cargar->setValue(0);
+//            ui->progress_Clus->setValue(100);
+//            ui->progress_Clus->setValue(0);
+//            ui->progress_Dimensionalidad->setValue(100);
+//            ui->progress_Dimensionalidad->setValue(0);
+//            ui->progress_Dimensionalidad->setValue(0);
+            Dat_Ref=ref;
+            QString reference=QString::fromStdString(ref);
+            this->ui->dataset_lab->setText("Dataset: "+reference);
+        }
+
+    }
 
 }

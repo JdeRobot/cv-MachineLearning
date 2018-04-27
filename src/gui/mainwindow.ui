@@ -27,7 +27,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="results_lab">
+        <widget class="QLabel" name="dataset_lab">
          <property name="text">
           <string>Dataset: </string>
          </property>
@@ -41,7 +41,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="dataset_lab">
+        <widget class="QLabel" name="results_lab">
          <property name="text">
           <string>Results:</string>
          </property>
@@ -401,7 +401,7 @@
           <attribute name="title">
            <string>Analysis</string>
           </attribute>
-          <widget class="QColumnView" name="Estadisticos">
+          <widget class="QColumnView" name="v_statistics">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -411,7 +411,7 @@
             </rect>
            </property>
           </widget>
-          <widget class="QPushButton" name="Analizar_2">
+          <widget class="QPushButton" name="v_analyse">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -442,7 +442,7 @@
           <attribute name="title">
            <string>Plotting</string>
           </attribute>
-          <widget class="QGroupBox" name="groupBox_3">
+          <widget class="QGroupBox" name="v_plotting_method">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -454,7 +454,7 @@
            <property name="title">
             <string>Method</string>
            </property>
-           <widget class="QRadioButton" name="But_datos">
+           <widget class="QRadioButton" name="v_plotting_data">
             <property name="geometry">
              <rect>
               <x>20</x>
@@ -470,7 +470,7 @@
              <bool>true</bool>
             </property>
            </widget>
-           <widget class="QRadioButton" name="But_Elipses">
+           <widget class="QRadioButton" name="v_plotting_ellipses">
             <property name="geometry">
              <rect>
               <x>20</x>
@@ -483,7 +483,7 @@
              <string>Ellipses</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="But_Datos_Elipses">
+           <widget class="QRadioButton" name="v_plotting_dataellipeses">
             <property name="geometry">
              <rect>
               <x>20</x>
@@ -508,7 +508,7 @@
             <property name="title">
              <string>Dimensions</string>
             </property>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="v_plotting_label_y_2">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -521,7 +521,7 @@
               <string>X</string>
              </property>
             </widget>
-            <widget class="QLabel" name="label_17">
+            <widget class="QLabel" name="v_plotting_label_y">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -534,7 +534,7 @@
               <string>Y</string>
              </property>
             </widget>
-            <widget class="QSpinBox" name="Dim_X">
+            <widget class="QSpinBox" name="v_plotting_x">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -550,7 +550,7 @@
               <number>999999</number>
              </property>
             </widget>
-            <widget class="QSpinBox" name="Dim_Y">
+            <widget class="QSpinBox" name="v_plotting_y">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -570,7 +570,7 @@
              </property>
             </widget>
            </widget>
-           <widget class="QRadioButton" name="But_Hist">
+           <widget class="QRadioButton" name="v_plotting_histogram">
             <property name="geometry">
              <rect>
               <x>20</x>
@@ -583,7 +583,7 @@
              <string>Histogram (Dimension)</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Dimension">
+           <widget class="QSpinBox" name="v_plotting_dimension">
             <property name="geometry">
              <rect>
               <x>240</x>
@@ -600,7 +600,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="v_plotting_selectdata">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -759,7 +759,7 @@
              <string>Classes</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Numero_Clases">
+           <widget class="QSpinBox" name="v_clustering_classes">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -1075,7 +1075,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QSpinBox" name="Num_dimensiones">
+          <widget class="QSpinBox" name="v_dimensionality_dimensions">
            <property name="geometry">
             <rect>
              <x>190</x>

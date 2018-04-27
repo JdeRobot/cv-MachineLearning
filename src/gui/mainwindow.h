@@ -52,8 +52,7 @@
 #include "conf_sc_vali.h"
 #include "selec_param.h"
 
-#include "../ClasificationSystem.h"
-#include "../Clasificadores/miclasificador.h"
+#include "running.h"
 
 #include <fstream>
 #include <opencv2/opencv.hpp>
@@ -195,6 +194,8 @@ public:
 private slots:
     void on_v_tool_activated(int index);
 
+    void on_v_toolButton_clicked();
+
     void on_v_run_datamanaging_clicked();
 
 private:
@@ -231,5 +232,11 @@ private:
     Clasificador_EM E;
 //    Clasificador_ERTrees ER;
     MiClasificador MC;
+
+    void update();
+    int progreso;
+    int max_progreso;
+    int base_progreso;
+    int total_progreso;
 };
 #endif // MAINWINDOW_H

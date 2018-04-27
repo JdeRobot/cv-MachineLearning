@@ -95,8 +95,7 @@
            </item>
            <item>
             <property name="text">
-             <string>Synthetic Data
-Generation</string>
+             <string>Synthetic Data</string>
             </property>
            </item>
            <item>
@@ -165,7 +164,7 @@ Generation</string>
             <number>0</number>
            </property>
           </widget>
-          <widget class="QGroupBox" name="Config_Herr">
+          <widget class="QGroupBox" name="v_config_tool">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -381,7 +380,7 @@ Generation</string>
             </property>
            </widget>
           </widget>
-          <widget class="QToolButton" name="toolButton">
+          <widget class="QToolButton" name="v_toolButton">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -1835,8 +1834,7 @@ Generation</string>
            </item>
            <item>
             <property name="text">
-             <string>Synthetic Images
-Generation</string>
+             <string>Synthetic Images</string>
             </property>
            </item>
            <item>

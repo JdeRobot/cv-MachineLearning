@@ -192,6 +192,11 @@ public:
     string parametro;
 
 
+private slots:
+    void on_v_tool_activated(int index);
+
+    void on_v_run_datamanaging_clicked();
+
 private:
     vector<cv::Scalar> Col;
     Scalar color;

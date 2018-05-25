@@ -23,7 +23,9 @@
 
 #include "generacion.h"
 
-MLT::Generacion::Generacion(){}
+MLT::Generacion::Generacion(){
+    this->running=false;
+}
 
 int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat> &Images){
     input_directory=input_directory+"/";
@@ -48,8 +50,8 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
         }
 #ifdef GUI
             progreso++;
-            window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-            window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//            window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//            window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     Images=img;
@@ -126,10 +128,10 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
         Archivo_recortes<<conta.str()<<imag;
 #ifdef GUI
         this->progreso++;
-        this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        this->window->v_progress_clustering->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        this->window->v_progress_dimensionality->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        this->window->v_progress_clustering->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        this->window->v_progress_dimensionality->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     Archivo_i<<"Tipo_Datos"<<info.Tipo_Datos;
@@ -154,12 +156,14 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
 }
 
 int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vector<float> &Labels, Info_Datos &info){
+    this->running=true;
     Imagenes.clear();
     Labels.clear();
     std::ifstream input_rec(Archivo.c_str());
     if(!input_rec.is_open()){
         cout<<"ERROR en Cargar_Fichero: path ilegible"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     int pos=0;
     for(uint i=0; i<Archivo.size(); i++){
@@ -190,7 +194,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                         path_imagen=path_imagen+line[j];
                     if(path_imagen=="" ){
                         cout<<"ERROR en Cargar_Fichero: nombre de imagen ilegible"<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
                 }
                 else if(espacios.size()==2){
@@ -244,7 +250,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                         numero=numero+line[j];
                     if(numero=="0"){
                         cout<<"ERROR en Cargar_Fichero: etiqueta erronea (igual a 0)"<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
                     Labels.push_back(atoi(numero.c_str()));
                     cont=0;
@@ -255,7 +263,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                     Archivo_recortes[nombr.str()]>>imagen;
                     if(imagen.empty()){
                         cout<<"ERROR en Cargar_Fichero: No se pudo cargar Imagen"<<numero_imagenes<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
 
                     Mat Imagen;
@@ -263,8 +273,8 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                     Imagenes.push_back(Imagen);
             #ifdef GUI
                     this->progreso++;
-                    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-                    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//                    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//                    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
             #endif
                 }
             }
@@ -281,7 +291,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
     cv::FileStorage archivo_r(archivo_i,CV_STORAGE_READ);
     if(!archivo_r.isOpened()){
         cout<<"ERROR en Cargar_Fichero: No se ha podido cargar el archivo Info.xml"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     archivo_r["Tipo_Datos"]>>info.Tipo_Datos;
     archivo_r["Num_Datos"]>>info.Num_Datos;
@@ -297,7 +309,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
     archivo_r["Tam_Orig_Y"]>>info.Tam_Orig_Y;
     archivo_r["Tam_X"]>>info.Tam_X;
     archivo_r["Tam_Y"]>>info.Tam_Y;
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
@@ -448,8 +462,8 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
             Archivo_recortes_in.release();
 #ifdef GUI
     this->progreso++;
-    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
     }
@@ -512,8 +526,8 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -721,8 +735,8 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -979,8 +993,8 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1305,8 +1319,8 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1683,8 +1697,8 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
             }
 #ifdef GUI
             this->progreso++;
-            this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-            this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//            this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//            this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
         separacion=separacion+separacion_clases;
@@ -1908,8 +1922,8 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
         }
 #ifdef GUI
         progreso++;
-        window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//        window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     info.Tipo_Datos=0;
@@ -1987,8 +2001,8 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -2575,8 +2589,8 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,Negativos,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -3079,8 +3093,8 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->v_progress_datamanaging->setValue(0);
-        window->i_progress_datamanaging->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());

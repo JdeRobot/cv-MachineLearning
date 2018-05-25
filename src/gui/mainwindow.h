@@ -233,7 +233,6 @@ private:
 //    Clasificador_ERTrees ER;
     MiClasificador MC;
 
-    void update();
     int progreso;
     int max_progreso;
     int base_progreso;

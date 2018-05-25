@@ -141,10 +141,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::update(){
-
-}
-
 void MainWindow::on_v_tool_activated(int index)
 {
     if(index==2)
@@ -186,11 +182,14 @@ void MainWindow::on_v_run_datamanaging_clicked()
             string ref;
 
             Running run;
+            run.window=ui;
             int er=run.load_dataset(path, ref, negative,this->LABELS,this->IMAGENES);
             if(er==1){
                 QMessageBox msgBox;
                 msgBox.setText("ERROR: The folder has not the expected structure");
                 msgBox.exec();
+                this->ui->v_progress_datamanaging->setValue(100);
+                this->ui->v_progress_datamanaging->setValue(0);
                 return;
             }
 
@@ -216,6 +215,8 @@ void MainWindow::on_v_run_datamanaging_clicked()
             this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
             this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
             this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+            this->ui->v_progress_datamanaging->setValue(100);
+            this->ui->v_progress_datamanaging->setValue(0);
 
 //            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
 //            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());

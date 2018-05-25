@@ -25,8 +25,14 @@
 
 MLT::Running::Running(){}
 
+void MLT::Running::update(){
+    this->window->v_progress_datamanaging->setValue(this->gen.base_progreso+(this->gen.max_progreso*this->gen.progreso/this->gen.total_progreso));
+    this->window->i_progress_datamanaging->setValue(this->gen.base_progreso+(this->gen.max_progreso*this->gen.progreso/this->gen.total_progreso));
+    cout<<"Estoy"<<endl;
+}
+
 int MLT::Running::load_dataset(QString path, string &ref, bool &negative,std::vector<float> &labels, std::vector<cv::Mat> &images){
-    Generacion gen;
+
     Auxiliares aux;
 
     std::string dir=path.toStdString();
@@ -49,9 +55,24 @@ int MLT::Running::load_dataset(QString path, string &ref, bool &negative,std::ve
 
     string input_directory=dir+"/Recortes.txt";
     Generacion::Info_Datos info;
-    int e=gen.Cargar_Fichero(input_directory,images,labels,info);
+//    int e=gen.Cargar_Fichero(input_directory,images,labels,info);
 
-    if(e==1)
+    gen.total_progreso=num;
+    gen.progreso=0;
+    gen.base_progreso=0;
+    gen.max_progreso=100;
+    gen.running=true;
+    std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,input_directory,std::ref(images),std::ref(labels),std::ref(info));
+    while(gen.running==true){
+        update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    thrd.join();
+
+    if(gen.running==false)
+        cout<<"Estoy a false"<<endl;
+    if(gen.error==1)
         return 2;
 
     aux.numero_etiquetas(labels,negative);

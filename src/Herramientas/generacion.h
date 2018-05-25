@@ -31,7 +31,7 @@
 #include "auxiliares.h"
 
 #ifdef GUI
-#include <ui_mainwindow.h>
+#include "ui_mainwindow.h"
 #endif
 
 using namespace std;
@@ -105,7 +105,12 @@ namespace MLT {
         int base_progreso;
         int total_progreso;
 
-        Ui::MainWindow *window;
+//        Ui::MainWindow *window;
+
+        bool error;
+        bool running;
+
+        //Running *run;
     #endif
 
     };

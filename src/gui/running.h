@@ -25,6 +25,7 @@
 #define RUNNING_H
 
 #include <opencv2/opencv.hpp>
+#include <thread>
 #include "../ClasificationSystem.h"
 #include "../Clasificadores/miclasificador.h"
 
@@ -37,6 +38,12 @@ namespace MLT {
     public:
         Running();
         int load_dataset(QString path, string &ref, bool &negative, std::vector<float> &labels, std::vector<Mat> &images);
+
+        Ui::MainWindow *window;
+
+    private:
+        void update();
+        Generacion gen;
 
     };
 }

@@ -198,7 +198,11 @@ private slots:
 
     void on_v_run_datamanaging_clicked();
 
+    void on_v_plotting_represent_clicked();
+
 private:
+    Running run;
+
     vector<cv::Scalar> Col;
     Scalar color;
 

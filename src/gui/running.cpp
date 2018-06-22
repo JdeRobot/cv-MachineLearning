@@ -26,9 +26,9 @@
 MLT::Running::Running(){}
 
 void MLT::Running::update(){
-    this->window->v_progress_datamanaging->setValue(this->gen.base_progreso+(this->gen.max_progreso*this->gen.progreso/this->gen.total_progreso));
-    this->window->i_progress_datamanaging->setValue(this->gen.base_progreso+(this->gen.max_progreso*this->gen.progreso/this->gen.total_progreso));
-    cout<<"Estoy"<<endl;
+    this->window->v_progress_datamanaging->setValue(this->base_progreso+(this->max_progreso*this->gen.progreso/this->gen.total_progreso));
+    this->window->i_progress_datamanaging->setValue(this->base_progreso+(this->max_progreso*this->gen.progreso/this->gen.total_progreso));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
 int MLT::Running::load_dataset(QString path, string &ref, bool &negative,std::vector<float> &labels, std::vector<cv::Mat> &images){
@@ -55,27 +55,41 @@ int MLT::Running::load_dataset(QString path, string &ref, bool &negative,std::ve
 
     string input_directory=dir+"/Recortes.txt";
     Generacion::Info_Datos info;
-//    int e=gen.Cargar_Fichero(input_directory,images,labels,info);
 
-    gen.total_progreso=num;
-    gen.progreso=0;
-    gen.base_progreso=0;
-    gen.max_progreso=100;
-    gen.running=true;
+    this->base_progreso=0;
+    this->max_progreso=100;
     std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,input_directory,std::ref(images),std::ref(labels),std::ref(info));
-    while(gen.running==true){
+    while(gen.running==true)
         update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
 
     thrd.join();
 
-    if(gen.running==false)
-        cout<<"Estoy a false"<<endl;
     if(gen.error==1)
         return 2;
 
     aux.numero_etiquetas(labels,negative);
 
     return 0;
+}
+
+int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases, vector<Mat> &data, vector<float> &labels){
+    Size size_img;
+    size_img.width=vector_size;
+    size_img.height=1;
+
+    std::string name=nombre.toStdString();
+    this->base_progreso=0;
+    this->max_progreso=100;
+
+    Generacion::Info_Datos info;
+
+    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, name, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(data), std::ref(labels),std::ref(info), this->save_data);
+    while(gen.running==true)
+        update();
+
+    thrd.join();
+
+    if(gen.error==1)
+        return 1;
+
 }

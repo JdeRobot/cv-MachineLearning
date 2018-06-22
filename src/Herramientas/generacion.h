@@ -101,16 +101,9 @@ namespace MLT {
 
     #ifdef GUI
         int progreso;
-        int max_progreso;
-        int base_progreso;
         int total_progreso;
-
-//        Ui::MainWindow *window;
-
         bool error;
         bool running;
-
-        //Running *run;
     #endif
 
     };

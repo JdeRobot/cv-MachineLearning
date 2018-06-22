@@ -38,13 +38,24 @@ namespace MLT {
     public:
         Running();
         int load_dataset(QString path, string &ref, bool &negative, std::vector<float> &labels, std::vector<Mat> &images);
+        int synthetic_data(QString nombre, int num_classes, int num_data_class, int vector_size, float ancho, float separacion_clases, std::vector<Mat> &data, std::vector<float> &labels);
 
         Ui::MainWindow *window;
+
+        int num_bar;
+        bool show_graphics;
+        bool save_clasif;
+        bool save_data;
+        bool save_other;
+        bool read;
+        bool ifreduc;
 
     private:
         void update();
         Generacion gen;
 
+        int max_progreso;
+        int base_progreso;
     };
 }
 

@@ -123,17 +123,36 @@ MainWindow::MainWindow(QWidget *parent) :
     X=0;
     Y=0;
 
-    fs["num_bar"]>>num_bar;
-    fs["show_graphics"]>>show_graphics;
-    fs["save_clasif"]>>save_clasif;
-    fs["save_data"]>>save_data;
-    fs["save_other"]>>save_other;
-    fs["read"]>>read;
-    fs["ifreduc"]>>ifreduc;
+
+//    int num_bar;
+//    bool show_graphics;
+//    bool save_clasif;
+//    bool save_data;
+//    bool save_other;
+//    bool read;
+//    bool ifreduc;
+
+    fs["num_bar"]>>this->num_bar;
+    fs["show_graphics"]>>this->show_graphics;
+    fs["save_clasif"]>>this->save_clasif;
+    fs["save_data"]>>this->save_data;
+    fs["save_other"]>>this->save_other;
+    fs["read"]>>this->read;
+    fs["ifreduc"]>>this->ifreduc;
 
     fs.release();
 
     ui->setupUi(this);
+
+    this->run.window=ui;
+
+    this->run.num_bar=this->num_bar;
+    this->run.show_graphics=this->show_graphics;
+    this->run.save_clasif=this->save_clasif;
+    this->run.save_data=this->save_data;
+    this->run.save_other=this->save_other;
+    this->run.read=this->read;
+    this->run.ifreduc=this->ifreduc;
 }
 
 MainWindow::~MainWindow()
@@ -143,8 +162,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_v_tool_activated(int index)
 {
-    if(index==2)
+    if(index==2){
         this->ui->v_config_tool->setEnabled(true);
+        this->ui->v_number->setEnabled(false);
+        this->ui->v_noise->setEnabled(false);
+    }
     else
         this->ui->v_config_tool->setEnabled(false);
     if (index==1 || index==4){
@@ -168,28 +190,25 @@ void MainWindow::on_v_toolButton_clicked()
 
 void MainWindow::on_v_run_datamanaging_clicked()
 {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     if(this->ui->v_tool->currentIndex()!=0){
-        if(this->ui->v_tool->currentIndex()==1){
+        QString path=this->ui->v_datapath->displayText();
+        QString name=this->ui->v_dataname->displayText();
+        bool negative;
+        string ref;
+        int er=0;
 //            ui->progress_Clasificar->setValue(1);
 //            ui->progress_generar->setValue(1);
 //            ui->progress_Cargar->setValue(1);
 //            ui->progress_Clus->setValue(1);
 //            ui->progress_Dimensionalidad->setValue(1);
             this->ui->v_progress_datamanaging->setValue(1);
-
-            QString path=this->ui->v_datapath->displayText();
-            bool negative;
-            string ref;
-
-            Running run;
-            run.window=ui;
-            int er=run.load_dataset(path, ref, negative,this->LABELS,this->IMAGENES);
+        if(this->ui->v_tool->currentIndex()==1){
+            er=run.load_dataset(path, ref, negative,this->LABELS,this->IMAGENES);
             if(er==1){
                 QMessageBox msgBox;
                 msgBox.setText("ERROR: The folder has not the expected structure");
                 msgBox.exec();
-                this->ui->v_progress_datamanaging->setValue(100);
-                this->ui->v_progress_datamanaging->setValue(0);
                 return;
             }
 
@@ -197,57 +216,126 @@ void MainWindow::on_v_run_datamanaging_clicked()
                 QMessageBox msgBox;
                 msgBox.setText("ERROR: Data could not be loaded");
                 msgBox.exec();
-//                this->ui->progress_Clasificar->setValue(100);
-//                this->ui->progress_Clasificar->setValue(0);
-//                this->ui->progress_generar->setValue(100);
-//                this->ui->progress_generar->setValue(0);
-//                this->ui->progress_Cargar->setValue(100);
-//                this->ui->progress_Cargar->setValue(0);
-//                this->ui->progress_Clus->setValue(100);
-//                this->ui->progress_Clus->setValue(0);
-//                this->ui->progress_Dimensionalidad->setValue(100);
-//                this-> ui->progress_Dimensionalidad->setValue(0);
-                this->ui->v_progress_datamanaging->setValue(100);
-                this->ui->v_progress_datamanaging->setValue(0);
 
                 return;
             }
-            this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-            this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-            this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-            this->ui->v_progress_datamanaging->setValue(100);
-            this->ui->v_progress_datamanaging->setValue(0);
+        }
+        else if(this->ui->v_tool->currentIndex()==2){
+            int num_clasess=this->ui->v_number->value();
+            int num_data_class=this->ui->v_number->value();
+            int vector_size=this->ui->v_vectordimension->value();
+            float width=this->ui->v_variance->value();
+            float interclass=this->ui->v_interclassdistance->value();
 
-//            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
-//            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
-//            ui->progress_Clasificar->setValue(100);
-//            ui->progress_Clasificar->setValue(0);
-//            ui->progress_generar->setValue(100);
-//            ui->progress_generar->setValue(0);
-//            ui->progress_Cargar->setValue(100);
-//            ui->progress_Cargar->setValue(0);
-//            ui->progress_Clus->setValue(100);
-//            ui->progress_Clus->setValue(0);
-//            ui->progress_Dimensionalidad->setValue(100);
-//            ui->progress_Dimensionalidad->setValue(0);
-//            ui->progress_Dimensionalidad->setValue(0);
-            Dat_Ref=ref;
-            QString reference=QString::fromStdString(ref);
-            this->ui->dataset_lab->setText("Dataset: "+reference);
+            er=run.synthetic_data(name,num_clasess,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
+            ref=name.toStdString();
         }
 
-    }
+        this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+        this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+        this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+        this->ui->v_progress_datamanaging->setValue(100);
+        this->ui->v_progress_datamanaging->setValue(0);
 
+    //            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
+    //            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    //            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
+        Dat_Ref=ref;
+        QString reference=QString::fromStdString(ref);
+        this->ui->dataset_lab->setText("Dataset: "+reference);
+        this->ui->v_progress_datamanaging->setValue(100);
+        this->ui->v_progress_datamanaging->setValue(0);
+        //                this->ui->progress_Clasificar->setValue(100);
+        //                this->ui->progress_Clasificar->setValue(0);
+        //                this->ui->progress_generar->setValue(100);
+        //                this->ui->progress_generar->setValue(0);
+        //                this->ui->progress_Cargar->setValue(100);
+        //                this->ui->progress_Cargar->setValue(0);
+        //                this->ui->progress_Clus->setValue(100);
+        //                this->ui->progress_Clus->setValue(0);
+        //                this->ui->progress_Dimensionalidad->setValue(100);
+        //                this-> ui->progress_Dimensionalidad->setValue(0);
+    }
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_v_plotting_represent_clicked()
+{
+    if(this->IMAGENES.empty()){
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: No hay datos cargados");
+        msgBox.exec();
+        return;
+    }
+    if(this->LABELS.empty()){
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: No hay Etiquetas cargadas");
+        msgBox.exec();
+        return;
+    }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    int e=0;
+    vector<int> dim;
+    if(ui->v_plotting_dimension->value()>this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()){
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: La dimension en Histograma esta fuera de rango");
+        msgBox.exec();
+        QApplication::restoreOverrideCursor();
+        return;
+    }
+    if(ui->v_plotting_x->value()<=this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()){
+        dim.push_back(ui->v_plotting_x->value());
+        if(ui->v_plotting_y->value()>0 && ui->v_plotting_y->value()<=this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels())
+            dim.push_back(ui->v_plotting_y->value());
+        else if(ui->v_plotting_y->value()==0){
+        }
+        else{
+            QMessageBox msgBox;
+            msgBox.setText("ERROR: La dimension Y esta fuera de rango");
+            msgBox.exec();
+            QApplication::restoreOverrideCursor();
+            return;
+        }
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: La dimension X esta fuera de rango");
+        msgBox.exec();
+        QApplication::restoreOverrideCursor();
+        return;
+    }
+    Representacion rep;
+    if(ui->v_plotting_data->isChecked()){
+        e=rep.Data_represent("DATOS "+Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    }
+    else if(ui->v_plotting_ellipses->isChecked()){
+        e=rep.Ellipse_represent("ELIPSES "+this->Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    }
+    else if(ui->v_plotting_dataellipeses->isChecked()){
+        e=rep.Data_Ellipse_represent("DATOS CON ELIPSES "+this->Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    }
+    else if(ui->v_plotting_histogram->isChecked()){
+        Analisis an;
+        vector<vector<Mat> > Histo;
+        vector<vector<int> > pos_barras;
+        an.Histograma(this->IMAGENES,this->LABELS,this->num_bar,Histo,pos_barras);
+        e=rep.Histogram_represent("HISTOGRAMA "+this->Dat_Ref,Histo,this->Col, this->ui->v_plotting_dimension->value());
+    }
+    if(e==1){
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: No se han podido representar los datos");
+        msgBox.exec();
+    }
+    QApplication::restoreOverrideCursor();
 }

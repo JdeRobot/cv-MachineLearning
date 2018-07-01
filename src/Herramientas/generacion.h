@@ -102,7 +102,7 @@ namespace MLT {
     #ifdef GUI
         int progreso;
         int total_progreso;
-        bool error;
+        int error;
         bool running;
     #endif
 

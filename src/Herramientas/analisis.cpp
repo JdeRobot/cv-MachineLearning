@@ -749,6 +749,55 @@ int MLT::Analisis::Covarianza(Mat Datos, vector<float> Etiquetas, vector<Mat> &C
     return 0;
 }
 
+int MLT::Analisis::Estadisticos_Covarianzas(vector<Mat> Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_Prime, vector<Mat> &Covarianzas, bool &negativa, vector<int> &numero){
+
+    this->running=true;
+    if(Datos.empty()){
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+    if(Etiquetas.empty()){
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+
+
+    Auxiliares aux;
+    int num=aux.numero_etiquetas(Etiquetas,negativa);
+    numero=vector<int> (num);
+    for(int i=0; i<num; i++)
+        numero[i]=0;
+    for(uint i=0; i<Etiquetas.size(); i++){
+        if(negativa && Etiquetas[i]==-1.0)
+            numero[0]++;
+        else if(negativa && Etiquetas[i]>0)
+            numero[Etiquetas[i]]++;
+        else if(negativa==false)
+            numero[Etiquetas[i]-1]++;
+    }
+    int e=Estadisticos(Datos,Etiquetas,Medias,Des_Tipics,D_Prime);
+    if(e==1){
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+    this->progreso=15;
+    if(Datos[0].cols*Datos[0].rows*Datos[0].channels()<=1024){
+        int e=Covarianza(Datos,Etiquetas,Covarianzas);
+        if(e==1){
+            this->running=false;
+            this->error=1;
+            return this->error;
+        }
+    }
+
+    this->running=false;
+    this->error=0;
+    return this->error;
+}
+
 int MLT::Analisis::Histograma(vector<Mat> Datos, vector<float> Etiquetas, int Num_Barras, vector<vector<Mat> > &His, vector<vector<int> > &pos_barra){
     if(Datos.size()==0){
         cout<<"ERROR en Histograma: No hay datos"<<endl;

@@ -200,7 +200,15 @@ private slots:
 
     void on_v_plotting_represent_clicked();
 
+    void on_v_analysis_analyse_clicked();
+
+    void on_v_clustering_method_activated(int index);
+
+    void on_v_clustering_generate_clicked();
+
 private:
+    void error_control(QString error);
+
     Running run;
 
     vector<cv::Scalar> Col;

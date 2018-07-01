@@ -26,6 +26,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <thread>
+#include <QStandardItem>
 #include "../ClasificationSystem.h"
 #include "../Clasificadores/miclasificador.h"
 
@@ -37,8 +38,10 @@ namespace MLT {
     {
     public:
         Running();
-        int load_dataset(QString path, string &ref, bool &negative, std::vector<float> &labels, std::vector<Mat> &images);
+        int load_dataset(QString path, string &ref, std::vector<float> &labels, std::vector<Mat> &images);
         int synthetic_data(QString nombre, int num_classes, int num_data_class, int vector_size, float ancho, float separacion_clases, std::vector<Mat> &data, std::vector<float> &labels);
+        int analyse(vector<Mat> images, vector<float> labels, QStandardItemModel *model);
+        int clustering(vector<Mat> images, int type, int k, int repetitions, float max_dist, float cell_size, vector<float> &labels);
 
         Ui::MainWindow *window;
 
@@ -51,8 +54,11 @@ namespace MLT {
         bool ifreduc;
 
     private:
-        void update();
+        void update_gen();
+        void update_analysis();
+
         Generacion gen;
+        Analisis ana;
 
         int max_progreso;
         int base_progreso;

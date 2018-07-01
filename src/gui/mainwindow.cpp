@@ -160,13 +160,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::error_control(QString error){
+    QMessageBox msgBox;
+    msgBox.setText(error);
+    msgBox.exec();
+    QApplication::restoreOverrideCursor();
+    this->ui->v_progress_datamanaging->setValue(0);
+    this->ui->v_progress_Analysis->setValue(0);
+    this->ui->v_progress_classifiers->setValue(0);
+//    this->ui->v_progress_clustering->setValue(0);
+//    this->ui->v_progress_dimensionality->setValue(0);
+}
+
 void MainWindow::on_v_tool_activated(int index)
 {
-    if(index==2){
+    if(index==2)
         this->ui->v_config_tool->setEnabled(true);
-        this->ui->v_number->setEnabled(false);
-        this->ui->v_noise->setEnabled(false);
-    }
     else
         this->ui->v_config_tool->setEnabled(false);
     if (index==1 || index==4){
@@ -177,6 +186,11 @@ void MainWindow::on_v_tool_activated(int index)
         this->ui->v_datapath->setEnabled(false);
         this->ui->v_toolButton->setEnabled(false);
     }
+    if(index==1 || index==0){
+        this->ui->v_dataname->setEnabled(false);
+    }
+    else
+        this->ui->v_dataname->setEnabled(true);
 }
 
 void MainWindow::on_v_toolButton_clicked()
@@ -194,41 +208,43 @@ void MainWindow::on_v_run_datamanaging_clicked()
     if(this->ui->v_tool->currentIndex()!=0){
         QString path=this->ui->v_datapath->displayText();
         QString name=this->ui->v_dataname->displayText();
-        bool negative;
-        string ref;
+        string ref=name.toStdString();
+
+        if(this->ui->v_tool->currentIndex()==2 || this->ui->v_tool->currentIndex()==3 || this->ui->v_tool->currentIndex()==4){
+            for(uint i=0; i<ref.size(); i++){
+                if(ref[i]==' '){
+                    error_control("ERROR: Name must not have spaces");
+                    return;
+                }
+            }
+        }
+
         int er=0;
-//            ui->progress_Clasificar->setValue(1);
-//            ui->progress_generar->setValue(1);
-//            ui->progress_Cargar->setValue(1);
-//            ui->progress_Clus->setValue(1);
-//            ui->progress_Dimensionalidad->setValue(1);
             this->ui->v_progress_datamanaging->setValue(1);
         if(this->ui->v_tool->currentIndex()==1){
-            er=run.load_dataset(path, ref, negative,this->LABELS,this->IMAGENES);
+            er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES);
             if(er==1){
-                QMessageBox msgBox;
-                msgBox.setText("ERROR: The folder has not the expected structure");
-                msgBox.exec();
+                error_control("ERROR: The folder has not the expected structure");
                 return;
             }
 
             if(er==2){
-                QMessageBox msgBox;
-                msgBox.setText("ERROR: Data could not be loaded");
-                msgBox.exec();
-
+                error_control("ERROR: Data could not be loaded");
                 return;
             }
         }
         else if(this->ui->v_tool->currentIndex()==2){
-            int num_clasess=this->ui->v_number->value();
-            int num_data_class=this->ui->v_number->value();
+            int num_classes=this->ui->v_clases->value();
+            int num_data_class=this->ui->v_dataperclass->value();
             int vector_size=this->ui->v_vectordimension->value();
             float width=this->ui->v_variance->value();
             float interclass=this->ui->v_interclassdistance->value();
 
-            er=run.synthetic_data(name,num_clasess,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
-            ref=name.toStdString();
+            er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
+            if(er==1){
+                error_control("ERROR: Data could not be created");
+                return;
+            }
         }
 
         this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
@@ -251,7 +267,7 @@ void MainWindow::on_v_run_datamanaging_clicked()
     //            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
     //            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
     //            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
-        Dat_Ref=ref;
+        this->Dat_Ref=ref;
         QString reference=QString::fromStdString(ref);
         this->ui->dataset_lab->setText("Dataset: "+reference);
         this->ui->v_progress_datamanaging->setValue(100);
@@ -270,35 +286,79 @@ void MainWindow::on_v_run_datamanaging_clicked()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_v_analysis_analyse_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    this->ui->v_progress_Analysis->setValue(1);
+
+    std::vector<cv::Mat> images;
+    std::vector<float> labels;
+    if(this->ui->v_analysis_dataset->isChecked()){
+        images=this->IMAGENES;
+        labels=this->LABELS;
+    }
+    else if(this->ui->v_analysis_results->isChecked()){
+        images=this->IMAGENES;
+        labels=this->resultado;
+    }
+
+    if(!images[0].cols*images[0].rows*images[0].channels()>1024){
+        QMessageBox msgBox;
+        msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
+        msgBox.exec();
+    }
+
+
+    QStandardItemModel *model=new QStandardItemModel(0,0);
+    int er=this->run.analyse(images,labels,model);
+
+    if(er==1){
+        error_control("ERROR: Statistics could not be calculated");
+        return;
+    }
+
+    this->ui->v_analysis_statistics->setModel(model);
+    this->ui->v_progress_Analysis->setValue(100);
+    this->ui->v_progress_Analysis->setValue(0);
+    QApplication::restoreOverrideCursor();
+}
+
 void MainWindow::on_v_plotting_represent_clicked()
 {
-    if(this->IMAGENES.empty()){
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: No hay datos cargados");
-        msgBox.exec();
-        return;
-    }
-    if(this->LABELS.empty()){
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: No hay Etiquetas cargadas");
-        msgBox.exec();
-        return;
-    }
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    std::vector<cv::Mat> images;
+    std::vector<float> labels;
+    if(this->ui->v_plotting_dataset->isChecked()){
+        images=this->IMAGENES;
+        labels=this->LABELS;
+    }
+    else if(this->ui->v_plotting_results->isChecked()){
+        images=this->IMAGENES;
+        labels=this->resultado;
+    }
+
+    if(images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    if(labels.empty()){
+        error_control("ERROR: There is not labels loaded");
+        return;
+    }
     int e=0;
     vector<int> dim;
-    if(ui->v_plotting_dimension->value()>this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()){
+    if(this->ui->v_plotting_dimension->value()>images[0].cols*images[0].rows*images[0].channels()){
         QMessageBox msgBox;
         msgBox.setText("ERROR: La dimension en Histograma esta fuera de rango");
         msgBox.exec();
         QApplication::restoreOverrideCursor();
         return;
     }
-    if(ui->v_plotting_x->value()<=this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()){
-        dim.push_back(ui->v_plotting_x->value());
-        if(ui->v_plotting_y->value()>0 && ui->v_plotting_y->value()<=this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels())
-            dim.push_back(ui->v_plotting_y->value());
-        else if(ui->v_plotting_y->value()==0){
+    if(this->ui->v_plotting_x->value()<=images[0].cols*images[0].rows*images[0].channels()){
+        dim.push_back(this->ui->v_plotting_x->value());
+        if(this->ui->v_plotting_y->value()>0 && ui->v_plotting_y->value()<=images[0].cols*images[0].rows*images[0].channels())
+            dim.push_back(this->ui->v_plotting_y->value());
+        else if(this->ui->v_plotting_y->value()==0){
         }
         else{
             QMessageBox msgBox;
@@ -316,20 +376,20 @@ void MainWindow::on_v_plotting_represent_clicked()
         return;
     }
     Representacion rep;
-    if(ui->v_plotting_data->isChecked()){
-        e=rep.Data_represent("DATOS "+Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    if(this->ui->v_plotting_data->isChecked()){
+        e=rep.Data_represent("DATOS "+this->Dat_Ref,images,labels,dim,this->Col);
     }
-    else if(ui->v_plotting_ellipses->isChecked()){
-        e=rep.Ellipse_represent("ELIPSES "+this->Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    else if(this->ui->v_plotting_ellipses->isChecked()){
+        e=rep.Ellipse_represent("ELIPSES "+this->Dat_Ref,images,labels,dim,this->Col);
     }
-    else if(ui->v_plotting_dataellipeses->isChecked()){
-        e=rep.Data_Ellipse_represent("DATOS CON ELIPSES "+this->Dat_Ref,this->IMAGENES,this->LABELS,dim,this->Col);
+    else if(this->ui->v_plotting_dataellipeses->isChecked()){
+        e=rep.Data_Ellipse_represent("DATOS CON ELIPSES "+this->Dat_Ref,images,labels,dim,this->Col);
     }
-    else if(ui->v_plotting_histogram->isChecked()){
+    else if(this->ui->v_plotting_histogram->isChecked()){
         Analisis an;
         vector<vector<Mat> > Histo;
         vector<vector<int> > pos_barras;
-        an.Histograma(this->IMAGENES,this->LABELS,this->num_bar,Histo,pos_barras);
+        an.Histograma(images,labels,this->num_bar,Histo,pos_barras);
         e=rep.Histogram_represent("HISTOGRAMA "+this->Dat_Ref,Histo,this->Col, this->ui->v_plotting_dimension->value());
     }
     if(e==1){
@@ -338,4 +398,87 @@ void MainWindow::on_v_plotting_represent_clicked()
         msgBox.exec();
     }
     QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_v_clustering_method_activated(int index)
+{
+    if(index==1){
+        this->ui->v_clustering_label_classes->setEnabled(true);
+        this->ui->v_clustering_label_initialization->setEnabled(true);
+        this->ui->v_clustering_label_repetitions->setEnabled(true);
+        this->ui->v_clustering_classes->setEnabled(true);
+        this->ui->v_clustering_initialization->setEnabled(true);
+        this->ui->v_clustering_repetitions->setEnabled(true);
+    }
+    else{
+        this->ui->v_clustering_label_classes->setEnabled(false);
+        this->ui->v_clustering_label_initialization->setEnabled(false);
+        this->ui->v_clustering_label_repetitions->setEnabled(false);
+        this->ui->v_clustering_classes->setEnabled(false);
+        this->ui->v_clustering_initialization->setEnabled(false);
+        this->ui->v_clustering_repetitions->setEnabled(false);
+    }
+    if(index==2 || index==3){
+        this->ui->v_clustering_label_maxdistance->setEnabled(true);
+        this->ui->v_clustering_maxdistance->setEnabled(true);
+    }
+    else{
+        this->ui->v_clustering_label_maxdistance->setEnabled(false);
+        this->ui->v_clustering_maxdistance->setEnabled(false);
+    }
+    if(index==4){
+        this->ui->v_clustering_label_cellsize->setEnabled(true);
+        this->ui->v_clustering_cellsize->setEnabled(true);
+    }
+    else{
+        this->ui->v_clustering_label_cellsize->setEnabled(false);
+        this->ui->v_clustering_cellsize->setEnabled(false);
+    }
+    if(index==5){
+        this->ui->v_clustering_label_classes->setEnabled(true);
+        this->ui->v_clustering_classes->setEnabled(true);
+        this->ui->v_clustering_covariance->setEnabled(true);
+        this->ui->v_clustering_covariance->setEnabled(true);
+    }
+    else{
+        this->ui->v_clustering_label_classes->setEnabled(false);
+        this->ui->v_clustering_classes->setEnabled(false);
+        this->ui->v_clustering_covariance->setEnabled(false);
+        this->ui->v_clustering_covariance->setEnabled(false);
+    }
+}
+
+void MainWindow::on_v_clustering_generate_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(IMAGENES.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    QString name=this->ui->v_clustering_dataname->displayText();
+    string ref=name.toStdString();
+    for(uint i=0; i<ref.size(); i++){
+        if(ref[i]==' '){
+            error_control("ERROR: Name must not have spaces");
+            return;
+        }
+    }
+
+//    if(ui->Tipo_Clus->currentIndex()==0){
+
+//        else{
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: Elige una opcion de Attempts");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            return;
+//        }
+//    }
+
+    ////////EJECUTAR//////////
+
+
+//    this->resultado=labels;
+    QApplication::restoreOverrideCursor();
+
 }

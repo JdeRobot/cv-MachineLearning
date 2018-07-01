@@ -68,7 +68,7 @@
           </rect>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="v_data_managing_tab">
           <attribute name="title">
@@ -139,6 +139,9 @@
            </property>
           </widget>
           <widget class="QLineEdit" name="v_dataname">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -324,61 +327,6 @@
              <double>0.100000000000000</double>
             </property>
            </widget>
-           <widget class="QLabel" name="v_label_number">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>240</y>
-              <width>131</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Number</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="v_label_noise">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>280</y>
-              <width>101</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Noise</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="v_number">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>240</y>
-              <width>60</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>999999</number>
-            </property>
-           </widget>
-           <widget class="QDoubleSpinBox" name="v_noise">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>280</y>
-              <width>62</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="maximum">
-             <double>999999.989999999990687</double>
-            </property>
-           </widget>
           </widget>
           <widget class="QToolButton" name="v_toolButton">
            <property name="enabled">
@@ -401,17 +349,17 @@
           <attribute name="title">
            <string>Analysis</string>
           </attribute>
-          <widget class="QColumnView" name="v_statistics">
+          <widget class="QColumnView" name="v_analysis_statistics">
            <property name="geometry">
             <rect>
              <x>10</x>
              <y>10</y>
              <width>1111</width>
-             <height>431</height>
+             <height>391</height>
             </rect>
            </property>
           </widget>
-          <widget class="QPushButton" name="v_analyse">
+          <widget class="QPushButton" name="v_analysis_analyse">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -436,6 +384,48 @@
            <property name="value">
             <number>0</number>
            </property>
+          </widget>
+          <widget class="QGroupBox" name="v_analysis_selectdata">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>410</y>
+             <width>471</width>
+             <height>61</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Select Data</string>
+           </property>
+           <widget class="QRadioButton" name="v_analysis_dataset">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>117</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Dataset</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="v_analysis_results">
+            <property name="geometry">
+             <rect>
+              <x>160</x>
+              <y>30</y>
+              <width>117</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Results</string>
+            </property>
+           </widget>
           </widget>
          </widget>
          <widget class="QWidget" name="v_plotting_tab">
@@ -612,7 +602,7 @@
            <property name="title">
             <string>Select Data</string>
            </property>
-           <widget class="QRadioButton" name="radioButton">
+           <widget class="QRadioButton" name="v_plotting_dataset">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -624,8 +614,11 @@
             <property name="text">
              <string>Dataset</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
-           <widget class="QRadioButton" name="radioButton_2">
+           <widget class="QRadioButton" name="v_plotting_results">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -643,7 +636,7 @@
            <property name="geometry">
             <rect>
              <x>1020</x>
-             <y>480</y>
+             <y>450</y>
              <width>98</width>
              <height>31</height>
             </rect>
@@ -657,19 +650,6 @@
           <attribute name="title">
            <string>Clustering</string>
           </attribute>
-          <widget class="QProgressBar" name="v_progress_clustering">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>490</y>
-             <width>1121</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
           <widget class="QGroupBox" name="groupBox_2">
            <property name="geometry">
             <rect>
@@ -682,7 +662,7 @@
            <property name="title">
             <string>Method</string>
            </property>
-           <widget class="QComboBox" name="Tipo_Clus">
+           <widget class="QComboBox" name="v_clustering_method">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -691,6 +671,11 @@
               <height>32</height>
              </rect>
             </property>
+            <item>
+             <property name="text">
+              <string>Choose Method</string>
+             </property>
+            </item>
             <item>
              <property name="text">
               <string>K_Mean</string>
@@ -718,7 +703,7 @@
             </item>
            </widget>
           </widget>
-          <widget class="QLineEdit" name="Nombre_Datos_2">
+          <widget class="QLineEdit" name="v_clustering_dataname">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -746,7 +731,10 @@
            <property name="title">
             <string>Configuration</string>
            </property>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="v_clustering_label_classes">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -760,6 +748,9 @@
             </property>
            </widget>
            <widget class="QSpinBox" name="v_clustering_classes">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -775,7 +766,10 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="v_clustering_label_initialization">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -788,9 +782,9 @@
              <string>Initialization</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="v_clustering_label_repetitions">
             <property name="enabled">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="geometry">
              <rect>
@@ -804,7 +798,7 @@
              <string>Repetitions</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="v_clustering_label_maxdistance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -820,7 +814,7 @@
              <string>Max Distance</string>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="Max_Dist">
+           <widget class="QDoubleSpinBox" name="v_clustering_maxdistance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -842,7 +836,10 @@
              <double>1.000000000000000</double>
             </property>
            </widget>
-           <widget class="QComboBox" name="Inicializaciones">
+           <widget class="QComboBox" name="v_clustering_initialization">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -867,7 +864,10 @@
              </property>
             </item>
            </widget>
-           <widget class="QSpinBox" name="Repeticiones">
+           <widget class="QSpinBox" name="v_clustering_repetitions">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -883,7 +883,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QLabel" name="label_20">
+           <widget class="QLabel" name="v_clustering_label_cellsize">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -899,7 +899,7 @@
              <string>Cell Size</string>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="Tam_Celda_Clus">
+           <widget class="QDoubleSpinBox" name="v_clustering_cellsize">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -918,7 +918,7 @@
              <double>999999.000000000000000</double>
             </property>
            </widget>
-           <widget class="QLabel" name="label_21">
+           <widget class="QLabel" name="v_clustering_label_covariance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -934,7 +934,7 @@
              <string>Covariance</string>
             </property>
            </widget>
-           <widget class="QComboBox" name="Tipo_Cov">
+           <widget class="QComboBox" name="v_clustering_covariance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -963,7 +963,7 @@
             </item>
            </widget>
           </widget>
-          <widget class="QPushButton" name="Generar_2">
+          <widget class="QPushButton" name="v_clustering_generate">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -981,19 +981,6 @@
           <attribute name="title">
            <string>Dimensionality</string>
           </attribute>
-          <widget class="QProgressBar" name="v_progress_dimensionality">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>490</y>
-             <width>1121</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
           <widget class="QGroupBox" name="groupBox_6">
            <property name="geometry">
             <rect>
@@ -2473,6 +2460,19 @@
             <number>0</number>
            </property>
           </widget>
+          <widget class="QPushButton" name="i_run_datamanaging">
+           <property name="geometry">
+            <rect>
+             <x>1020</x>
+             <y>450</y>
+             <width>98</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
          </widget>
          <widget class="QWidget" name="i_plotting">
           <attribute name="title">
@@ -2517,164 +2517,6 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="groupBox_11">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>110</y>
-             <width>441</width>
-             <height>311</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Method</string>
-           </property>
-           <widget class="QRadioButton" name="But_datos_2">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>40</y>
-              <width>116</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Data</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="But_Elipses_2">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>90</y>
-              <width>116</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Ellipses</string>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="But_Datos_Elipses_2">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>140</y>
-              <width>151</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Data + Ellipses</string>
-            </property>
-           </widget>
-           <widget class="QGroupBox" name="groupBox_13">
-            <property name="geometry">
-             <rect>
-              <x>220</x>
-              <y>40</y>
-              <width>211</width>
-              <height>111</height>
-             </rect>
-            </property>
-            <property name="title">
-             <string>Dimensions</string>
-            </property>
-            <widget class="QLabel" name="label_34">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>40</y>
-               <width>66</width>
-               <height>17</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </widget>
-            <widget class="QLabel" name="label_35">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>80</y>
-               <width>66</width>
-               <height>21</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="Dim_X_2">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>36</y>
-               <width>81</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>999999</number>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="Dim_Y_2">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>76</y>
-               <width>81</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>999999</number>
-             </property>
-             <property name="value">
-              <number>2</number>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QRadioButton" name="But_Hist_2">
-            <property name="geometry">
-             <rect>
-              <x>20</x>
-              <y>190</y>
-              <width>201</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Histogram (Dimension)</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Dimension_2">
-            <property name="geometry">
-             <rect>
-              <x>240</x>
-              <y>190</y>
-              <width>81</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>999999</number>
-            </property>
-           </widget>
-          </widget>
           <widget class="QPushButton" name="Analizar_4">
            <property name="geometry">
             <rect>
@@ -2686,6 +2528,35 @@
            </property>
            <property name="text">
             <string>Represent</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_47">
+           <property name="geometry">
+            <rect>
+             <x>30</x>
+             <y>84</y>
+             <width>66</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Label</string>
+           </property>
+          </widget>
+          <widget class="QSpinBox" name="Dim_X_3">
+           <property name="geometry">
+            <rect>
+             <x>170</x>
+             <y>80</y>
+             <width>81</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>999999</number>
            </property>
           </widget>
          </widget>

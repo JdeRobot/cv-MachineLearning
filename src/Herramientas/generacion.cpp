@@ -28,6 +28,7 @@ MLT::Generacion::Generacion(){
 }
 
 int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat> &Images){
+    this->running=true;
     input_directory=input_directory+"/";
     string strPrefix;
     DIR    *dir_p = opendir (input_directory.c_str());
@@ -60,7 +61,9 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
         this->error=1;
         return this->error;
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<float> Labels, Info_Datos info){
@@ -166,6 +169,7 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
     std::ifstream input_rec(Archivo.c_str());
     if(!input_rec.is_open()){
         cout<<"ERROR en Cargar_Fichero: path ilegible"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1635,26 +1639,31 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
     Labels.clear();
     if(num_clases<1){
         cout<<"ERROR en Random_Synthetic_Data: num_clases es menor a uno";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(num_data_clase<1){
         cout<<"ERROR en Random_Synthetic_Data: num_data_clase es menor a uno";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(tam_img.height<1 || tam_img.width<1){
         cout<<"ERROR en Random_Synthetic_Data: tam_img tiene un tamaño menor a uno";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(ancho<0){
         cout<<"ERROR en Random_Synthetic_Data: ancho es menor a cero";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(separacion_clases<0){
         cout<<"ERROR en Random_Synthetic_Data: separacion_clases es menor a cero";
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1692,6 +1701,9 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     }
     float separacion=0;
+#ifdef GUI
+    this->total_progreso=num_clases*num_data_clase;
+#endif
     for(int i=0; i<num_clases; i++){
         for(int j=0; j<num_data_clase; j++){
             cont++;
@@ -1740,6 +1752,7 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
     }
     if(Labels.size()==0 || Data.size()==0 || Labels.size()!=Data.size()){
         cout<<"ERROR en Random_Synthetic_Data: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }

@@ -215,20 +215,27 @@ int MLT::Running::clustering(vector<Mat> images, int type, int k, int repetition
     Mat centers;
     labels.clear();
     int er=0;
+    std::thread thrd;
     if(type==1)
-        er=clus.K_mean(images,k,labels,centers,repetitions,KMEANS_RANDOM_CENTERS);
+        thrd=std::thread(&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_RANDOM_CENTERS);
     else if(type==2)
-        er=clus.K_mean(images,k,labels,centers,repetitions,KMEANS_PP_CENTERS);
+        thrd=std::thread (&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_PP_CENTERS);
     else if(type==3)
-        er=clus.Distancias_Encadenadas(images,max_dist,labels,centers);
+        thrd=std::thread (&MLT::Clustering::Distancias_Encadenadas,&clus, images,max_dist,std::ref(labels),std::ref(centers));
     else if(type==4)
-        er=clus.Min_Max(images,max_dist,labels,centers);
+        thrd=std::thread (&MLT::Clustering::Min_Max,&clus, images,max_dist,std::ref(labels),std::ref(centers));
     else if(type==5)
-        er=clus.Histograma(images,cell_size,labels,centers);
+        thrd=std::thread (&MLT::Clustering::Histograma,&clus, images,cell_size,std::ref(labels),std::ref(centers));
     else if(type==6)
-        er=clus.EXP_MAX(images,labels,centers,k,ml::EM::COV_MAT_SPHERICAL);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_SPHERICAL);
     else if(type==7)
-        er=clus.EXP_MAX(images,labels,centers,k,ml::EM::COV_MAT_DIAGONAL);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_DIAGONAL);
     else if(type==8)
-        er=clus.EXP_MAX(images,labels,centers,k,ml::EM::COV_MAT_GENERIC);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_GENERIC);
+
+
+    thrd.join();
+
+    if(this->gen.error==1)
+        return 1;
 }

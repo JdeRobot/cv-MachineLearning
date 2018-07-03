@@ -39,18 +39,22 @@ int MLT::Clustering::K_mean(vector<Mat> Data, int K, vector<float> &Labels, Mat 
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en K_mean: No hay datos"<<endl;
+        this->error=1;
         return 1;
     }
     if(K<1){
         cout<<"ERROR en K_mean: Valor erroneo en K"<<endl;
+        this->error=1;
         return 1;
     }
     if(attempts<1){
         cout<<"ERROR en K_mean: Valor erroneo en attempts"<<endl;
+        this->error=1;
         return 1;
     }
     if(inicializacion != KMEANS_RANDOM_CENTERS && inicializacion!= KMEANS_PP_CENTERS && inicializacion !=KMEANS_USE_INITIAL_LABELS){
         cout<<"ERROR en K_mean: inicializacion erronea, debe estar dentre 0 y 2"<<endl;
+        this->error=1;
         return 1;
     }
     Auxiliares ax;
@@ -58,6 +62,7 @@ int MLT::Clustering::K_mean(vector<Mat> Data, int K, vector<float> &Labels, Mat 
     e=ax.Image2Lexic(Data, Datos);
     if(e==1){
         cout<<"ERROR en K_mean: Error en Image2lexic"<<endl;
+        this->error=1;
         return 1;
     }
     Mat lab;
@@ -66,6 +71,7 @@ int MLT::Clustering::K_mean(vector<Mat> Data, int K, vector<float> &Labels, Mat 
     Labels.clear();
     for(int i=0; i<lab.rows; i++)
         Labels.push_back(lab.at<int>(i,0)+1);
+    this->error=0;
     return 0;
 }
 
@@ -73,10 +79,12 @@ int MLT::Clustering::Min_Max(vector<Mat> Data, float max_dist, vector<float> &La
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en Min_Max: No hay datos"<<endl;
+        this->error=1;
         return 1;
     }
     if(max_dist<0){
         cout<<"ERROR en Min_Max: Valor erroneo en max_dist"<<endl;
+        this->error=1;
         return 1;
     }
     Auxiliares ax;
@@ -84,6 +92,7 @@ int MLT::Clustering::Min_Max(vector<Mat> Data, float max_dist, vector<float> &La
     e=ax.Image2Lexic(Data, Datos);
     if(e==1){
         cout<<"ERROR en Min_Max: Error en Image2lexic"<<endl;
+        this->error=1;
         return 1;
     }
     Mat dato=Mat::zeros(1,Datos.cols,CV_32FC1);
@@ -155,6 +164,7 @@ int MLT::Clustering::Min_Max(vector<Mat> Data, float max_dist, vector<float> &La
             Centers.row(i-1)=suma/(float)Labels.size();
         }
     }
+    this->error=0;
     return 0;
 }
 
@@ -162,10 +172,12 @@ int MLT::Clustering::Distancias_Encadenadas(vector<Mat> Data, float max_dist, ve
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en Distancias_Encadenadas: No hay datos"<<endl;
+        this->error=1;
         return 1;
     }
     if(max_dist<0){
         cout<<"ERROR en Distancias_Encadenadas: Valor erroneo en max_dist"<<endl;
+        this->error=1;
         return 1;
     }
     Auxiliares ax;
@@ -173,6 +185,7 @@ int MLT::Clustering::Distancias_Encadenadas(vector<Mat> Data, float max_dist, ve
     e=ax.Image2Lexic(Data, Datos);
     if(e==1){
         cout<<"ERROR en Distancias_Encadenadas: Error en Image2lexic"<<endl;
+        this->error=1;
         return 1;
     }
     vector<float> distancias(Datos.rows);
@@ -248,6 +261,7 @@ int MLT::Clustering::Distancias_Encadenadas(vector<Mat> Data, float max_dist, ve
             Centers.row(i-1)=suma/(float)Labels.size();
         }
     }
+    this->error=0;
     return 0;
 }
 
@@ -255,10 +269,12 @@ int MLT::Clustering::Histograma(vector<Mat> Data, float tam_celda, vector<float>
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en Histograma: No hay datos"<<endl;
+        this->error=1;
         return 1;
     }
     if(tam_celda<0){
         cout<<"ERROR en Histograma: Valor erroneo en tam_celda"<<endl;
+        this->error=1;
         return 1;
     }
     Auxiliares ax;
@@ -266,6 +282,7 @@ int MLT::Clustering::Histograma(vector<Mat> Data, float tam_celda, vector<float>
     e=ax.Image2Lexic(Data, Datos);
     if(e==1){
         cout<<"ERROR en Histograma: Error en Image2lexic"<<endl;
+        this->error=1;
         return 1;
     }
     Mat celdas=Mat::zeros(Datos.rows,Datos.cols,CV_32FC1);
@@ -405,6 +422,7 @@ int MLT::Clustering::Histograma(vector<Mat> Data, float tam_celda, vector<float>
             Centers.row(i-1)=suma/(float)Labels.size();
         }
     }
+    this->error=0;
     return 0;
 }
 
@@ -421,10 +439,12 @@ int MLT::Clustering::EXP_MAX(vector<Mat> Data, vector<float> &Labels, Mat &Cente
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en EXP_MAX: No hay datos"<<endl;
+        this->error=1;
         return 1;
     }
     if(nclusters<1){
         cout<<"ERROR en EXP_MAX: Valor erroneo en nclusters"<<endl;
+        this->error=1;
         return 1;
     }
     Auxiliares ax;
@@ -432,6 +452,7 @@ int MLT::Clustering::EXP_MAX(vector<Mat> Data, vector<float> &Labels, Mat &Cente
     e=ax.Image2Lexic(Data, Datos);
     if(e==1){
         cout<<"ERROR en EXP_MAX: Error en Image2lexic"<<endl;
+        this->error=1;
         return 1;
     }
     cv::Ptr<cv::ml::EM> em=cv::ml::EM::create();
@@ -474,5 +495,6 @@ int MLT::Clustering::EXP_MAX(vector<Mat> Data, vector<float> &Labels, Mat &Cente
             Centers.row(i-1)=suma/(float)Labels.size();
         }
     }
+    this->error=0;
     return 0;
 }

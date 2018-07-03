@@ -205,84 +205,87 @@ void MainWindow::on_v_toolButton_clicked()
 void MainWindow::on_v_run_datamanaging_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    if(this->ui->v_tool->currentIndex()!=0){
-        QString path=this->ui->v_datapath->displayText();
-        QString name=this->ui->v_dataname->displayText();
-        string ref=name.toStdString();
-
-        if(this->ui->v_tool->currentIndex()==2 || this->ui->v_tool->currentIndex()==3 || this->ui->v_tool->currentIndex()==4){
-            for(uint i=0; i<ref.size(); i++){
-                if(ref[i]==' '){
-                    error_control("ERROR: Name must not have spaces");
-                    return;
-                }
-            }
-        }
-
-        int er=0;
-            this->ui->v_progress_datamanaging->setValue(1);
-        if(this->ui->v_tool->currentIndex()==1){
-            er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES);
-            if(er==1){
-                error_control("ERROR: The folder has not the expected structure");
-                return;
-            }
-
-            if(er==2){
-                error_control("ERROR: Data could not be loaded");
-                return;
-            }
-        }
-        else if(this->ui->v_tool->currentIndex()==2){
-            int num_classes=this->ui->v_clases->value();
-            int num_data_class=this->ui->v_dataperclass->value();
-            int vector_size=this->ui->v_vectordimension->value();
-            float width=this->ui->v_variance->value();
-            float interclass=this->ui->v_interclassdistance->value();
-
-            er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
-            if(er==1){
-                error_control("ERROR: Data could not be created");
-                return;
-            }
-        }
-
-        this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-        this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-        this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-        this->ui->v_progress_datamanaging->setValue(100);
-        this->ui->v_progress_datamanaging->setValue(0);
-
-    //            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
-    //            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    //            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
-        this->Dat_Ref=ref;
-        QString reference=QString::fromStdString(ref);
-        this->ui->dataset_lab->setText("Dataset: "+reference);
-        this->ui->v_progress_datamanaging->setValue(100);
-        this->ui->v_progress_datamanaging->setValue(0);
-        //                this->ui->progress_Clasificar->setValue(100);
-        //                this->ui->progress_Clasificar->setValue(0);
-        //                this->ui->progress_generar->setValue(100);
-        //                this->ui->progress_generar->setValue(0);
-        //                this->ui->progress_Cargar->setValue(100);
-        //                this->ui->progress_Cargar->setValue(0);
-        //                this->ui->progress_Clus->setValue(100);
-        //                this->ui->progress_Clus->setValue(0);
-        //                this->ui->progress_Dimensionalidad->setValue(100);
-        //                this-> ui->progress_Dimensionalidad->setValue(0);
+    if(this->ui->v_tool->currentIndex()==0){
+        error_control("ERROR: Choose a tool");
+        return;
     }
+    QString path=this->ui->v_datapath->displayText();
+    QString name=this->ui->v_dataname->displayText();
+    string ref=name.toStdString();
+
+    if(this->ui->v_tool->currentIndex()==2 || this->ui->v_tool->currentIndex()==3 || this->ui->v_tool->currentIndex()==4){
+        for(uint i=0; i<ref.size(); i++){
+            if(ref[i]==' '){
+                error_control("ERROR: Name must not have spaces");
+                return;
+            }
+        }
+    }
+
+    int er=0;
+        this->ui->v_progress_datamanaging->setValue(1);
+    if(this->ui->v_tool->currentIndex()==1){
+        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES);
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
+    }
+    else if(this->ui->v_tool->currentIndex()==2){
+        int num_classes=this->ui->v_clases->value();
+        int num_data_class=this->ui->v_dataperclass->value();
+        int vector_size=this->ui->v_vectordimension->value();
+        float width=this->ui->v_variance->value();
+        float interclass=this->ui->v_interclassdistance->value();
+
+        er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+    }
+
+    this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    this->ui->v_progress_datamanaging->setValue(100);
+    this->ui->v_progress_datamanaging->setValue(0);
+
+//            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
+//            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
+    this->Dat_Ref=ref;
+    QString reference=QString::fromStdString(ref);
+    this->ui->dataset_lab->setText("Dataset: "+reference);
+    this->ui->v_progress_datamanaging->setValue(100);
+    this->ui->v_progress_datamanaging->setValue(0);
+    //                this->ui->progress_Clasificar->setValue(100);
+    //                this->ui->progress_Clasificar->setValue(0);
+    //                this->ui->progress_generar->setValue(100);
+    //                this->ui->progress_generar->setValue(0);
+    //                this->ui->progress_Cargar->setValue(100);
+    //                this->ui->progress_Cargar->setValue(0);
+    //                this->ui->progress_Clus->setValue(100);
+    //                this->ui->progress_Clus->setValue(0);
+    //                this->ui->progress_Dimensionalidad->setValue(100);
+    //                this-> ui->progress_Dimensionalidad->setValue(0);
+
     QApplication::restoreOverrideCursor();
 }
 
@@ -464,21 +467,33 @@ void MainWindow::on_v_clustering_generate_clicked()
         }
     }
 
-//    if(ui->Tipo_Clus->currentIndex()==0){
+    int k=this->ui->v_clustering_classes->value();
+    int repetitions=this->ui->v_clustering_repetitions->value();
+    float max_dist=this->ui->v_clustering_maxdistance->value();
+    float cell_size=this->ui->v_clustering_cellsize->value();
+    int type=0;
+    if(this->ui->v_clustering_method->currentIndex()==1 && this->ui->v_clustering_initialization->currentIndex()==0)
+        type=1;
+    else if(this->ui->v_clustering_method->currentIndex()==1 && this->ui->v_clustering_initialization->currentIndex()==1)
+        type=2;
+    else if(this->ui->v_clustering_method->currentIndex()==2)
+        type=3;
+    else if(this->ui->v_clustering_method->currentIndex()==3)
+        type=4;
+    else if(this->ui->v_clustering_method->currentIndex()==4)
+        type=5;
+    else if(this->ui->v_clustering_method->currentIndex()==5 && this->ui->v_clustering_covariance->currentIndex()==0)
+        type=6;
+    else if(this->ui->v_clustering_method->currentIndex()==5 && this->ui->v_clustering_covariance->currentIndex()==1)
+        type=7;
+    else if(this->ui->v_clustering_method->currentIndex()==5 && this->ui->v_clustering_covariance->currentIndex()==2)
+        type=8;
 
-//        else{
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: Elige una opcion de Attempts");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            return;
-//        }
-//    }
+    run.clustering(this->IMAGENES,type,k,repetitions,max_dist,cell_size,this->resultado);
 
-    ////////EJECUTAR//////////
+    QString reference=QString::fromStdString(ref);
+    this->ui->results_lab->setText("Results: "+reference);
 
-
-//    this->resultado=labels;
     QApplication::restoreOverrideCursor();
 
 }

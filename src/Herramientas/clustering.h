@@ -42,6 +42,8 @@ namespace MLT {
         int Distancias_Encadenadas(vector<Mat> Data, float max_dist, vector<float> &Labels, Mat &Centers);
         int Histograma(vector<Mat> Data, float tam_celda, vector<float> &Labels, Mat &Centers);
         int EXP_MAX(vector<Mat> Data, vector<float> &Labelsint, Mat &Centers, int nclusters=ml::EM::DEFAULT_NCLUSTERS, int covMatType=ml::EM::COV_MAT_DIAGONAL);
+
+        int error;
     };
 }
 

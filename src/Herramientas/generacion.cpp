@@ -67,18 +67,22 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
 }
 
 int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<float> Labels, Info_Datos info){
+    this->running=true;
     if(Imagenes.size()==0){
         cout<<"ERROR en Guardar_Datos: Imagenes esta vacio"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Guardar_Datos: Labels esta vacio"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(Imagenes.size()!= Labels.size()){
         cout<<"ERROR en Guardar_Datos: El tamaño de Imagenes y Labels no coincide"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -159,7 +163,9 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vector<float> &Labels, Info_Datos &info){
@@ -325,6 +331,10 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
 }
 
 int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
+    this->running=true;
+    Auxiliares aux;
+    this->total_progreso=aux.numero_imagenes(Path);
+
     Path=Path+"/";
     string output_directory=Path+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -338,6 +348,7 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
         int er=system(command.c_str());
         if(er==1){
             cout<<"ERROR en Juntar_Recortes: Error al crear carpeta"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -424,6 +435,7 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
                     if (er!=0){
                         cout<<"Puede que hayan quedado archivos corruptos en el path de destino"<<endl;
                     }
+                    this->running=false;
                     this->error=1;
                     return this->error;
                 }
@@ -498,7 +510,9 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){

@@ -225,7 +225,7 @@ void MainWindow::on_v_run_datamanaging_clicked()
     int er=0;
         this->ui->v_progress_datamanaging->setValue(1);
     if(this->ui->v_tool->currentIndex()==1){
-        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES);
+        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
         if(er==1){
             error_control("ERROR: The folder has not the expected structure");
             return;
@@ -243,12 +243,27 @@ void MainWindow::on_v_run_datamanaging_clicked()
         float width=this->ui->v_variance->value();
         float interclass=this->ui->v_interclassdistance->value();
 
-        er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS);
+        er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS,this->info);
         if(er==1){
             error_control("ERROR: Data could not be created");
             return;
         }
     }
+    else if(this->ui->v_tool->currentIndex()==3){
+        er=this->run.save(ref,this->IMAGENES,this->resultado,this->info);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+    }
+    else if(this->ui->v_tool->currentIndex()==4){
+        er=this->run.join_data(ref,path);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+    }
+
 
     this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
     this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());

@@ -37,7 +37,7 @@ void MLT::Running::update_analysis(){
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &labels, std::vector<cv::Mat> &images){
+int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &labels, std::vector<cv::Mat> &images, Generacion::Info_Datos &info){
     std::string dir=path.toStdString();
     int pos=0;
     for(uint i=0; i<dir.size(); i++){
@@ -57,7 +57,6 @@ int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &la
     Archivo_i.release();
 
     string input_directory=dir+"/Recortes.txt";
-    Generacion::Info_Datos info;
 
     this->base_progreso=1;
     this->max_progreso=100;
@@ -74,7 +73,7 @@ int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &la
     return 0;
 }
 
-int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases, vector<Mat> &data, vector<float> &labels){
+int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases, vector<Mat> &data, vector<float> &labels, Generacion::Info_Datos &info){
     Size size_img;
     size_img.width=vector_size;
     size_img.height=1;
@@ -82,8 +81,6 @@ int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_cl
     std::string name=nombre.toStdString();
     this->base_progreso=1;
     this->max_progreso=100;
-
-    Generacion::Info_Datos info;
 
     std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, name, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(data), std::ref(labels),std::ref(info), this->save_data);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -95,6 +92,37 @@ int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_cl
     if(this->gen.error==1)
         return 1;
 
+}
+
+int MLT::Running::save(string ref, vector<Mat> images, vector<float> labels, Generacion::Info_Datos info){
+    this->base_progreso=1;
+    this->max_progreso=100;
+
+    std::thread thrd(&MLT::Generacion::Guardar_Datos,&gen, ref,images,labels,info);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(gen.running==true)
+        update_gen();
+
+    thrd.join();
+
+    if(this->gen.error==1)
+        return 1;
+}
+
+int MLT::Running::join_data(string ref, QString path){
+    std::string dir=path.toStdString();
+    this->base_progreso=1;
+    this->max_progreso=100;
+
+    std::thread thrd(&MLT::Generacion::Juntar_Recortes,&gen, ref,dir);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(gen.running==true)
+        update_gen();
+
+    thrd.join();
+
+    if(this->gen.error==1)
+        return 1;
 }
 
 int MLT::Running::analyse(vector<Mat> images, vector<float> labels, QStandardItemModel *model){

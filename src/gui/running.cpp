@@ -38,6 +38,7 @@ void MLT::Running::update_analysis(){
 }
 
 int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &labels, std::vector<cv::Mat> &images, Generacion::Info_Datos &info){
+    ref="";
     std::string dir=path.toStdString();
     int pos=0;
     for(uint i=0; i<dir.size(); i++){
@@ -125,7 +126,7 @@ int MLT::Running::join_data(string ref, QString path){
         return 1;
 }
 
-int MLT::Running::analyse(vector<Mat> images, vector<float> labels, QStandardItemModel *model){
+int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStandardItemModel *model){
     vector<Mat> means,  std, covariance;
     vector<vector<Mat> > d_prime;
     bool negative;
@@ -236,6 +237,148 @@ int MLT::Running::analyse(vector<Mat> images, vector<float> labels, QStandardIte
         }
         model->appendRow(Lab);
     }
+}
+
+int MLT::Running::analyse_result(vector<float> labels, vector<float> results, QStandardItemModel *model){
+    Mat confusion;
+    float error;
+    vector<Analisis::Ratios_data> rates;
+
+    std::thread thrd(&MLT::Analisis::Confusion_Ratios,&ana, labels, results, std::ref(confusion),std::ref(error), std::ref(rates));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(this->ana.running==true)
+        update_analysis();
+
+    thrd.join();
+
+
+    if(this->ana.error==1)
+        return 1;
+
+    int progreso=0;
+
+    Auxiliares aux;
+    bool negativa;
+    int num=aux.numero_etiquetas(labels,negativa);
+    this->max_progreso=num;
+
+    QStandardItem *ER= new QStandardItem(QString("Error"));
+    QStandardItem *Er = new QStandardItem(QString("%1").arg(error));
+    ER->appendRow(Er);
+    model->appendRow(ER);
+    QStandardItem *Conf = new QStandardItem(QString("Confusion"));
+    for(int j=0; j<confusion.rows; j++){
+        stringstream linea_conf;
+        for(int k=0; k<confusion.cols; k++){
+            linea_conf<<confusion.at<float>(j,k);
+            linea_conf<<"   ";
+        }
+        linea_conf<<";\n";
+        QString valor=QString::fromStdString(linea_conf.str());
+        QStandardItem *conf = new QStandardItem(QString(valor));
+        Conf->appendRow(conf);
+    }
+    model->appendRow(Conf);
+    QStandardItem *Rati= new QStandardItem(QString("Ratios"));
+    model->appendRow(Rati);
+    for(int i=0; i<num; i++){
+        int etiqueta;
+        if(negativa){
+            if(i==0)
+                etiqueta=-1;
+            else
+                etiqueta=i;
+        }
+        else
+            etiqueta=i+1;
+        QStandardItem *Lab = new QStandardItem(QString("Etiqueta %1").arg(etiqueta));
+        QStandardItem *VP = new QStandardItem(QString("VP"));
+        QStandardItem *vp = new QStandardItem(QString("%1").arg(rates[i].VP));
+        VP->appendRow(vp);
+        Lab->appendRow(VP);
+        QStandardItem *VN = new QStandardItem(QString("VN"));
+        QStandardItem *vn = new QStandardItem(QString("%1").arg(rates[i].VN));
+        VN->appendRow(vn);
+        Lab->appendRow(VN);
+        QStandardItem *FP = new QStandardItem(QString("FP"));
+        QStandardItem *fp = new QStandardItem(QString("%1").arg(rates[i].FP));
+        FP->appendRow(fp);
+        Lab->appendRow(FP);
+        QStandardItem *FN = new QStandardItem(QString("FN"));
+        QStandardItem *fn = new QStandardItem(QString("%1").arg(rates[i].FN));
+        FN->appendRow(fn);
+        Lab->appendRow(FN);
+        QStandardItem *TAR = new QStandardItem(QString("TAR"));
+        QStandardItem *tar = new QStandardItem(QString("%1").arg(rates[i].TAR));
+        TAR->appendRow(tar);
+        Lab->appendRow(TAR);
+        QStandardItem *TRR = new QStandardItem(QString("TRR"));
+        QStandardItem *trr = new QStandardItem(QString("%1").arg(rates[i].TRR));
+        TRR->appendRow(trr);
+        Lab->appendRow(TRR);
+        QStandardItem *FAR = new QStandardItem(QString("FAR"));
+        QStandardItem *far = new QStandardItem(QString("%1").arg(rates[i].FAR));
+        FAR->appendRow(far);
+        Lab->appendRow(FAR);
+        QStandardItem *FRR = new QStandardItem(QString("FRR"));
+        QStandardItem *frr = new QStandardItem(QString("%1").arg(rates[i].FRR));
+        FRR->appendRow(frr);
+        Lab->appendRow(FRR);
+        QStandardItem *PPV = new QStandardItem(QString("PPV"));
+        QStandardItem *ppv = new QStandardItem(QString("%1").arg(rates[i].PPV));
+        PPV->appendRow(ppv);
+        Lab->appendRow(PPV);
+        QStandardItem *NPV = new QStandardItem(QString("NPV"));
+        QStandardItem *npv = new QStandardItem(QString("%1").arg(rates[i].NPV));
+        NPV->appendRow(npv);
+        Lab->appendRow(NPV);
+        QStandardItem *FDR = new QStandardItem(QString("FDR"));
+        QStandardItem *fdr = new QStandardItem(QString("%1").arg(rates[i].FDR));
+        FDR->appendRow(fdr);
+        Lab->appendRow(FDR);
+        QStandardItem *F1 = new QStandardItem(QString("F1"));
+        QStandardItem *f1 = new QStandardItem(QString("%1").arg(rates[i].F1));
+        F1->appendRow(f1);
+        Lab->appendRow(F1);
+        QStandardItem *INFORMEDNESS = new QStandardItem(QString("INFORMEDNESS"));
+        QStandardItem *informedness = new QStandardItem(QString("%1").arg(rates[i].INFORMEDNESS));
+        INFORMEDNESS->appendRow(informedness);
+        Lab->appendRow(INFORMEDNESS);
+        QStandardItem *MARKEDNESS = new QStandardItem(QString("MARKEDNESS"));
+        QStandardItem *markedness = new QStandardItem(QString("%1").arg(rates[i].MARKEDNESS));
+        MARKEDNESS->appendRow(markedness);
+        Lab->appendRow(MARKEDNESS);
+        QStandardItem *EXP_ERROR = new QStandardItem(QString("EXP_ERROR"));
+        QStandardItem *exp_error = new QStandardItem(QString("%1").arg(rates[i].EXP_ERROR));
+        EXP_ERROR->appendRow(exp_error);
+        Lab->appendRow(EXP_ERROR);
+        QStandardItem *LR_NEG = new QStandardItem(QString("LR_NEG"));
+        QStandardItem *lr_neg = new QStandardItem(QString("%1").arg(rates[i].LR_NEG));
+        LR_NEG->appendRow(lr_neg);
+        Lab->appendRow(LR_NEG);
+        QStandardItem *LR_POS = new QStandardItem(QString("LR_POS"));
+        QStandardItem *lr_pos = new QStandardItem(QString("%1").arg(rates[i].LR_POS));
+        LR_POS->appendRow(lr_pos);
+        Lab->appendRow(LR_POS);
+        QStandardItem *DOR = new QStandardItem(QString("DOR"));
+        QStandardItem *dor = new QStandardItem(QString("%1").arg(rates[i].DOR));
+        DOR->appendRow(dor);
+        Lab->appendRow(DOR);
+        QStandardItem *ACC = new QStandardItem(QString("ACC"));
+        QStandardItem *acc = new QStandardItem(QString("%1").arg(rates[i].ACC));
+        ACC->appendRow(acc);
+        Lab->appendRow(ACC);
+        QStandardItem *PREVALENCE = new QStandardItem(QString("PREVALENCE"));
+        QStandardItem *prevalence = new QStandardItem(QString("%1").arg(rates[i].PREVALENCE));
+        PREVALENCE->appendRow(prevalence);
+        Lab->appendRow(PREVALENCE);
+        Rati->appendRow(Lab);
+        progreso++;
+        this->window->v_progress_Analysis->setValue(30+(70*progreso/this->max_progreso));
+    }
+    this->window->v_progress_Analysis->setValue(100);
+    this->window->v_progress_Analysis->setValue(0);
+    QApplication::restoreOverrideCursor();
 }
 
 int MLT::Running::clustering(vector<Mat> images, int type, int k, int repetitions, float max_dist, float cell_size, vector<float> &labels){

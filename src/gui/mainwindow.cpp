@@ -255,11 +255,33 @@ void MainWindow::on_v_run_datamanaging_clicked()
             error_control("ERROR: Data could not be created");
             return;
         }
+        path="../Data/Imagenes/"+name;
+        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
     }
     else if(this->ui->v_tool->currentIndex()==4){
         er=this->run.join_data(ref,path);
         if(er==1){
             error_control("ERROR: Data could not be created");
+            return;
+        }
+        path="../Data/Imagenes/"+name;
+        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
             return;
         }
     }
@@ -308,27 +330,32 @@ void MainWindow::on_v_analysis_analyse_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     this->ui->v_progress_Analysis->setValue(1);
-
-    std::vector<cv::Mat> images;
-    std::vector<float> labels;
-    if(this->ui->v_analysis_dataset->isChecked()){
-        images=this->IMAGENES;
-        labels=this->LABELS;
+    if(this->IMAGENES.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
     }
-    else if(this->ui->v_analysis_results->isChecked()){
-        images=this->IMAGENES;
-        labels=this->resultado;
-    }
-
-    if(!images[0].cols*images[0].rows*images[0].channels()>1024){
-        QMessageBox msgBox;
-        msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
-        msgBox.exec();
-    }
-
 
     QStandardItemModel *model=new QStandardItemModel(0,0);
-    int er=this->run.analyse(images,labels,model);
+    int er=0;
+    if(this->ui->v_analysis_dataset->isChecked()){
+        if(this->LABELS.empty()){
+            error_control("ERROR: There is not labels loaded");
+            return;
+        }
+        if(!this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()>1024){
+            QMessageBox msgBox;
+            msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
+            msgBox.exec();
+        }
+        er=this->run.analyse_data(this->IMAGENES,this->LABELS,model);
+    }
+    else if(this->ui->v_analysis_results->isChecked()){
+        if(this->resultado.empty()){
+            error_control("ERROR: There is not labels loaded");
+            return;
+        }
+        er=this->run.analyse_result(this->LABELS,this->resultado,model);
+    }
 
     if(er==1){
         error_control("ERROR: Statistics could not be calculated");

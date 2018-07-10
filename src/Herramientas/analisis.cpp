@@ -29,7 +29,7 @@ bool ord (MLT::Analisis::Ratios_data A, MLT::Analisis::Ratios_data B) {
 
 MLT::Analisis::Analisis(){}
 
-int MLT::Analisis::Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &Confusion, float &error){
+int MLT::Analisis::Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error){
     error=0;
     if(Etiquetas.size()!=Resultados.size()){
         cout<<"ERROR en Confusion: Tamaño de Etiquetas y Resultados distintos"<<endl;
@@ -83,7 +83,7 @@ int MLT::Analisis::Confusion(std::vector<float> Etiquetas, std::vector<float> Re
         }
     }
     error=error/Etiquetas.size();
-    conf.copyTo(Confusion);
+    conf.copyTo(confusion);
     return 0;
 }
 
@@ -169,6 +169,60 @@ int MLT::Analisis::Ratios(std::vector<float> Etiquetas, std::vector<float> Resul
         Rat.push_back(datos);
     }
     return 0;
+}
+
+int MLT::Analisis::Confusion_Ratios(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error, vector<Ratios_data> &Rat){
+
+    this->running=true;
+    if(Etiquetas.size()!=Resultados.size()){
+        cout<<"ERROR en Confusion_Ratios: Tamaño de Etiquetas y Resultados distintos"<<endl;
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+    for(uint i=0; i<Resultados.size(); i++){
+#ifdef WARNINGS
+        if(Resultados[i]==0)
+            cout<<"WARNING en Confusion_Ratios: Etiquetas con valor igual 0"<<endl;
+#endif
+        if(Resultados[i]<-1){
+            cout<<"ERROR en Confusion_Ratios: Etiquetas con valor menor -1"<<endl;
+            this->running=false;
+            this->error=1;
+            return this->error;
+        }
+    }
+#ifdef WARNINGS
+    for(uint i=0; i<Etiquetas.size(); i++){
+        if(Etiquetas[i]==0)
+            cout<<"WARING en Confusion_Ratios: Etiquetas con valor 0"<<endl;
+    }
+#endif
+
+    this->progreso=10;
+    int e=Confusion(Etiquetas,Resultados,confusion,error);
+
+    if(e==1){
+        cout<<"ERROR en Confusion_Ratios: Error en Confusion"<<endl;
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+    this->progreso=20;
+    e=Ratios(Etiquetas,Resultados,Rat);
+    if(e==1){
+        cout<<"ERROR en Confusion_Ratios: Errir en Ratios"<<endl;
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+
+    this->progreso=30;
+
+
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Analisis::Ratios_Histograma(std::vector<Mat> Datos, std::vector<float> Etiquetas, std::vector<float> Resultados, int num_barras, vector<vector<Ratios_data> > &Hist_Rat){
@@ -753,16 +807,17 @@ int MLT::Analisis::Estadisticos_Covarianzas(vector<Mat> Datos, vector<float> Eti
 
     this->running=true;
     if(Datos.empty()){
+        cout<<"ERROR en Estadisticos_Covarianzas: No hay datos"<<endl;
         this->running=false;
         this->error=1;
         return this->error;
     }
     if(Etiquetas.empty()){
+        cout<<"ERROR en Estadisticos_Covarianzas: No hay etiquetas"<<endl;
         this->running=false;
         this->error=1;
         return this->error;
     }
-
 
     Auxiliares aux;
     int num=aux.numero_etiquetas(Etiquetas,negativa);

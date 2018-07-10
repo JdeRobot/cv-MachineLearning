@@ -73,8 +73,9 @@ namespace MLT {
 
         Analisis();
 
-        int Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &Confusion, float &error);
+        int Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error);
         int Ratios(std::vector<float> Etiquetas, std::vector<float> Resultados, vector<Ratios_data> &Rat);
+        int Confusion_Ratios(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error, vector<Ratios_data> &Rat);
         int Ratios_Histograma(std::vector<Mat> Datos, std::vector<float> Etiquetas, std::vector<float> Resultados, int num_barras, vector<vector<Ratios_data> > &Hist_Rat);
         int Estadisticos(vector<Mat> Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_prime);
         int Estadisticos(Mat Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_prime);

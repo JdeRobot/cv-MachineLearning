@@ -42,7 +42,8 @@ namespace MLT {
         int synthetic_data(QString nombre, int num_classes, int num_data_class, int vector_size, float ancho, float separacion_clases, std::vector<Mat> &data, std::vector<float> &labels, Generacion::Info_Datos &info);
         int join_data(string ref, QString path);
         int save(string ref, vector<Mat> images, vector<float> labels, Generacion::Info_Datos info);
-        int analyse(vector<Mat> images, vector<float> labels, QStandardItemModel *model);
+        int analyse_data(vector<Mat> images, vector<float> labels, QStandardItemModel *model);
+        int analyse_result(vector<float> labels, vector<float> results, QStandardItemModel *model);
         int clustering(vector<Mat> images, int type, int k, int repetitions, float max_dist, float cell_size, vector<float> &labels);
 
         Ui::MainWindow *window;

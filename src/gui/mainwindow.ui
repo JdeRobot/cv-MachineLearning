@@ -1158,621 +1158,6 @@
            </widget>
           </widget>
          </widget>
-         <widget class="QWidget" name="v_classifiers">
-          <attribute name="title">
-           <string>Classifiers</string>
-          </attribute>
-          <widget class="QGroupBox" name="groupBox_8">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>50</y>
-             <width>271</width>
-             <height>121</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Classifier Type</string>
-           </property>
-           <widget class="QToolButton" name="toolButton_14">
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>30</y>
-              <width>25</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Iniciar_2">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>70</y>
-              <width>98</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Train</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="Tipo_Clasif_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>211</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <item>
-             <property name="text">
-              <string>Choose Classifier Type</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Distances</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Gauss</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Histogram</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>KNN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ANN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SVM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>RTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>DTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Boosting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>HAAR</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LBP</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>EM</string>
-             </property>
-            </item>
-           </widget>
-          </widget>
-          <widget class="QLineEdit" name="Nombre_Clasif">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>281</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Classifier Name</string>
-           </property>
-          </widget>
-          <widget class="Line" name="line">
-           <property name="geometry">
-            <rect>
-             <x>290</x>
-             <y>10</y>
-             <width>16</width>
-             <height>461</height>
-            </rect>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_12">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>10</y>
-             <width>481</width>
-             <height>141</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Configuration</string>
-           </property>
-           <widget class="QToolButton" name="toolButton_8">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>110</y>
-              <width>25</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="Nombre_Clasif_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>281</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Results Name</string>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="Clasif_Cargado_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>70</y>
-              <width>181</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Loaded Classifier</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="Multiclasif_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>110</y>
-              <width>151</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Multiclassifier</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Iniciar_4">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>100</y>
-              <width>98</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Classify</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QProgressBar" name="v_progress_classifiers">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>490</y>
-             <width>1121</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-          <widget class="QTextBrowser" name="Result_Clas">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>160</y>
-             <width>801</width>
-             <height>301</height>
-            </rect>
-           </property>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="v_optimize">
-          <attribute name="title">
-           <string>Optimize</string>
-          </attribute>
-          <widget class="QRadioButton" name="C_Validation">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>64</y>
-             <width>161</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Cross Validation</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_20">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>94</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Ratios_Parametro">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>124</y>
-             <width>181</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Rates per Parameter</string>
-           </property>
-          </widget>
-          <widget class="QTextBrowser" name="Texto_Result">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>180</y>
-             <width>1121</width>
-             <height>291</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Validation">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>4</y>
-             <width>115</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Validation</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Validation2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>34</y>
-             <width>231</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Validation (Multiclassifier)</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_9">
-           <property name="geometry">
-            <rect>
-             <x>250</x>
-             <y>34</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="SC_Validation">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>94</y>
-             <width>191</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Super Cross Validation</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_22">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>124</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_9">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>14</y>
-             <width>551</width>
-             <height>151</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Parameters</string>
-           </property>
-           <widget class="QComboBox" name="Tipo_Clasif">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>30</y>
-              <width>211</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <item>
-             <property name="text">
-              <string>Choose Classifier</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Distances</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Gauss</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Histogram</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>KNN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ANN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SVM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>RTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>DTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Boosting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>EM</string>
-             </property>
-            </item>
-           </widget>
-           <widget class="QLabel" name="label_18">
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>20</y>
-              <width>111</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Validation %</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_19">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>60</y>
-              <width>111</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>N Folders</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_28">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>100</y>
-              <width>101</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Folder Size</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Parametros">
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>20</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Parameters</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Salto">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>60</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Leap</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Parada">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>100</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Stop</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Porcentaje">
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>20</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="suffix">
-             <string>%</string>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Num_folds">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>60</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>5</number>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Tam_Folds">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>100</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <number>999999</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QPushButton" name="Iniciar_5">
-           <property name="geometry">
-            <rect>
-             <x>1020</x>
-             <y>480</y>
-             <width>98</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Run</string>
-           </property>
-          </widget>
-         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="images_tab">
@@ -2555,621 +1940,6 @@
            </property>
           </widget>
          </widget>
-         <widget class="QWidget" name="i_classifiers">
-          <attribute name="title">
-           <string>Classifiers</string>
-          </attribute>
-          <widget class="QGroupBox" name="groupBox_15">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>10</y>
-             <width>481</width>
-             <height>141</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Configuration</string>
-           </property>
-           <widget class="QToolButton" name="toolButton_10">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>110</y>
-              <width>25</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-           <widget class="QLineEdit" name="Nombre_Clasif_5">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>281</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Results Name</string>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="Clasif_Cargado_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>70</y>
-              <width>181</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Loaded Classifier</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="Multiclasif_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>110</y>
-              <width>151</width>
-              <height>27</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Multiclassifier</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Iniciar_7">
-            <property name="geometry">
-             <rect>
-              <x>310</x>
-              <y>100</y>
-              <width>98</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Classify</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="Line" name="line_2">
-           <property name="geometry">
-            <rect>
-             <x>290</x>
-             <y>10</y>
-             <width>16</width>
-             <height>461</height>
-            </rect>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-          <widget class="QTextBrowser" name="Result_Clas_2">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>160</y>
-             <width>801</width>
-             <height>301</height>
-            </rect>
-           </property>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_14">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>50</y>
-             <width>271</width>
-             <height>121</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Classifier Type</string>
-           </property>
-           <widget class="QToolButton" name="toolButton_15">
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>30</y>
-              <width>25</width>
-              <height>30</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Iniciar_6">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>70</y>
-              <width>98</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Train</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="Tipo_Clasif_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>30</y>
-              <width>211</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <item>
-             <property name="text">
-              <string>Choose Classifier Type</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Distances</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Gauss</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Histogram</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>KNN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ANN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SVM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>RTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>DTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Boosting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>HAAR</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LBP</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>EM</string>
-             </property>
-            </item>
-           </widget>
-          </widget>
-          <widget class="QLineEdit" name="Nombre_Clasif_4">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>281</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Classifier Name</string>
-           </property>
-          </widget>
-          <widget class="QProgressBar" name="i_progress_classifiers">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>490</y>
-             <width>1121</width>
-             <height>23</height>
-            </rect>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </widget>
-         <widget class="QWidget" name="i_optimize">
-          <attribute name="title">
-           <string>Optimize</string>
-          </attribute>
-          <widget class="QRadioButton" name="Validation_2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>4</y>
-             <width>115</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Validation</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Validation2_2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>34</y>
-             <width>231</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Validation (Multiclassifier)</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Ratios_Parametro_2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>124</y>
-             <width>181</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Rates per parameter</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_21">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>94</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QGroupBox" name="groupBox_16">
-           <property name="geometry">
-            <rect>
-             <x>310</x>
-             <y>14</y>
-             <width>551</width>
-             <height>151</height>
-            </rect>
-           </property>
-           <property name="title">
-            <string>Parameters</string>
-           </property>
-           <widget class="QComboBox" name="Tipo_Clasif_4">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>30</y>
-              <width>211</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <item>
-             <property name="text">
-              <string>Choose Classifier</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Distances</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Gauss</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Histogram</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ANN</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>NEURONAL</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>SVM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>RTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>DTREES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Boosting</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>EM</string>
-             </property>
-            </item>
-           </widget>
-           <widget class="QLabel" name="label_36">
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>20</y>
-              <width>111</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Validation %</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_37">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>60</y>
-              <width>111</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>N Folders</string>
-            </property>
-           </widget>
-           <widget class="QLabel" name="label_38">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>230</x>
-              <y>100</y>
-              <width>101</width>
-              <height>22</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Folder Size</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Parametros_2">
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>20</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Parameters</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Salto_2">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>60</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Leap</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="Parada_2">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>450</x>
-              <y>100</y>
-              <width>96</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Stop</string>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Porcentaje_2">
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>20</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="suffix">
-             <string>%</string>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="value">
-             <number>10</number>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Num_folds_2">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>60</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="value">
-             <number>5</number>
-            </property>
-           </widget>
-           <widget class="QSpinBox" name="Tam_Folds_2">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="geometry">
-             <rect>
-              <x>360</x>
-              <y>100</y>
-              <width>71</width>
-              <height>32</height>
-             </rect>
-            </property>
-            <property name="minimum">
-             <number>2</number>
-            </property>
-            <property name="maximum">
-             <number>999999</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QPushButton" name="Iniciar_8">
-           <property name="geometry">
-            <rect>
-             <x>1020</x>
-             <y>480</y>
-             <width>98</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Run</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="SC_Validation_2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>94</y>
-             <width>191</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Super Cross Validation</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_11">
-           <property name="geometry">
-            <rect>
-             <x>250</x>
-             <y>34</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QToolButton" name="toolButton_23">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>124</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="C_Validation_2">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>64</y>
-             <width>161</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Cross Validation</string>
-           </property>
-          </widget>
-          <widget class="QTextBrowser" name="Texto_Result_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>180</y>
-             <width>1121</width>
-             <height>291</height>
-            </rect>
-           </property>
-          </widget>
-         </widget>
          <widget class="QWidget" name="i_detection">
           <attribute name="title">
            <string>Detection</string>
@@ -3788,6 +2558,639 @@
            </property>
            <property name="text">
             <string>Run</string>
+           </property>
+          </widget>
+         </widget>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Models</string>
+        </attribute>
+        <widget class="QTabWidget" name="tabWidget_4">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1141</width>
+           <height>551</height>
+          </rect>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="i_classifiers_2">
+          <attribute name="title">
+           <string>Classifiers</string>
+          </attribute>
+          <widget class="QGroupBox" name="groupBox_22">
+           <property name="geometry">
+            <rect>
+             <x>310</x>
+             <y>10</y>
+             <width>481</width>
+             <height>141</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Configuration</string>
+           </property>
+           <widget class="QToolButton" name="toolButton_12">
+            <property name="geometry">
+             <rect>
+              <x>160</x>
+              <y>110</y>
+              <width>25</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="Nombre_Clasif_6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>281</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Results Name</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="Clasif_Cargado_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>70</y>
+              <width>181</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Loaded Classifier</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="Multiclasif_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>110</y>
+              <width>151</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Multiclassifier</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="Iniciar_10">
+            <property name="geometry">
+             <rect>
+              <x>310</x>
+              <y>100</y>
+              <width>98</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Classify</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="Line" name="line_3">
+           <property name="geometry">
+            <rect>
+             <x>290</x>
+             <y>10</y>
+             <width>16</width>
+             <height>461</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="QTextBrowser" name="Result_Clas_3">
+           <property name="geometry">
+            <rect>
+             <x>310</x>
+             <y>160</y>
+             <width>801</width>
+             <height>301</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QGroupBox" name="groupBox_23">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>271</width>
+             <height>121</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Classifier Type</string>
+           </property>
+           <widget class="QToolButton" name="toolButton_16">
+            <property name="geometry">
+             <rect>
+              <x>230</x>
+              <y>30</y>
+              <width>25</width>
+              <height>30</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="Iniciar_11">
+            <property name="geometry">
+             <rect>
+              <x>160</x>
+              <y>70</y>
+              <width>98</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Train</string>
+            </property>
+           </widget>
+           <widget class="QComboBox" name="Tipo_Clasif_5">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>30</y>
+              <width>211</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <item>
+             <property name="text">
+              <string>Choose Classifier Type</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Distances</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Gauss</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Histogram</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>KNN</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ANN</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SVM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>RTREES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>DTREES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Boosting</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HAAR</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LBP</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>EM</string>
+             </property>
+            </item>
+           </widget>
+          </widget>
+          <widget class="QLineEdit" name="Nombre_Clasif_7">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>10</y>
+             <width>281</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Classifier Name</string>
+           </property>
+          </widget>
+          <widget class="QProgressBar" name="m_progress_classifiers">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>490</y>
+             <width>1121</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="i_optimize_2">
+          <attribute name="title">
+           <string>Optimize</string>
+          </attribute>
+          <widget class="QRadioButton" name="Validation_3">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>4</y>
+             <width>115</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Validation</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="Validation2_3">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>34</y>
+             <width>231</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Validation (Multiclassifier)</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="Ratios_Parametro_3">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>124</y>
+             <width>181</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Rates per parameter</string>
+           </property>
+          </widget>
+          <widget class="QToolButton" name="toolButton_24">
+           <property name="geometry">
+            <rect>
+             <x>210</x>
+             <y>94</y>
+             <width>25</width>
+             <height>30</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+          <widget class="QGroupBox" name="groupBox_24">
+           <property name="geometry">
+            <rect>
+             <x>310</x>
+             <y>14</y>
+             <width>551</width>
+             <height>151</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Parameters</string>
+           </property>
+           <widget class="QComboBox" name="Tipo_Clasif_6">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>30</y>
+              <width>211</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <item>
+             <property name="text">
+              <string>Choose Classifier</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Distances</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Gauss</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Histogram</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>ANN</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>NEURONAL</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SVM</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>RTREES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>DTREES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Boosting</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>EM</string>
+             </property>
+            </item>
+           </widget>
+           <widget class="QLabel" name="label_58">
+            <property name="geometry">
+             <rect>
+              <x>230</x>
+              <y>20</y>
+              <width>111</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Validation %</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_59">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>230</x>
+              <y>60</y>
+              <width>111</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>N Folders</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_60">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>230</x>
+              <y>100</y>
+              <width>101</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Folder Size</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="Parametros_3">
+            <property name="geometry">
+             <rect>
+              <x>450</x>
+              <y>20</y>
+              <width>96</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Parameters</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="Salto_4">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>450</x>
+              <y>60</y>
+              <width>96</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Leap</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="Parada_3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>450</x>
+              <y>100</y>
+              <width>96</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="Porcentaje_3">
+            <property name="geometry">
+             <rect>
+              <x>360</x>
+              <y>20</y>
+              <width>71</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string>%</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>10</number>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="Num_folds_3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>360</x>
+              <y>60</y>
+              <width>71</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>5</number>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="Tam_Folds_3">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="geometry">
+             <rect>
+              <x>360</x>
+              <y>100</y>
+              <width>71</width>
+              <height>32</height>
+             </rect>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QPushButton" name="Iniciar_12">
+           <property name="geometry">
+            <rect>
+             <x>1020</x>
+             <y>480</y>
+             <width>98</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="SC_Validation_3">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>94</y>
+             <width>191</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Super Cross Validation</string>
+           </property>
+          </widget>
+          <widget class="QToolButton" name="toolButton_13">
+           <property name="geometry">
+            <rect>
+             <x>250</x>
+             <y>34</y>
+             <width>25</width>
+             <height>30</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+          <widget class="QToolButton" name="toolButton_25">
+           <property name="geometry">
+            <rect>
+             <x>210</x>
+             <y>124</y>
+             <width>25</width>
+             <height>30</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="C_Validation_3">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>64</y>
+             <width>161</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Cross Validation</string>
+           </property>
+          </widget>
+          <widget class="QTextBrowser" name="Texto_Result_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>180</y>
+             <width>1121</width>
+             <height>291</height>
+            </rect>
            </property>
           </widget>
          </widget>

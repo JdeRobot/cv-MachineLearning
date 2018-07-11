@@ -1,26 +1,3 @@
-/*
-*
-* Copyright 2014-2016 Ignacio San Roman Lana
-*
-* This file is part of OpenCV_ML_Tool
-*
-* OpenCV_ML_Tool is free software: you can redistribute it and/or
-* modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* OpenCV_ML_Tool is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with OpenCV_ML_Tool. If not, see http://www.gnu.org/licenses/.
-*
-* For those usages not covered by this license please contact with
-* isanromanlana@gmail.com
-*/
-
 #include "multiclasificador.h"
 
 
@@ -33,11 +10,11 @@ MLT::MultiClasificador::MultiClasificador(vector<Clasificador *> Clasificadores)
     }
 
     for(uint i=0; i<Clasificadores.size(); i++){
-        Clasificadores[i]->ReadData();
-        ventanas_x.push_back(Clasificadores[i]->getVentanaX());
-        ventanas_y.push_back(Clasificadores[i]->getVentanaY());
-        n_etiquetas.push_back(Clasificadores[i]->getNumeroEtiquetas());
-        tipos_dato.push_back(Clasificadores[i]->getTipoDato());
+        Clasificadores[i]->Read_Data();
+        ventanas_x.push_back(Clasificadores[i]->ventana_x);
+        ventanas_y.push_back(Clasificadores[i]->ventana_y);
+        n_etiquetas.push_back(Clasificadores[i]->numero_etiquetas);
+        tipos_dato.push_back(Clasificadores[i]->tipo_dato);
     }
     ventana_x=ventanas_x[0];
     ventana_y=ventanas_y[0];
@@ -78,12 +55,12 @@ int MLT::MultiClasificador::Cascada(vector<Mat> Data, vector<int> tipo_regla, ve
         }
     }
 #ifdef GUI
-    for(size_t i=0; i<clasificadores.size();i++){
-        clasificadores[i]->setProgreso(progreso);
-        clasificadores[i]->setMaxProgreso(max_progreso);
-        clasificadores[i]->setBaseProgreso(base_progreso);
-        clasificadores[i]->setTotalProgreso(total_progreso);
-        clasificadores[i]->setWindow(window);
+    for(int i=0; i<clasificadores.size();i++){
+        clasificadores[i]->progreso=progreso;
+        clasificadores[i]->max_progreso=max_progreso;
+        clasificadores[i]->base_progreso=base_progreso;
+        clasificadores[i]->total_progreso=total_progreso;
+        clasificadores[i]->window=window;
     }
 #endif
     vector<vector<float> > labels;
@@ -91,7 +68,7 @@ int MLT::MultiClasificador::Cascada(vector<Mat> Data, vector<int> tipo_regla, ve
         vector<float> l;
         e=clasificadores[i]->Autoclasificacion(Data,l,false,false);
         if(e==1){
-            cout<<"Error en "+clasificadores[i]->getNombre()+": Error en Autoclasificacion"<<endl;
+            cout<<"Error en "+clasificadores[i]->nombre+": Error en Autoclasificacion"<<endl;
             return 1;
         }
         labels.push_back(l);
@@ -160,12 +137,12 @@ int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, v
         return 1;
     }
 #ifdef GUI
-    for(size_t i=0; i<clasificadores.size();i++){
-        clasificadores[i]->setProgreso(progreso);
-        clasificadores[i]->setMaxProgreso(max_progreso);
-        clasificadores[i]->setBaseProgreso(base_progreso);
-        clasificadores[i]->setTotalProgreso(total_progreso);
-        clasificadores[i]->setWindow(window);
+    for(int i=0; i<clasificadores.size();i++){
+        clasificadores[i]->progreso=progreso;
+        clasificadores[i]->max_progreso=max_progreso;
+        clasificadores[i]->base_progreso=base_progreso;
+        clasificadores[i]->total_progreso=total_progreso;
+        clasificadores[i]->window=window;
     }
 #endif
     vector<vector<float> > labels;
@@ -173,7 +150,7 @@ int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, v
         vector<float> l;
         e=clasificadores[i]->Autoclasificacion(Data,l,false,false);
         if(e==1){
-            cout<<"Error en "+clasificadores[i]->getNombre()+": Error en Autoclasificacion"<<endl;
+            cout<<"Error en "+clasificadores[i]->nombre+": Error en Autoclasificacion"<<endl;
             return 1;
         }
         labels.push_back(l);
@@ -202,7 +179,7 @@ int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, v
                 pesos[label-1]=pesos[label-1]+w_clasif[j];
             else if(label==0){
 #ifdef WARNINGS
-                cout<<"WARNING: El clasificador "<<clasificadores[j]->getNombre()<<" ha dado un resultado erróneo (0)"<<endl;
+                cout<<"WARNING: El clasificador "<<clasificadores[j]->nombre<<" ha dado un resultado erróneo (0)"<<endl;
 #endif
             }
         }

@@ -407,6 +407,59 @@ int MLT::Running::clustering(vector<Mat> images, int type, int k, int repetition
 
     thrd.join();
 
+    if(clus.error==1)
+        return 1;
+}
+
+int MLT::Running::dimensionality(string ref, vector<Mat> images, vector<float> labels, int size_reduc, int type, vector<Mat> &data, Generacion::Info_Datos &info){
+    Dimensionalidad::Reducciones reduc;
+    reduc.tam_reduc=size_reduc;
+
+    if(type==LDA_DIM)
+        reduc.si_lda=true;
+    else if(type==PCA_DIM)
+        reduc.si_pca=true;
+    else if(type==MAXDIST_DIM)
+        reduc.si_dist=true;
+    else if(type==D_PRIME_DIM)
+        reduc.si_d_prime=true;
+    Dimensionalidad dim(ref);
+    std::thread  thrd=std::thread(&MLT::Dimensionalidad::Reducir,&dim, images, std::ref(data), labels, reduc, std::ref(info), this->save_other);
+
+
+
+    thrd.join();
+
     if(this->gen.error==1)
         return 1;
 }
+
+//int MLT::Running::dimension_cuality(vector<Mat> images, vector<float> labels, int size_reduc, int type){
+//    Clustering clus;
+//    Mat centers;
+//    labels.clear();
+//    int er=0;
+//    std::thread thrd;
+//    if(type==1)
+//        thrd=std::thread(&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_RANDOM_CENTERS);
+//    else if(type==2)
+//        thrd=std::thread (&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_PP_CENTERS);
+//    else if(type==3)
+//        thrd=std::thread (&MLT::Clustering::Distancias_Encadenadas,&clus, images,max_dist,std::ref(labels),std::ref(centers));
+//    else if(type==4)
+//        thrd=std::thread (&MLT::Clustering::Min_Max,&clus, images,max_dist,std::ref(labels),std::ref(centers));
+//    else if(type==5)
+//        thrd=std::thread (&MLT::Clustering::Histograma,&clus, images,cell_size,std::ref(labels),std::ref(centers));
+//    else if(type==6)
+//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_SPHERICAL);
+//    else if(type==7)
+//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_DIAGONAL);
+//    else if(type==8)
+//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_GENERIC);
+
+
+//    thrd.join();
+
+//    if(this->gen.error==1)
+//        return 1;
+//}

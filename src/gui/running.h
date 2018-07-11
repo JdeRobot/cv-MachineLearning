@@ -45,6 +45,7 @@ namespace MLT {
         int analyse_data(vector<Mat> images, vector<float> labels, QStandardItemModel *model);
         int analyse_result(vector<float> labels, vector<float> results, QStandardItemModel *model);
         int clustering(vector<Mat> images, int type, int k, int repetitions, float max_dist, float cell_size, vector<float> &labels);
+        int dimensionality(string ref, vector<Mat> images, vector<float> labels, int size_reduc, int type, vector<Mat> &data, Generacion::Info_Datos &info);
 
         Ui::MainWindow *window;
 

@@ -124,14 +124,6 @@ MainWindow::MainWindow(QWidget *parent) :
     Y=0;
 
 
-//    int num_bar;
-//    bool show_graphics;
-//    bool save_clasif;
-//    bool save_data;
-//    bool save_other;
-//    bool read;
-//    bool ifreduc;
-
     fs["num_bar"]>>this->num_bar;
     fs["show_graphics"]>>this->show_graphics;
     fs["save_clasif"]>>this->save_clasif;
@@ -167,7 +159,7 @@ void MainWindow::error_control(QString error){
     QApplication::restoreOverrideCursor();
     this->ui->v_progress_datamanaging->setValue(0);
     this->ui->v_progress_Analysis->setValue(0);
-    this->ui->v_progress_classifiers->setValue(0);
+    this->ui->m_progress_classifiers->setValue(0);
 //    this->ui->v_progress_clustering->setValue(0);
 //    this->ui->v_progress_dimensionality->setValue(0);
 }

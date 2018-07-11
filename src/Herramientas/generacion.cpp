@@ -332,8 +332,6 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
 
 int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     this->running=true;
-    Auxiliares aux;
-    this->total_progreso=aux.numero_imagenes(Path);
 
     Path=Path+"/";
     string output_directory=Path+nombre+"/";
@@ -354,6 +352,11 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
         }
     }
     DIR    *dir_p = opendir (Path.c_str());
+    if(dir_p==NULL){
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
     struct dirent *dir_entry_p;
     f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -378,6 +381,8 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     int total_recortes=0;
     int cuenta_imagenes=0;
     int cuenta_recortes=0;
+//    Auxiliares aux;
+//    this->total_progreso=aux.numero_imagenes(Path);
     while((dir_entry_p = readdir(dir_p)) != NULL){
         if(strcmp(dir_entry_p->d_name, ".")!=0 && strcmp(dir_entry_p->d_name, "..")!=0 && strcmp(dir_entry_p->d_name, nombre.c_str())!=0){
             cuenta_carpetas++;

@@ -1,26 +1,3 @@
-/*
-*
-* Copyright 2014-2016 Ignacio San Roman Lana
-*
-* This file is part of OpenCV_ML_Tool
-*
-* OpenCV_ML_Tool is free software: you can redistribute it and/or
-* modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* OpenCV_ML_Tool is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with OpenCV_ML_Tool. If not, see http://www.gnu.org/licenses/.
-*
-* For those usages not covered by this license please contact with
-* isanromanlana@gmail.com
-*/
-
 #include "clasificador_neuronal.h"
 
 MLT::Clasificador_Neuronal::Clasificador_Neuronal(string Nombre, Mat layerSize, int Method, int Function, double bp_dw_scale, double bp_moment_scale, double rp_dw0, double rp_dw_max, double rp_dw_min, double rp_dw_minus, double rp_dw_plus, double fparam1, double fparam2){
@@ -56,7 +33,7 @@ MLT::Clasificador_Neuronal::Clasificador_Neuronal(string Nombre, Mat layerSize, 
                      rp_dw_max, rp_dw_min, rp_dw_minus, rp_dw_plus,
                      fparam1, fparam2);
     nombre=Nombre;
-    tipoClasificador=NEURONAL;
+    tipo_clasificador=NEURONAL;
 }
 
 MLT::Clasificador_Neuronal::~Clasificador_Neuronal(){}
@@ -109,18 +86,18 @@ int MLT::Clasificador_Neuronal::Autotrain(vector<Mat> Data, vector<float> Labels
         cout<<"ERROR en Autotrain: No se ha inicializado la matriz layerSize"<<endl;
         return 1;
     }
-    ventanaOX=info.Tam_Orig_X;
-    ventanaOY=info.Tam_Orig_Y;
-    ventanaX=info.Tam_X;
-    ventanaY=info.Tam_Y;
-    tipoDato=info.Tipo_Datos;
+    ventana_o_x=info.Tam_Orig_X;
+    ventana_o_y=info.Tam_Orig_Y;
+    ventana_x=info.Tam_X;
+    ventana_y=info.Tam_Y;
+    tipo_dato=info.Tipo_Datos;
     if((reduc.si_dist==true || reduc.si_d_prime==true || reduc.si_lda==true || reduc.si_pca==true)&&(info.si_dist==true || info.si_d_prime==true || info.si_lda==true || info.si_pca==true)){
         cout<<"ERROR en Autotrain: Ya se le ha hecho una reduccion anteriormente a los datos"<<endl;
         return 1;
     }
     reduccion=reduc;
     Auxiliares ax;
-    numeroEtiquetas=ax.numero_etiquetas(Labels,negativa);
+    numero_etiquetas=ax.numero_etiquetas(Labels,negativa);
     Mat lexic_data;
     int e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
@@ -207,7 +184,7 @@ int MLT::Clasificador_Neuronal::Autotrain(vector<Mat> Data, vector<float> Labels
         reduccion.tam_reduc=info.Tam_X*info.Tam_Y;
     }
     if(save){
-        e=SaveData();
+        e=Save_Data();
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Save_Data"<<endl;
             return 1;
@@ -219,7 +196,7 @@ int MLT::Clasificador_Neuronal::Autotrain(vector<Mat> Data, vector<float> Labels
 int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
     int e=0;
     if(read){
-        e=ReadData();
+        e=Read_Data();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
             return 1;
@@ -284,9 +261,8 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
         float response=Clasificacion(trainingDataMat.row(i));
         Labels.push_back(response);
 #ifdef GUI
-        this->_progreso++;
-        this->_window->i_progress_classifiers->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
-        this->_window->v_progress_classifiers->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
+            progreso++;
+//            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     return 0;
@@ -294,7 +270,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
 
 void MLT::Clasificador_Neuronal::Entrenamiento(Mat trainingDataMat, Mat labelsMat){
     labelsMat.convertTo(labelsMat,CV_32FC1);
-    Mat labels=Mat::zeros(labelsMat.rows,numeroEtiquetas,CV_32FC1);
+    Mat labels=Mat::zeros(labelsMat.rows,numero_etiquetas,CV_32FC1);
     for(int i=0; i<labelsMat.rows; i++){
         float etiqueta=labelsMat.at<float>(i,0);
         int pos=-1;
@@ -314,7 +290,7 @@ float MLT::Clasificador_Neuronal::Clasificacion(Mat Data){
     Data.convertTo(Data,CV_32FC1);
     float response=0;
     cv :: Mat resp;
-    if(Data.cols==(ventanaX*ventanaY) || Data.cols==reduccion.tam_reduc){
+    if(Data.cols==(ventana_x*ventana_y) || Data.cols==reduccion.tam_reduc){
         response=MLP->predict(Data,resp);
         if(negativa && response==0)
             response=-1;
@@ -324,7 +300,7 @@ float MLT::Clasificador_Neuronal::Clasificacion(Mat Data){
      return response;
 }
 
-int MLT::Clasificador_Neuronal::SaveData(){
+int MLT::Clasificador_Neuronal::Save_Data(){
     DIR    *dir_p = opendir ("../Data/Configuracion");
     if(dir_p == NULL) {
         string command = "mkdir ../Data/Configuracion";
@@ -347,12 +323,12 @@ int MLT::Clasificador_Neuronal::SaveData(){
     string g="../Data/Configuracion/"+nombre+"/NEURONAL2.xml";
     cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
     if(archivo_w.isOpened()){
-        archivo_w<<"ventana_x"<<ventanaX;
-        archivo_w<<"ventana_y"<<ventanaY;
-        archivo_w<<"ventana_o_x"<<ventanaOX;
-        archivo_w<<"ventana_o_y"<<ventanaOY;
-        archivo_w<<"numero_etiquetas"<<numeroEtiquetas;
-        archivo_w<<"tipo_dato"<<tipoDato;
+        archivo_w<<"ventana_x"<<ventana_x;
+        archivo_w<<"ventana_y"<<ventana_y;
+        archivo_w<<"ventana_o_x"<<ventana_o_x;
+        archivo_w<<"ventana_o_y"<<ventana_o_y;
+        archivo_w<<"numero_etiquetas"<<numero_etiquetas;
+        archivo_w<<"tipo_dato"<<tipo_dato;
         archivo_w<<"tam_reduc"<<reduccion.tam_reduc;
         archivo_w<<"lda"<<reduccion.si_lda;
         archivo_w<<"LDA"<<reduccion.LDA;
@@ -378,16 +354,16 @@ int MLT::Clasificador_Neuronal::SaveData(){
     return 0;
 }
 
-int MLT::Clasificador_Neuronal::ReadData(){
+int MLT::Clasificador_Neuronal::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/NEURONAL2.xml";
     cv::FileStorage archivo_r(g,CV_STORAGE_READ);
     if(archivo_r.isOpened()){
-        archivo_r["ventana_x"]>>ventanaX;
-        archivo_r["ventana_y"]>>ventanaY;
-        archivo_r["ventana_o_x"]>>ventanaOX;
-        archivo_r["ventana_o_y"]>>ventanaOY;
-        archivo_r["numero_etiquetas"]>>numeroEtiquetas;
-        archivo_r["tipo_dato"]>>tipoDato;
+        archivo_r["ventana_x"]>>ventana_x;
+        archivo_r["ventana_y"]>>ventana_y;
+        archivo_r["ventana_o_x"]>>ventana_o_x;
+        archivo_r["ventana_o_y"]>>ventana_o_y;
+        archivo_r["numero_etiquetas"]>>numero_etiquetas;
+        archivo_r["tipo_dato"]>>tipo_dato;
         archivo_r["tam_reduc"]>>reduccion.tam_reduc;
         archivo_r["lda"]>>reduccion.si_lda;
         archivo_r["LDA"]>>reduccion.LDA;

@@ -145,6 +145,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->run.save_other=this->save_other;
     this->run.read=this->read;
     this->run.ifreduc=this->ifreduc;
+    this->run.colors=Col;
 }
 
 MainWindow::~MainWindow()
@@ -217,7 +218,7 @@ void MainWindow::on_v_run_datamanaging_clicked()
     int er=0;
         this->ui->v_progress_datamanaging->setValue(1);
     if(this->ui->v_tool->currentIndex()==1){
-        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
+        er=this->run.load_dataset(path.toStdString());
         if(er==1){
             error_control("ERROR: The folder has not the expected structure");
             return;
@@ -235,20 +236,20 @@ void MainWindow::on_v_run_datamanaging_clicked()
         float width=this->ui->v_variance->value();
         float interclass=this->ui->v_interclassdistance->value();
 
-        er=this->run.synthetic_data(name,num_classes,num_data_class,vector_size,width,interclass,this->IMAGENES,this->LABELS,this->info);
+        er=this->run.synthetic_data(ref,num_classes,num_data_class,vector_size,width,interclass);
         if(er==1){
             error_control("ERROR: Data could not be created");
             return;
         }
     }
     else if(this->ui->v_tool->currentIndex()==3){
-        er=this->run.save(ref,this->IMAGENES,this->resultado,this->info);
+        er=this->run.save(ref);
         if(er==1){
             error_control("ERROR: Data could not be created");
             return;
         }
         path="../Data/Imagenes/"+name;
-        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
+        er=this->run.load_dataset(path.toStdString());
         if(er==1){
             error_control("ERROR: The folder has not the expected structure");
             return;
@@ -260,13 +261,13 @@ void MainWindow::on_v_run_datamanaging_clicked()
         }
     }
     else if(this->ui->v_tool->currentIndex()==4){
-        er=this->run.join_data(ref,path);
+        er=this->run.join_data(ref,path.toStdString());
         if(er==1){
             error_control("ERROR: Data could not be created");
             return;
         }
         path="../Data/Imagenes/"+name;
-        er=this->run.load_dataset(path, ref,this->LABELS,this->IMAGENES,this->info);
+        er=this->run.load_dataset(path.toStdString());
         if(er==1){
             error_control("ERROR: The folder has not the expected structure");
             return;
@@ -279,9 +280,13 @@ void MainWindow::on_v_run_datamanaging_clicked()
     }
 
 
-    this->ui->v_plotting_x->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    this->ui->v_plotting_y->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-    this->ui->v_plotting_dimension->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+    this->ui->v_plotting_x->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_y->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_dimension->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+
+    this->ui->v_dimensionality_dimensions->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_dimension->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+
     this->ui->v_progress_datamanaging->setValue(100);
     this->ui->v_progress_datamanaging->setValue(0);
 
@@ -299,8 +304,8 @@ void MainWindow::on_v_run_datamanaging_clicked()
 //            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
 //            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
 //            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
-    this->Dat_Ref=ref;
-    QString reference=QString::fromStdString(ref);
+//    this->Dat_Ref=ref;
+    QString reference=QString::fromStdString(this->run.org_ref);
     this->ui->dataset_lab->setText("Dataset: "+reference);
     this->ui->v_progress_datamanaging->setValue(100);
     this->ui->v_progress_datamanaging->setValue(0);
@@ -322,7 +327,7 @@ void MainWindow::on_v_analysis_analyse_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     this->ui->v_progress_Analysis->setValue(1);
-    if(this->IMAGENES.empty()){
+    if(this->run.org_images.empty()){
         error_control("ERROR: There is not data loaded");
         return;
     }
@@ -330,23 +335,23 @@ void MainWindow::on_v_analysis_analyse_clicked()
     QStandardItemModel *model=new QStandardItemModel(0,0);
     int er=0;
     if(this->ui->v_analysis_dataset->isChecked()){
-        if(this->LABELS.empty()){
+        if(this->run.org_labels.empty()){
             error_control("ERROR: There is not labels loaded");
             return;
         }
-        if(!this->IMAGENES[0].cols*this->IMAGENES[0].rows*this->IMAGENES[0].channels()>1024){
+        if(!this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels()>1024){
             QMessageBox msgBox;
             msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
             msgBox.exec();
         }
-        er=this->run.analyse_data(this->IMAGENES,this->LABELS,model);
+        er=this->run.analyse_data(model);
     }
     else if(this->ui->v_analysis_results->isChecked()){
-        if(this->resultado.empty()){
+        if(this->run.result_images.empty()){
             error_control("ERROR: There is not labels loaded");
             return;
         }
-        er=this->run.analyse_result(this->LABELS,this->resultado,model);
+        er=this->run.analyse_result(model);
     }
 
     if(er==1){
@@ -363,76 +368,34 @@ void MainWindow::on_v_analysis_analyse_clicked()
 void MainWindow::on_v_plotting_represent_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    std::vector<cv::Mat> images;
-    std::vector<float> labels;
-    if(this->ui->v_plotting_dataset->isChecked()){
-        images=this->IMAGENES;
-        labels=this->LABELS;
-    }
-    else if(this->ui->v_plotting_results->isChecked()){
-        images=this->IMAGENES;
-        labels=this->resultado;
-    }
-
-    if(images.empty()){
-        error_control("ERROR: There is not data loaded");
-        return;
-    }
-    if(labels.empty()){
-        error_control("ERROR: There is not labels loaded");
-        return;
-    }
-    int e=0;
+    int type_plot=-1;
     vector<int> dim;
-    if(this->ui->v_plotting_dimension->value()>images[0].cols*images[0].rows*images[0].channels()){
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: La dimension en Histograma esta fuera de rango");
-        msgBox.exec();
-        QApplication::restoreOverrideCursor();
-        return;
-    }
-    if(this->ui->v_plotting_x->value()<=images[0].cols*images[0].rows*images[0].channels()){
-        dim.push_back(this->ui->v_plotting_x->value());
-        if(this->ui->v_plotting_y->value()>0 && ui->v_plotting_y->value()<=images[0].cols*images[0].rows*images[0].channels())
-            dim.push_back(this->ui->v_plotting_y->value());
-        else if(this->ui->v_plotting_y->value()==0){
-        }
-        else{
-            QMessageBox msgBox;
-            msgBox.setText("ERROR: La dimension Y esta fuera de rango");
-            msgBox.exec();
-            QApplication::restoreOverrideCursor();
-            return;
-        }
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: La dimension X esta fuera de rango");
-        msgBox.exec();
-        QApplication::restoreOverrideCursor();
-        return;
-    }
-    Representacion rep;
     if(this->ui->v_plotting_data->isChecked()){
-        e=rep.Data_represent("DATOS "+this->Dat_Ref,images,labels,dim,this->Col);
+        type_plot=0;
+        dim.push_back(this->ui->v_plotting_x->value());
+        dim.push_back(this->ui->v_plotting_y->value());
     }
     else if(this->ui->v_plotting_ellipses->isChecked()){
-        e=rep.Ellipse_represent("ELIPSES "+this->Dat_Ref,images,labels,dim,this->Col);
+        type_plot=1;
+        dim.push_back(this->ui->v_plotting_x->value());
+        dim.push_back(this->ui->v_plotting_y->value());
     }
     else if(this->ui->v_plotting_dataellipeses->isChecked()){
-        e=rep.Data_Ellipse_represent("DATOS CON ELIPSES "+this->Dat_Ref,images,labels,dim,this->Col);
+        type_plot=2;
+        dim.push_back(this->ui->v_plotting_x->value());
+        dim.push_back(this->ui->v_plotting_y->value());
     }
     else if(this->ui->v_plotting_histogram->isChecked()){
-        Analisis an;
-        vector<vector<Mat> > Histo;
-        vector<vector<int> > pos_barras;
-        an.Histograma(images,labels,this->num_bar,Histo,pos_barras);
-        e=rep.Histogram_represent("HISTOGRAMA "+this->Dat_Ref,Histo,this->Col, this->ui->v_plotting_dimension->value());
+        type_plot=3;
+        dim.push_back(this->ui->v_plotting_dimension->value());
     }
+    if(this->ui->v_plotting_results->isChecked())
+        type_plot=type_plot+4;
+
+    int e=this->run.plot_data(type_plot,dim);
     if(e==1){
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: No se han podido representar los datos");
-        msgBox.exec();
+        error_control("ERROR: Data could not be plotted");
+        return;
     }
     QApplication::restoreOverrideCursor();
 }
@@ -488,7 +451,7 @@ void MainWindow::on_v_clustering_method_activated(int index)
 void MainWindow::on_v_clustering_generate_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    if(IMAGENES.empty()){
+    if(this->run.org_images.empty()){
         error_control("ERROR: There is not data loaded");
         return;
     }
@@ -523,11 +486,352 @@ void MainWindow::on_v_clustering_generate_clicked()
     else if(this->ui->v_clustering_method->currentIndex()==5 && this->ui->v_clustering_covariance->currentIndex()==2)
         type=8;
 
-    run.clustering(this->IMAGENES,type,k,repetitions,max_dist,cell_size,this->resultado);
+    run.clustering(ref,type,k,repetitions,max_dist,cell_size);
+
+
 
     QString reference=QString::fromStdString(ref);
     this->ui->results_lab->setText("Results: "+reference);
 
     QApplication::restoreOverrideCursor();
+
+}
+
+void MainWindow::on_v_dimensionality_generate_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    QString name=this->ui->v_dimensionality_dataname->displayText();
+    string ref=name.toStdString();
+    for(uint i=0; i<ref.size(); i++){
+        if(ref[i]==' '){
+            error_control("ERROR: Name must not have spaces");
+            return;
+        }
+    }
+
+    int type=-1;
+    if(this->ui->v_dimensionality_lda->isChecked())
+        type=LDA_DIM;
+    else if(this->ui->v_dimensionality_pca->isChecked())
+        type=PCA_DIM;
+    else if(this->ui->v_dimensionality_max_dist->isChecked())
+        type=MAXDIST_DIM;
+    else if(this->ui->v_dimensionality_dprime->isChecked())
+        type=D_PRIME_DIM;
+
+    run.dimensionality(ref,this->ui->v_dimensionality_dimensions->value(),type);
+
+    QString reference=QString::fromStdString(ref);
+    this->ui->results_lab->setText("Results: "+reference);
+
+    QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_v_dimensionality_quality_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    QString name=this->ui->v_dimensionality_dataname->displayText();
+    string ref=name.toStdString();
+//    for(uint i=0; i<ref.size(); i++){
+//        if(ref[i]==' '){
+//            error_control("ERROR: Name must not have spaces");
+//            return;
+//        }
+//    }
+
+    int type=-1;
+    if(this->ui->v_dimensionality_lda->isChecked())
+        type=LDA_DIM;
+    else if(this->ui->v_dimensionality_pca->isChecked())
+        type=PCA_DIM;
+    else if(this->ui->v_dimensionality_max_dist->isChecked())
+        type=MAXDIST_DIM;
+    else if(this->ui->v_dimensionality_dprime->isChecked())
+        type=D_PRIME_DIM;
+
+    int measure=-1;
+    if(this->ui->v_dimensionality_distance_parameter->isChecked())
+        measure=0;
+    else if(this->ui->v_dimensionality_dprime_parameter->isChecked())
+        measure=1;
+
+    string result;
+    run.dimension_cuality(ref,this->ui->v_dimensionality_dimensions->value(),type, measure, result);
+    QMessageBox msgBox;
+    msgBox.setText(QString::fromStdString(result));
+    msgBox.exec();
+
+    cv::waitKey(0);
+
+    QApplication::restoreOverrideCursor();
+    return;
+}
+
+void MainWindow::on_i_tool_activated(int index)
+{
+//    if(index>1){
+//        this->ui->i_datatype->setEnabled(true);
+//        this->ui->i_config_tool->setEnabled(true);
+//        this->ui->i_dataname->setEnabled(true);
+//    }
+//    else{
+//        this->ui->i_datatype->setEnabled(false);
+//        this->ui->i_config_tool->setEnabled(false);
+//        this->ui->i_dataname->setEnabled(false);
+//    }
+//    if(index==2 || index==10 || index==11 || index==0){
+//        this->ui->i_datapath->setEnabled(false);
+//        this->ui->i_toolButton->setEnabled(false);
+//    }
+//    else{
+//        this->ui->i_datapath->setEnabled(true);
+//        this->ui->i_toolButton->setEnabled(true);
+//    }
+//    if(index==10)
+//        this->ui->i_datatype->setEnabled(true);
+//    else
+//        this->ui->i_datatype->setEnabled(false);
+
+    if(index==0){
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(false);
+        this->ui->i_toolButton->setEnabled(false);
+        this->ui->i_config_tool->setEnabled(false);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(false);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(false);
+        this->ui->i_size_y->setEnabled(false);
+        this->ui->i_variance->setEnabled(false);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+
+    }
+    else if(index==1 || index==12 || index==13){
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(false);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(false);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(false);
+        this->ui->i_size_y->setEnabled(false);
+        this->ui->i_variance->setEnabled(true);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+    }
+    else if(index==2){
+        this->ui->i_dataname->setEnabled(true);
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(false);
+        this->ui->i_toolButton->setEnabled(false);
+        this->ui->i_config_tool->setEnabled(true);
+
+        this->ui->i_label_clases->setEnabled(true);
+        this->ui->i_label_dataperclass->setEnabled(true);
+        this->ui->i_label_size->setEnabled(true);
+        this->ui->i_label_variance->setEnabled(true);
+        this->ui->i_label_interclassdistance->setEnabled(true);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(true);
+        this->ui->i_dataperclass->setEnabled(true);
+        this->ui->i_size_x->setEnabled(true);
+        this->ui->i_size_y->setEnabled(true);
+        this->ui->i_variance->setEnabled(true);
+        this->ui->i_interclassdistance->setEnabled(true);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+    }
+    else if(index==3){
+        this->ui->i_dataname->setEnabled(false);
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(true);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(true);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(true);
+        this->ui->i_size_y->setEnabled(true);
+        this->ui->i_variance->setEnabled(false);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+    }
+    else if(index>=4 && index<=9){
+        this->ui->i_dataname->setEnabled(false);
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(true);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(true);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(true);
+        this->ui->i_size_y->setEnabled(true);
+        this->ui->i_variance->setEnabled(false);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+    }
+    else if(index==10){
+        this->ui->i_dataname->setEnabled(true);
+        this->ui->i_datatype->setEnabled(true);
+        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(false);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(false);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(false);
+        this->ui->i_size_y->setEnabled(false);
+        this->ui->i_variance->setEnabled(false);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
+    }
+    if(index==11){
+        this->ui->i_dataname->setEnabled(true);
+        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(true);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(false);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_frames->setEnabled(true);
+        this->ui->i_label_maxnoise->setEnabled(true);
+        this->ui->i_label_maxblur->setEnabled(true);
+        this->ui->i_label_maxrotx->setEnabled(true);
+        this->ui->i_label_maxroty->setEnabled(true);
+        this->ui->i_label_maxrotz->setEnabled(true);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(false);
+        this->ui->i_size_y->setEnabled(false);
+        this->ui->i_variance->setEnabled(false);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_frames->setEnabled(true);
+        this->ui->i_maxnoise->setEnabled(true);
+        this->ui->i_maxblur->setEnabled(true);
+        this->ui->i_maxrotx->setEnabled(true);
+        this->ui->i_maxroty->setEnabled(true);
+        this->ui->i_maxrotz->setEnabled(true);
+    }
+    if(index==12 || index==13)
+        this->ui->i_dataname->setEnabled(true);
+    if(index==5 || index==6 || index==8 || index==9)
+        this->ui->i_square->setEnabled(true);
+    else
+        this->ui->i_square->setEnabled(false);
+    if(index==7 || index==9){
+        this->ui->i_label_frames->setEnabled(true);
+        this->ui->i_frames->setEnabled(true);
+    }
 
 }

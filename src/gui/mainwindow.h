@@ -74,8 +74,8 @@ public:
 
     Ui::MainWindow *ui;
 
-    string Dat_Ref;
-    string result_ref;
+//    string Dat_Ref;
+//    string result_ref;
 
     String Tipo_Des,Tipo_Ext;
     float Parametro;
@@ -206,6 +206,12 @@ private slots:
 
     void on_v_clustering_generate_clicked();
 
+    void on_v_dimensionality_generate_clicked();
+
+    void on_v_dimensionality_quality_clicked();
+
+    void on_i_tool_activated(int index);
+
 private:
     void error_control(QString error);
 
@@ -214,12 +220,12 @@ private:
     vector<cv::Scalar> Col;
     Scalar color;
 
-    Generacion::Info_Datos info,Info;
-    std::vector<float> LABELS;
-    std::vector<cv::Mat> IMAGENES;
-    std::vector<float> Labels;
-    std::vector<cv::Mat> Imagenes;
-    std::vector<float> resultado;
+//    Generacion::Info_Datos info,Info;
+//    std::vector<float> LABELS;
+//    std::vector<cv::Mat> IMAGENES;
+//    std::vector<float> Labels;
+//    std::vector<cv::Mat> Imagenes;
+//    std::vector<float> resultado;
     int ID;
 
     int num_bar;

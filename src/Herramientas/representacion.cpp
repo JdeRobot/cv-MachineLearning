@@ -1165,7 +1165,7 @@ int MLT::Representacion::Continuous_data_represent(string nombre, Mat Data, vect
     QApplication::restoreOverrideCursor();
 #endif
     imshow(nombre,represent);
-    waitKey(0);
+//    waitKey(0);
     return 0;
 }
 

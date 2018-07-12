@@ -37,17 +37,16 @@ void MLT::Running::update_analysis(){
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &labels, std::vector<cv::Mat> &images, Generacion::Info_Datos &info){
-    ref="";
-    std::string dir=path.toStdString();
+int MLT::Running::load_dataset(string path){
+    this->org_ref="";
     int pos=0;
-    for(uint i=0; i<dir.size(); i++){
-        if(dir[i]=='/')
+    for(uint i=0; i<path.size(); i++){
+        if(path[i]=='/')
             pos=i;
     }
-    for(uint i=pos+1; i<dir.size(); i++)
-        ref=ref+dir[i];
-    string archivo_i=dir+"/Info.xml";
+    for(uint i=pos+1; i<path.size(); i++)
+        this->org_ref=this->org_ref+path[i];
+    string archivo_i=path+"/Info.xml";
     cv::FileStorage Archivo_i(archivo_i,CV_STORAGE_READ);
 
     if(!Archivo_i.isOpened())
@@ -57,11 +56,11 @@ int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &la
     Archivo_i["Num_Datos"]>>num;
     Archivo_i.release();
 
-    string input_directory=dir+"/Recortes.txt";
+    string input_directory=path+"/Recortes.txt";
 
     this->base_progreso=1;
     this->max_progreso=100;
-    std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,input_directory,std::ref(images),std::ref(labels),std::ref(info));
+    std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,input_directory,std::ref(this->org_images),std::ref(this->org_labels),std::ref(this->org_info));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(gen.running==true)
         update_gen();
@@ -74,48 +73,33 @@ int MLT::Running::load_dataset(QString path, string &ref, std::vector<float> &la
     return 0;
 }
 
-int MLT::Running::synthetic_data(QString nombre, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases, vector<Mat> &data, vector<float> &labels, Generacion::Info_Datos &info){
+int MLT::Running::synthetic_data(string ref, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases){
     Size size_img;
     size_img.width=vector_size;
     size_img.height=1;
 
-    std::string name=nombre.toStdString();
+
     this->base_progreso=1;
     this->max_progreso=100;
 
-    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, name, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(data), std::ref(labels),std::ref(info), this->save_data);
+    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(gen.running==true)
         update_gen();
 
     thrd.join();
+    this->org_ref=ref;
 
     if(this->gen.error==1)
         return 1;
 
 }
 
-int MLT::Running::save(string ref, vector<Mat> images, vector<float> labels, Generacion::Info_Datos info){
+int MLT::Running::save(string ref){
     this->base_progreso=1;
     this->max_progreso=100;
 
-    std::thread thrd(&MLT::Generacion::Guardar_Datos,&gen, ref,images,labels,info);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    while(gen.running==true)
-        update_gen();
-
-    thrd.join();
-
-    if(this->gen.error==1)
-        return 1;
-}
-
-int MLT::Running::join_data(string ref, QString path){
-    std::string dir=path.toStdString();
-    this->base_progreso=1;
-    this->max_progreso=100;
-
-    std::thread thrd(&MLT::Generacion::Juntar_Recortes,&gen, ref,dir);
+    std::thread thrd(&MLT::Generacion::Guardar_Datos,&gen, ref,this->result_images,this->result_labels,this->result_info);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(gen.running==true)
         update_gen();
@@ -126,13 +110,81 @@ int MLT::Running::join_data(string ref, QString path){
         return 1;
 }
 
-int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStandardItemModel *model){
+int MLT::Running::join_data(string ref, string path){
+    this->base_progreso=1;
+    this->max_progreso=100;
+
+    std::thread thrd(&MLT::Generacion::Juntar_Recortes,&gen, ref,path);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(gen.running==true)
+        update_gen();
+
+    thrd.join();
+
+    if(this->gen.error==1)
+        return 1;
+}
+
+int MLT::Running::plot_data(int type_plot, vector<int> dim){
+    if(dim[0]>this->org_images[0].cols*this->org_images[0].rows*this->org_images[0].channels())
+        return 1;
+    Representacion rep;
+    int e=0;
+    vector<float> labels;
+    vector<Scalar> colors;
+    if(type_plot<4){
+        for(int i=0; i<this->org_labels.size(); i++)
+            labels.push_back(org_labels[i]);
+        for(int i=0; i<this->colors.size(); i++)
+            colors.push_back(this->colors[i]);
+    }
+    else{
+        if(this->result_images.empty())
+            return 1;
+        type_plot=type_plot-4;
+        bool all_successes=true;
+        for(int i=0; i<this->result_labels.size(); i++){
+            if(this->result_labels[i]==this->org_labels[i])
+                labels.push_back(1.);
+            else{
+                labels.push_back(-1.);
+                all_successes=false;
+            }
+        }
+        if(all_successes)
+            colors.push_back(Scalar(0,255,0));
+        else{
+            colors.push_back(Scalar(0,0,255));
+            colors.push_back(Scalar(0,255,0));
+        }
+    }
+
+    if(type_plot==0){
+        e=rep.Data_represent("DATA "+this->org_ref,this->org_images,labels,dim,colors);
+    }
+    else if(type_plot==1){
+        e=rep.Ellipse_represent("ELLIPSES "+this->org_ref,this->org_images,labels,dim,colors);
+    }
+    else if(type_plot==2){
+        e=rep.Data_Ellipse_represent("DATA AND ELLIPSES "+this->org_ref,this->org_images,labels,dim,colors);
+    }
+    else if(type_plot==3){
+        Analisis an;
+        vector<vector<Mat> > histogram;
+        vector<vector<int> > bars;
+        an.Histograma(this->org_images,labels,this->num_bar,histogram,bars);
+        e=rep.Histogram_represent("HISTOGRAM "+this->org_ref,histogram,colors, dim[0]);
+    }
+    return e;
+}
+
+int MLT::Running::analyse_data(QStandardItemModel *model){
     vector<Mat> means,  std, covariance;
     vector<vector<Mat> > d_prime;
     bool negative;
     vector<int> number;
 
-    std::thread thrd(&MLT::Analisis::Estadisticos_Covarianzas,&ana, images, labels, std::ref(means),std::ref(std), std::ref(d_prime), std::ref(covariance), std::ref(negative), std::ref(number));
+    std::thread thrd(&MLT::Analisis::Estadisticos_Covarianzas,&ana, this->org_images, this->org_labels, std::ref(means),std::ref(std), std::ref(d_prime), std::ref(covariance), std::ref(negative), std::ref(number));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(this->ana.running==true)
         update_analysis();
@@ -143,7 +195,7 @@ int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStanda
     if(this->ana.error==1)
         return 1;
 
-    if(images[0].cols*images[0].rows*images[0].channels()<=1024){
+    if(this->org_images[0].cols*this->org_images[0].rows*this->org_images[0].channels()<=1024){
         this->max_progreso=number.size()*(means[0].cols+std[0].cols+d_prime.size()*d_prime[0].size()+covariance[0].rows*covariance[0].cols);
     }
     else
@@ -167,7 +219,7 @@ int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStanda
         Num_Datos->appendRow(Num);
         Lab->appendRow(Num_Datos);
         QStandardItem *Dimensiones = new QStandardItem(QString("Dimensions"));
-        QStandardItem *Dim = new QStandardItem(QString("%1").arg(images.size()));
+        QStandardItem *Dim = new QStandardItem(QString("%1").arg(this->org_images.size()));
         Dimensiones->appendRow(Dim);
         Lab->appendRow(Dimensiones);
         QStandardItem *Medias = new QStandardItem(QString("Mean"));
@@ -218,7 +270,7 @@ int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStanda
             }
         }
         Lab->appendRow(DPrime);
-        if(images[0].cols*images[0].rows*images[0].channels()<=1024){
+        if(this->org_images[0].cols*this->org_images[0].rows*this->org_images[0].channels()<=1024){
             QStandardItem *Cov = new QStandardItem(QString("Covariance"));
             for(int j=0; j<covariance[i].rows; j++){
                 stringstream linea_covarianza;
@@ -239,12 +291,12 @@ int MLT::Running::analyse_data(vector<Mat> images, vector<float> labels, QStanda
     }
 }
 
-int MLT::Running::analyse_result(vector<float> labels, vector<float> results, QStandardItemModel *model){
+int MLT::Running::analyse_result(QStandardItemModel *model){
     Mat confusion;
     float error;
     vector<Analisis::Ratios_data> rates;
 
-    std::thread thrd(&MLT::Analisis::Confusion_Ratios,&ana, labels, results, std::ref(confusion),std::ref(error), std::ref(rates));
+    std::thread thrd(&MLT::Analisis::Confusion_Ratios,&ana, this->org_labels, this->result_labels, std::ref(confusion),std::ref(error), std::ref(rates));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(this->ana.running==true)
         update_analysis();
@@ -259,7 +311,7 @@ int MLT::Running::analyse_result(vector<float> labels, vector<float> results, QS
 
     Auxiliares aux;
     bool negativa;
-    int num=aux.numero_etiquetas(labels,negativa);
+    int num=aux.numero_etiquetas(this->result_labels,negativa);
     this->max_progreso=num;
 
     QStandardItem *ER= new QStandardItem(QString("Error"));
@@ -381,37 +433,59 @@ int MLT::Running::analyse_result(vector<float> labels, vector<float> results, QS
     QApplication::restoreOverrideCursor();
 }
 
-int MLT::Running::clustering(vector<Mat> images, int type, int k, int repetitions, float max_dist, float cell_size, vector<float> &labels){
+int MLT::Running::clustering(string ref,int type, int k, int repetitions, float max_dist, float cell_size){
     Clustering clus;
     Mat centers;
-    labels.clear();
+    this->result_labels.clear();
     int er=0;
     std::thread thrd;
     if(type==1)
-        thrd=std::thread(&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_RANDOM_CENTERS);
+        thrd=std::thread(&MLT::Clustering::K_mean,&clus, this->org_images,k,std::ref(this->result_labels),std::ref(centers),repetitions,KMEANS_RANDOM_CENTERS);
     else if(type==2)
-        thrd=std::thread (&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_PP_CENTERS);
+        thrd=std::thread (&MLT::Clustering::K_mean,&clus, this->org_images,k,std::ref(this->result_labels),std::ref(centers),repetitions,KMEANS_PP_CENTERS);
     else if(type==3)
-        thrd=std::thread (&MLT::Clustering::Distancias_Encadenadas,&clus, images,max_dist,std::ref(labels),std::ref(centers));
+        thrd=std::thread (&MLT::Clustering::Distancias_Encadenadas,&clus, this->org_images,max_dist,std::ref(this->result_labels),std::ref(centers));
     else if(type==4)
-        thrd=std::thread (&MLT::Clustering::Min_Max,&clus, images,max_dist,std::ref(labels),std::ref(centers));
+        thrd=std::thread (&MLT::Clustering::Min_Max,&clus, this->org_images,max_dist,std::ref(this->result_labels),std::ref(centers));
     else if(type==5)
-        thrd=std::thread (&MLT::Clustering::Histograma,&clus, images,cell_size,std::ref(labels),std::ref(centers));
+        thrd=std::thread (&MLT::Clustering::Histograma,&clus, this->org_images,cell_size,std::ref(this->result_labels),std::ref(centers));
     else if(type==6)
-        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_SPHERICAL);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, this->org_images,std::ref(this->result_labels),std::ref(centers),k,ml::EM::COV_MAT_SPHERICAL);
     else if(type==7)
-        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_DIAGONAL);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, this->org_images,std::ref(this->result_labels),std::ref(centers),k,ml::EM::COV_MAT_DIAGONAL);
     else if(type==8)
-        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_GENERIC);
+        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, this->org_images,std::ref(this->result_labels),std::ref(centers),k,ml::EM::COV_MAT_GENERIC);
 
 
     thrd.join();
 
     if(clus.error==1)
         return 1;
+
+    this->result_images.clear();
+    for(int i=0; i<this->org_images.size(); i++){
+        this->result_images.push_back(this->org_images[i]);
+    }
+    this->result_ref=ref;
+    this->result_info.Tipo_Datos=this->org_info.Tipo_Datos;
+    this->result_info.Num_Datos=this->org_info.Num_Datos;
+    this->result_info.Tam_X=this->org_info.Tam_X;
+    this->result_info.Tam_Y=this->org_info.Tam_Y;
+    this->result_info.Tam_Orig_X=this->org_info.Tam_Orig_X;
+    this->result_info.Tam_Orig_Y=this->org_info.Tam_Orig_Y;
+    this->result_info.si_lda=this->org_info.si_lda;
+    this->result_info.si_pca=this->org_info.si_pca;
+    this->result_info.si_dist=this->org_info.si_dist;
+    this->result_info.si_d_prime=this->org_info.si_d_prime;
+    this->org_info.LDA.copyTo(this->result_info.LDA);
+    this->org_info.PCA.copyTo(this->result_info.PCA);
+    this->org_info.DS.copyTo(this->result_info.DS);
+    this->org_info.D_PRIME.copyTo(this->result_info.D_PRIME);
+
+    return 0;
 }
 
-int MLT::Running::dimensionality(string ref, vector<Mat> images, vector<float> labels, int size_reduc, int type, vector<Mat> &data, Generacion::Info_Datos &info){
+int MLT::Running::dimensionality(string ref, int size_reduc, int type){
     Dimensionalidad::Reducciones reduc;
     reduc.tam_reduc=size_reduc;
 
@@ -424,42 +498,84 @@ int MLT::Running::dimensionality(string ref, vector<Mat> images, vector<float> l
     else if(type==D_PRIME_DIM)
         reduc.si_d_prime=true;
     Dimensionalidad dim(ref);
-    std::thread  thrd=std::thread(&MLT::Dimensionalidad::Reducir,&dim, images, std::ref(data), labels, reduc, std::ref(info), this->save_other);
-
-
+    std::thread  thrd=std::thread(&MLT::Dimensionalidad::Reducir,&dim, this->org_images, std::ref(this->result_images), this->org_labels, reduc, std::ref(this->result_info), this->save_other);
 
     thrd.join();
 
     if(this->gen.error==1)
         return 1;
+
+    this->result_labels.clear();
+    for(int i=0; i<this->org_labels.size(); i++){
+        this->result_labels.push_back(this->org_labels[i]);
+    }
+    this->result_info.Tipo_Datos=this->org_info.Tipo_Datos;
+    this->result_info.Num_Datos=this->org_info.Num_Datos;
+    this->result_info.Tam_X=this->org_info.Tam_X;
+    this->result_info.Tam_Y=this->org_info.Tam_Y;
+    this->result_info.Tam_Orig_X=this->org_info.Tam_Orig_X;
+    this->result_info.Tam_Orig_Y=this->org_info.Tam_Orig_Y;
+    this->result_info.si_lda=this->org_info.si_lda;
+    this->result_info.si_pca=this->org_info.si_pca;
+    this->result_info.si_dist=this->org_info.si_dist;
+    this->result_info.si_d_prime=this->org_info.si_d_prime;
+    this->org_info.LDA.copyTo(this->result_info.LDA);
+    this->org_info.PCA.copyTo(this->result_info.PCA);
+    this->org_info.DS.copyTo(this->result_info.DS);
+    this->org_info.D_PRIME.copyTo(this->result_info.D_PRIME);
+
+    return 0;
 }
 
-//int MLT::Running::dimension_cuality(vector<Mat> images, vector<float> labels, int size_reduc, int type){
-//    Clustering clus;
-//    Mat centers;
-//    labels.clear();
-//    int er=0;
-//    std::thread thrd;
-//    if(type==1)
-//        thrd=std::thread(&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_RANDOM_CENTERS);
-//    else if(type==2)
-//        thrd=std::thread (&MLT::Clustering::K_mean,&clus, images,k,std::ref(labels),std::ref(centers),repetitions,KMEANS_PP_CENTERS);
-//    else if(type==3)
-//        thrd=std::thread (&MLT::Clustering::Distancias_Encadenadas,&clus, images,max_dist,std::ref(labels),std::ref(centers));
-//    else if(type==4)
-//        thrd=std::thread (&MLT::Clustering::Min_Max,&clus, images,max_dist,std::ref(labels),std::ref(centers));
-//    else if(type==5)
-//        thrd=std::thread (&MLT::Clustering::Histograma,&clus, images,cell_size,std::ref(labels),std::ref(centers));
-//    else if(type==6)
-//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_SPHERICAL);
-//    else if(type==7)
-//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_DIAGONAL);
-//    else if(type==8)
-//        thrd=std::thread (&MLT::Clustering::EXP_MAX,&clus, images,std::ref(labels),std::ref(centers),k,ml::EM::COV_MAT_GENERIC);
+int MLT::Running::dimension_cuality(string ref, int size_reduc, int type_reduc, int type_measure, string &result){
+    int e=0;
+    if(this->org_images.empty())
+        return 1;
+    if(this->org_labels.empty())
+        return 1;
 
+    Representacion rep;
+    Dimensionalidad dim(ref);
+    Mat separability,accumulative;
+    int best_dim;
+    Dimensionalidad::Reducciones reduc;
+    reduc.tam_reduc=size_reduc;
 
-//    thrd.join();
+    std::thread thrd;
+    if(type_measure==0)
+        thrd=std::thread(&MLT::Dimensionalidad::Calidad_dimensiones_distancia,&dim, this->org_images,this->org_labels,type_reduc,size_reduc,std::ref(separability),std::ref(accumulative),std::ref(best_dim));
 
-//    if(this->gen.error==1)
-//        return 1;
-//}
+    else if(type_measure==1)
+        thrd=std::thread(&MLT::Dimensionalidad::Calidad_dimensiones_d_prime,&dim, this->org_images,this->org_labels,type_reduc,size_reduc,std::ref(separability),std::ref(accumulative),std::ref(best_dim));
+
+    thrd.join();
+
+    stringstream txt;
+    txt<<"INFO: The optimum number of dimensions is "<<best_dim;
+    result=txt.str();
+
+    vector<float> graphic;
+    for(int i=0; i<separability.rows; i++)
+        graphic.push_back(1.0);
+    for(int i=0; i<accumulative.rows; i++)
+        graphic.push_back(2.0);
+    vector<Scalar> colors;
+    colors.push_back(Scalar(0,0,255));
+    colors.push_back(Scalar(0,255,0));
+
+    Mat sep=Mat::zeros(separability.rows+accumulative.rows,2,CV_32F);
+    for(int i=0; i<separability.rows; i++)
+        separability.row(i).copyTo(sep.row(i));
+    for(int i=1; i<accumulative.rows+1; i++)
+        accumulative.row(i-1).copyTo(sep.row(separability.rows-1+i));
+    Mat most=Mat::zeros(150,400,CV_8UC3);
+    most=most+Scalar(255,255,255);
+    String texto="SEPARABILITY";
+    putText(most,texto,Point(10,50),1,1.5,colors[0],2);
+    texto="ACCUMULATIVE SEPARABILITY";
+    putText(most,texto,Point(10,100),1,1.5,colors[1],2);
+    imshow("LEGEND",most);
+    rep.Continuous_data_represent("DIMENSION QUALITY "+this->org_ref, sep, graphic, colors);
+
+    return 0;
+}

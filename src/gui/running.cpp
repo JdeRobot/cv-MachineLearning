@@ -73,10 +73,12 @@ int MLT::Running::load_dataset(string path){
     return 0;
 }
 
-int MLT::Running::synthetic_data(string ref, int num_clases, int num_data_clase, int vector_size, float ancho, float separacion_clases){
+int MLT::Running::synthetic_data(string ref, int num_clases, int num_data_clase, int size_x, int size_y, float ancho, float separacion_clases){
     Size size_img;
-    size_img.width=vector_size;
-    size_img.height=1;
+    size_img.width=size_x;
+    size_img.height=size_y;
+    if(size_img.height>1)
+        size_img.height=1;
 
 
     this->base_progreso=1;
@@ -509,6 +511,7 @@ int MLT::Running::dimensionality(string ref, int size_reduc, int type){
     for(int i=0; i<this->org_labels.size(); i++){
         this->result_labels.push_back(this->org_labels[i]);
     }
+    this->result_ref=ref;
     this->result_info.Tipo_Datos=this->org_info.Tipo_Datos;
     this->result_info.Num_Datos=this->org_info.Num_Datos;
     this->result_info.Tam_X=this->org_info.Tam_X;
@@ -578,4 +581,182 @@ int MLT::Running::dimension_cuality(string ref, int size_reduc, int type_reduc, 
     rep.Continuous_data_represent("DIMENSION QUALITY "+this->org_ref, sep, graphic, colors);
 
     return 0;
+}
+
+int MLT::Running::generate_data(string ref, string input_directory, int type, int scale_x, int scale_y, bool square, int number){
+    this->base_progreso=1;
+    this->max_progreso=100;
+
+    cv::Size2i scale=cv::Size2i(scale_x,scale_y);
+    std::thread thrd;
+    if(type==0){
+        thrd=std::thread(&MLT::Generacion::Datos_Imagenes,&this->gen, ref, input_directory,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==1){
+        thrd=std::thread(&MLT::Generacion::Etiquetar,&this->gen, ref, input_directory,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==2){
+        thrd=std::thread(&MLT::Generacion::Recortar_Etiquetar_imagenes,&this->gen, ref, input_directory,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==3){
+        cv::VideoCapture cap(input_directory);
+        thrd=std::thread(&MLT::Generacion::Recortar_Etiquetar_video,&this->gen, ref, cap,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==4){
+        thrd=std::thread(&MLT::Generacion::Autonegativos,&this->gen, ref, input_directory, scale, number,std::ref(this->org_images),std::ref(this->org_labels),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==5){
+        cv::VideoCapture cap(input_directory);
+        thrd=std::thread(&MLT::Generacion::Autopositivos,&this->gen, ref, cap,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+    else if(type==6){
+        cv::VideoCapture cap(input_directory);
+        thrd=std::thread(&MLT::Generacion::Autogeneracion,&this->gen, ref, cap, number, square, scale, std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(this->gen.running==true)
+        update_gen();
+
+    thrd.join();
+
+    this->org_ref=ref;
+}
+
+int MLT::Running::Descriptors(string &ref, int descriptor, int size_x, int size_x){
+    if(descriptor>=0 && descriptor<=8){
+        Basic_Transformations basic(this->org_info,descriptor);
+        e=basic.Extract(this->org_images,this->result_images);
+        if(e==1)
+            return 1;
+
+        if(descriptor==0)
+            this->result_ref=this->ref+"_RGB";
+
+        else if(ui->Tipo_Descrip->currentIndex()==2)
+            this->result_ref=this->ref+"_GRAY";
+        else if(ui->Tipo_Descrip->currentIndex()==3)
+            this->result_ref=this->ref+"_HSV";
+        else if(ui->Tipo_Descrip->currentIndex()==4)
+            this->result_ref=this->ref+"_H";
+        else if(ui->Tipo_Descrip->currentIndex()==5)
+            this->result_ref=this->ref+"_S";
+        else if(ui->Tipo_Descrip->currentIndex()==6)
+            this->result_ref=this->ref+"_V";
+        else if(ui->Tipo_Descrip->currentIndex()==7)
+            this->result_ref=this->ref+"_THRESHOLD";
+        else if(ui->Tipo_Descrip->currentIndex()==8)
+            this->result_ref=this->ref+"_CANNY";
+        else if(ui->Tipo_Descrip->currentIndex()==9)
+            this->result_ref=this->ref+"_SOBEL";
+    }
+    else if(descriptor==9){
+        cv::Size2i size=cv::Size21(size_x,size_y);
+        if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
+            return 1;
+        }
+        HOG H(Win_Size,Block_Stride, Win_Sigma,Threshold_L2hys, Gamma_Correction, Nlevels);
+        e=H.Extract(IMAGENES,descriptores);
+        if(descriptores.size()!=IMAGENES.size()){
+            QMessageBox msgBox;
+            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
+            msgBox.exec();
+        }
+        this->result_ref=this->ref+"_HOG";
+        ui->progress_generar->setValue(50);
+        pos_barra=50;
+    }
+    else if(ui->Tipo_Descrip->currentIndex()==11){
+        Puntos_Caracteristicos des(Tipo_Des,Tipo_Ext,Parametro);
+        e=des.Extract(IMAGENES,descriptores);
+        if(descriptores.size()!=IMAGENES.size()){
+            QMessageBox msgBox;
+            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
+            msgBox.exec();
+        }
+        this->result_ref=this->ref+"_PC";
+        ui->progress_generar->setValue(50);
+        pos_barra=50;
+    }
+    else if(ui->Tipo_Descrip->currentIndex()==12){
+        Basic_Transformations basic(info.Tipo_Datos,COLOR_PREDOMINANTE);
+        e=basic.Extract(IMAGENES,descriptores);
+        if(descriptores.size()!=IMAGENES.size()){
+            QMessageBox msgBox;
+            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
+            msgBox.exec();
+        }
+        this->result_ref=this->ref+"_COLOR_PREDOMINANTE";
+        ui->progress_generar->setValue(50);
+        pos_barra=50;
+    }
+    else{
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: Seleccione un tipo de descriptor");
+        msgBox.exec();
+        return;
+    }
+    if(e==1){
+        QMessageBox msgBox;
+        msgBox.setText("ERROR: No se han podido generar los descriptores");
+        msgBox.exec();
+        ui->progress_Clasificar->setValue(100);
+        ui->progress_Clasificar->setValue(0);
+        ui->progress_generar->setValue(100);
+        ui->progress_generar->setValue(0);
+        ui->progress_Cargar->setValue(100);
+        ui->progress_Cargar->setValue(0);
+        ui->progress_Clus->setValue(100);
+        ui->progress_Clus->setValue(0);
+        ui->progress_Dimensionalidad->setValue(100);
+        ui->progress_Dimensionalidad->setValue(0);
+        return;
+    }
+    int pos_bar_tor;
+    for(uint zzz=0; zzz<ref.size(); zzz++){
+        if(ref[zzz]=='_')
+            pos_bar_tor=zzz;
+    }
+    string tip_dat;
+    for(uint zzz=pos_bar_tor+1; zzz<ref.size(); zzz++){
+        tip_dat=tip_dat+ref[zzz];
+    }
+    if(tip_dat=="RGB")
+        info.Tipo_Datos=RGB;
+    else if(tip_dat=="GRAY")
+        info.Tipo_Datos=GRAY;
+    else if(tip_dat=="HSV")
+        info.Tipo_Datos=HSV;
+    else if(tip_dat=="H")
+        info.Tipo_Datos=H_CHANNEL;
+    else if(tip_dat=="S")
+        info.Tipo_Datos=S_CHANNEL;
+    else if(tip_dat=="V")
+        info.Tipo_Datos=V_CHANNEL;
+    else if(tip_dat=="THRESHOLD")
+        info.Tipo_Datos=THRESHOLD;
+    else if(tip_dat=="CANNY")
+        info.Tipo_Datos=CANNY;
+    else if(tip_dat=="SOBEL")
+        info.Tipo_Datos=SOBEL;
+    else if(tip_dat=="HOG")
+        info.Tipo_Datos=HOG_DES;
+    else if(tip_dat=="PC")
+        info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
+    else if(tip_dat=="COLOR_PREDOMINANTE")
+        info.Tipo_Datos=COLOR_PREDOMINANTE;
+//                if(tip_dat=="FAC")
+//                    info.Tipo_Datos=3;
+    info.Tam_X=descriptores[0].cols;
+    info.Tam_Y=descriptores[0].rows;
+    gen.total_progreso=IMAGENES.size();
+    gen.progreso=0;
+    gen.base_progreso=pos_barra;
+    gen.max_progreso=20;
+    gen.window=ui;
+    pos_barra=70;
+    gen.Guardar_Datos(ref,descriptores,LABELS,info);
+    referencia=QString::fromStdString(ref);
+    Dat_Ref=ref;
+    ui->label_Datos->setText("Datos ref: "+referencia);
 }

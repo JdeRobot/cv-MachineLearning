@@ -994,7 +994,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     return 0;
 }
 
-int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
         this->error=1;
@@ -1324,7 +1324,7 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
     return 0;
 }
 
-int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
         this->error=1;
@@ -2620,7 +2620,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
 }
 
 
-int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save){
+int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save){
     if(num_recortes_imagen<1){
         cout<<"ERROR en Autonegativos: num_recortes_imagen es menor a 0";
         this->error=1;

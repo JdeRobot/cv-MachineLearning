@@ -39,7 +39,7 @@ namespace MLT {
     public:
         Running();
         int load_dataset(string path);
-        int synthetic_data(string ref, int num_classes, int num_data_class, int vector_size, float ancho, float separacion_clases);
+        int synthetic_data(string ref, int num_classes, int num_data_class, int size_x, int size_y, float ancho, float separacion_clases);
         int save(string ref);
         int join_data(string ref, string path);
         int plot_data(int type_plot, vector<int> dim);
@@ -49,6 +49,8 @@ namespace MLT {
         int clustering(string ref, int type, int k, int repetitions, float max_dist, float cell_size);
         int dimensionality(string ref, int size_reduc, int type);
         int dimension_cuality(string ref, int size_reduc, int type_reduc, int type_measure, string &result);
+        int generate_data(string ref, string input_directory, int type, int scale_x, int scale_y, bool square, int number);
+
 
 
         Ui::MainWindow *window;

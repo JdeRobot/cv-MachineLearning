@@ -52,7 +52,7 @@
      <item>
       <widget class="QTabWidget" name="Tipo_Herr2">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="vectors_tab">
         <attribute name="title">
@@ -1617,7 +1617,7 @@
              <double>0.100000000000000</double>
             </property>
            </widget>
-           <widget class="QLabel" name="i_label_frames">
+           <widget class="QLabel" name="i_label_negatives">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1627,7 +1627,7 @@
              </rect>
             </property>
             <property name="text">
-             <string>Frames</string>
+             <string>N Negatives</string>
             </property>
            </widget>
            <widget class="QLabel" name="i_label_maxnoise">
@@ -1695,7 +1695,7 @@
              <string>Max Rot Y</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="i_frames">
+           <widget class="QSpinBox" name="i_negatives">
             <property name="geometry">
              <rect>
               <x>170</x>

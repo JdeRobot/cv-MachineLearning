@@ -212,6 +212,10 @@ private slots:
 
     void on_i_tool_activated(int index);
 
+    void on_i_toolButton_clicked();
+
+    void on_i_run_datamanaging_clicked();
+
 private:
     void error_control(QString error);
 

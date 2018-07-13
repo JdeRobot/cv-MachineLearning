@@ -232,11 +232,12 @@ void MainWindow::on_v_run_datamanaging_clicked()
     else if(this->ui->v_tool->currentIndex()==2){
         int num_classes=this->ui->v_clases->value();
         int num_data_class=this->ui->v_dataperclass->value();
-        int vector_size=this->ui->v_vectordimension->value();
+        int scale_x=this->ui->v_vectordimension->value();
+        int scale_y=1;
         float width=this->ui->v_variance->value();
         float interclass=this->ui->v_interclassdistance->value();
 
-        er=this->run.synthetic_data(ref,num_classes,num_data_class,vector_size,width,interclass);
+        er=this->run.synthetic_data(ref,num_classes,num_data_class,scale_x,scale_y,width,interclass);
         if(er==1){
             error_control("ERROR: Data could not be created");
             return;
@@ -287,8 +288,7 @@ void MainWindow::on_v_run_datamanaging_clicked()
     this->ui->v_dimensionality_dimensions->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
     this->ui->v_plotting_dimension->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
 
-    this->ui->v_progress_datamanaging->setValue(100);
-    this->ui->v_progress_datamanaging->setValue(0);
+
 
 //            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
 //            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
@@ -303,22 +303,13 @@ void MainWindow::on_v_run_datamanaging_clicked()
 //            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
 //            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
 //            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
-//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
-//    this->Dat_Ref=ref;
+//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());;
     QString reference=QString::fromStdString(this->run.org_ref);
     this->ui->dataset_lab->setText("Dataset: "+reference);
     this->ui->v_progress_datamanaging->setValue(100);
     this->ui->v_progress_datamanaging->setValue(0);
-    //                this->ui->progress_Clasificar->setValue(100);
-    //                this->ui->progress_Clasificar->setValue(0);
-    //                this->ui->progress_generar->setValue(100);
-    //                this->ui->progress_generar->setValue(0);
-    //                this->ui->progress_Cargar->setValue(100);
-    //                this->ui->progress_Cargar->setValue(0);
-    //                this->ui->progress_Clus->setValue(100);
-    //                this->ui->progress_Clus->setValue(0);
-    //                this->ui->progress_Dimensionalidad->setValue(100);
-    //                this-> ui->progress_Dimensionalidad->setValue(0);
+    this->ui->i_progress_datamanaging->setValue(100);
+    this->ui->i_progress_datamanaging->setValue(0);
 
     QApplication::restoreOverrideCursor();
 }
@@ -577,29 +568,6 @@ void MainWindow::on_v_dimensionality_quality_clicked()
 
 void MainWindow::on_i_tool_activated(int index)
 {
-//    if(index>1){
-//        this->ui->i_datatype->setEnabled(true);
-//        this->ui->i_config_tool->setEnabled(true);
-//        this->ui->i_dataname->setEnabled(true);
-//    }
-//    else{
-//        this->ui->i_datatype->setEnabled(false);
-//        this->ui->i_config_tool->setEnabled(false);
-//        this->ui->i_dataname->setEnabled(false);
-//    }
-//    if(index==2 || index==10 || index==11 || index==0){
-//        this->ui->i_datapath->setEnabled(false);
-//        this->ui->i_toolButton->setEnabled(false);
-//    }
-//    else{
-//        this->ui->i_datapath->setEnabled(true);
-//        this->ui->i_toolButton->setEnabled(true);
-//    }
-//    if(index==10)
-//        this->ui->i_datatype->setEnabled(true);
-//    else
-//        this->ui->i_datatype->setEnabled(false);
-
     if(index==0){
         this->ui->i_datatype->setEnabled(false);
         this->ui->i_datapath->setEnabled(false);
@@ -611,7 +579,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(false);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -624,7 +592,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(false);
         this->ui->i_variance->setEnabled(false);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -643,7 +611,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(false);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -656,7 +624,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(false);
         this->ui->i_variance->setEnabled(true);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -675,7 +643,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(true);
         this->ui->i_label_variance->setEnabled(true);
         this->ui->i_label_interclassdistance->setEnabled(true);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -688,7 +656,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(true);
         this->ui->i_variance->setEnabled(true);
         this->ui->i_interclassdistance->setEnabled(true);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -707,7 +675,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(true);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -720,7 +688,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(true);
         this->ui->i_variance->setEnabled(false);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -739,7 +707,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(true);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -752,7 +720,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(true);
         this->ui->i_variance->setEnabled(false);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -771,7 +739,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(false);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(false);
+        this->ui->i_label_negatives->setEnabled(false);
         this->ui->i_label_maxnoise->setEnabled(false);
         this->ui->i_label_maxblur->setEnabled(false);
         this->ui->i_label_maxrotx->setEnabled(false);
@@ -784,7 +752,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(false);
         this->ui->i_variance->setEnabled(false);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(false);
+        this->ui->i_negatives->setEnabled(false);
         this->ui->i_maxnoise->setEnabled(false);
         this->ui->i_maxblur->setEnabled(false);
         this->ui->i_maxrotx->setEnabled(false);
@@ -803,7 +771,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_size->setEnabled(false);
         this->ui->i_label_variance->setEnabled(false);
         this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_frames->setEnabled(true);
+        this->ui->i_label_negatives->setEnabled(true);
         this->ui->i_label_maxnoise->setEnabled(true);
         this->ui->i_label_maxblur->setEnabled(true);
         this->ui->i_label_maxrotx->setEnabled(true);
@@ -816,7 +784,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_size_y->setEnabled(false);
         this->ui->i_variance->setEnabled(false);
         this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_frames->setEnabled(true);
+        this->ui->i_negatives->setEnabled(true);
         this->ui->i_maxnoise->setEnabled(true);
         this->ui->i_maxblur->setEnabled(true);
         this->ui->i_maxrotx->setEnabled(true);
@@ -830,8 +798,197 @@ void MainWindow::on_i_tool_activated(int index)
     else
         this->ui->i_square->setEnabled(false);
     if(index==7 || index==9){
-        this->ui->i_label_frames->setEnabled(true);
-        this->ui->i_frames->setEnabled(true);
+        this->ui->i_label_negatives->setEnabled(true);
+        this->ui->i_negatives->setEnabled(true);
     }
 
+}
+
+void MainWindow::on_i_toolButton_clicked()
+{
+    QString filename= QFileDialog::getExistingDirectory(
+                this,
+                tr("CHOOSE FOLDER"),
+                QDir::currentPath()+"/../Data/Imagenes/");
+    this->ui->i_datapath->setText(filename);
+}
+
+void MainWindow::on_i_run_datamanaging_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(this->ui->i_tool->currentIndex()==0){
+        error_control("ERROR: Choose a tool");
+        return;
+    }
+    QString path=this->ui->i_datapath->displayText();
+    QString name=this->ui->i_dataname->displayText();
+    string ref=name.toStdString();
+
+    if(this->ui->i_tool->currentIndex()==2 || this->ui->i_tool->currentIndex()==3 || this->ui->i_tool->currentIndex()==4){
+        for(uint i=0; i<ref.size(); i++){
+            if(ref[i]==' '){
+                error_control("ERROR: Name must not have spaces");
+                return;
+            }
+        }
+    }
+
+    int er=0;
+        this->ui->i_progress_datamanaging->setValue(1);
+    if(this->ui->i_tool->currentIndex()==1){
+        er=this->run.load_dataset(path.toStdString());
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
+    }
+    else if(this->ui->i_tool->currentIndex()==2){
+        int num_classes=this->ui->i_clases->value();
+        int num_data_class=this->ui->i_dataperclass->value();
+        int scale_x=this->ui->i_size_x->value();
+        int scale_y=this->ui->i_size_y->value();
+        float width=this->ui->i_variance->value();
+        float interclass=this->ui->i_interclassdistance->value();
+
+        er=this->run.synthetic_data(ref,num_classes,num_data_class,scale_x,scale_y,width,interclass);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+    }
+    else if(this->ui->i_tool->currentIndex()>=3 && this->ui->i_tool->currentIndex()<=9){
+        int type=-1;
+        if(this->ui->i_tool->currentIndex()==3)
+            type=0;
+        else if(this->ui->i_tool->currentIndex()==4)
+            type=1;
+        else if(this->ui->i_tool->currentIndex()==5)
+            type=2;
+        else if(this->ui->i_tool->currentIndex()==6)
+            type=3;
+        else if(this->ui->i_tool->currentIndex()==7)
+            type=4;
+        else if(this->ui->i_tool->currentIndex()==8)
+            type=5;
+        else if(this->ui->i_tool->currentIndex()==9)
+            type=6;
+
+        int scale_x=this->ui->i_size_x->value();
+        int scale_y=this->ui->i_size_y->value();
+        er=this->run.generate_data(ref,path.toStdString(),type,scale_x,scale_y,this->ui->i_square->isChecked(),this->ui->i_negatives->value());
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+    }
+    else if(this->ui->i_tool->currentIndex()==10){
+
+//        er=this->run.save(ref);
+//        if(er==1){
+//            error_control("ERROR: Data could not be created");
+//            return;
+//        }
+//        path="../Data/Imagenes/"+name;
+//        er=this->run.load_dataset(path.toStdString());
+//        if(er==1){
+//            error_control("ERROR: The folder has not the expected structure");
+//            return;
+//        }
+
+//        if(er==2){
+//            error_control("ERROR: Data could not be loaded");
+//            return;
+//        }
+    }
+    else if(this->ui->i_tool->currentIndex()==11){
+//        er=this->run.join_data(ref,path.toStdString());
+//        if(er==1){
+//            error_control("ERROR: Data could not be created");
+//            return;
+//        }
+//        path="../Data/Imagenes/"+name;
+//        er=this->run.load_dataset(path.toStdString());
+//        if(er==1){
+//            error_control("ERROR: The folder has not the expected structure");
+//            return;
+//        }
+
+//        if(er==2){
+//            error_control("ERROR: Data could not be loaded");
+//            return;
+//        }
+    }
+    else if(this->ui->i_tool->currentIndex()==12){
+        er=this->run.save(ref);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+        path="../Data/Imagenes/"+name;
+        er=this->run.load_dataset(path.toStdString());
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
+    }
+    else if(this->ui->i_tool->currentIndex()==13){
+        er=this->run.join_data(ref,path.toStdString());
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+        path="../Data/Imagenes/"+name;
+        er=this->run.load_dataset(path.toStdString());
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
+
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
+    }
+
+
+    this->ui->v_plotting_x->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_y->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_dimension->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+
+    this->ui->v_dimensionality_dimensions->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+    this->ui->v_plotting_dimension->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
+
+
+//            this->ui->Numero_Clases->setValue(aux.numero_etiquetas(LABELS,neg));
+//            this->ui->Dim_X_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dim_Y_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            this->ui->Dimension_4->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Num_dimensiones->setValue(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_3->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_X_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dim_Y_6->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_5->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Dimension_graf->setMaximum(IMAGENES[0].cols*IMAGENES[0].rows*IMAGENES[0].channels());
+//            ui->Tam_Folds->setValue(IMAGENES.size()/ui->Num_folds->value());
+    QString reference=QString::fromStdString(this->run.org_ref);
+    this->ui->dataset_lab->setText("Dataset: "+reference);
+    this->ui->v_progress_datamanaging->setValue(100);
+    this->ui->v_progress_datamanaging->setValue(0);
+    this->ui->i_progress_datamanaging->setValue(100);
+    this->ui->i_progress_datamanaging->setValue(0);
+
+    QApplication::restoreOverrideCursor();
 }

@@ -42,7 +42,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Distancias</string>
+      <string>Distance</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="Histograma">
@@ -55,7 +55,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Histograma</string>
+      <string>Histogram</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="KNN">
@@ -81,7 +81,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Bayesiano (GAUSS)</string>
+      <string>Bayesian (GAUSS)</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="Neuronal">
@@ -89,12 +89,12 @@
       <rect>
        <x>10</x>
        <y>200</y>
-       <width>115</width>
+       <width>171</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text">
-      <string>Neuronal</string>
+      <string>Neuronal Net</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="EM">
@@ -209,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>525</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

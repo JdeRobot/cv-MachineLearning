@@ -60,6 +60,8 @@ int MLT::Running::load_dataset(string path){
 
     this->base_progreso=1;
     this->max_progreso=100;
+    this->gen.progreso=0;
+
     std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,input_directory,std::ref(this->org_images),std::ref(this->org_labels),std::ref(this->org_info));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(gen.running==true)
@@ -83,6 +85,7 @@ int MLT::Running::synthetic_data(string ref, int num_clases, int num_data_clase,
 
     this->base_progreso=1;
     this->max_progreso=100;
+    this->gen.progreso=0;
 
     std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -115,6 +118,7 @@ int MLT::Running::save(string ref){
 int MLT::Running::join_data(string ref, string path){
     this->base_progreso=1;
     this->max_progreso=100;
+    this->gen.progreso=0;
 
     std::thread thrd(&MLT::Generacion::Juntar_Recortes,&gen, ref,path);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -623,140 +627,184 @@ int MLT::Running::generate_data(string ref, string input_directory, int type, in
     this->org_ref=ref;
 }
 
-int MLT::Running::Descriptors(string &ref, int descriptor, int size_x, int size_x){
-    if(descriptor>=0 && descriptor<=8){
-        Basic_Transformations basic(this->org_info,descriptor);
-        e=basic.Extract(this->org_images,this->result_images);
-        if(e==1)
-            return 1;
+//int MLT::Running::descriptors(string &ref, int descriptor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels){
+//    if(descriptor>=0 && descriptor<=9){
+//        Basic_Transformations basic(this->org_info.Tipo_Datos,descriptor);
+//        int e=basic.Extract(this->org_images,this->result_images);
+//        if(e==1)
+//            return 1;
 
-        if(descriptor==0)
-            this->result_ref=this->ref+"_RGB";
+//        if(descriptor==0)
+//            this->result_ref=this->org_ref+"_RGB";
+//        else if(descriptor==1)
+//            this->result_ref=this->org_ref+"_GRAY";
+//        else if(descriptor==2)
+//            this->result_ref=this->org_ref+"_HSV";
+//        else if(descriptor==3)
+//            this->result_ref=this->org_ref+"_H";
+//        else if(descriptor==4)
+//            this->result_ref=this->org_ref+"_S";
+//        else if(descriptor==5)
+//            this->result_ref=this->org_ref+"_V";
+//        else if(descriptor==6)
+//            this->result_ref=this->org_ref+"_THRESHOLD";
+//        else if(descriptor==7)
+//            this->result_ref=this->org_ref+"_CANNY";
+//        else if(descriptor==8)
+//            this->result_ref=this->org_ref+"_SOBEL";
+//        else if(descriptor==9)
+//            this->result_ref=this->org_ref+"_PREDOMINANT_COLOR";
 
-        else if(ui->Tipo_Descrip->currentIndex()==2)
-            this->result_ref=this->ref+"_GRAY";
-        else if(ui->Tipo_Descrip->currentIndex()==3)
-            this->result_ref=this->ref+"_HSV";
-        else if(ui->Tipo_Descrip->currentIndex()==4)
-            this->result_ref=this->ref+"_H";
-        else if(ui->Tipo_Descrip->currentIndex()==5)
-            this->result_ref=this->ref+"_S";
-        else if(ui->Tipo_Descrip->currentIndex()==6)
-            this->result_ref=this->ref+"_V";
-        else if(ui->Tipo_Descrip->currentIndex()==7)
-            this->result_ref=this->ref+"_THRESHOLD";
-        else if(ui->Tipo_Descrip->currentIndex()==8)
-            this->result_ref=this->ref+"_CANNY";
-        else if(ui->Tipo_Descrip->currentIndex()==9)
-            this->result_ref=this->ref+"_SOBEL";
-    }
-    else if(descriptor==9){
-        cv::Size2i size=cv::Size21(size_x,size_y);
-        if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
-            return 1;
-        }
-        HOG H(Win_Size,Block_Stride, Win_Sigma,Threshold_L2hys, Gamma_Correction, Nlevels);
-        e=H.Extract(IMAGENES,descriptores);
-        if(descriptores.size()!=IMAGENES.size()){
-            QMessageBox msgBox;
-            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
-            msgBox.exec();
-        }
-        this->result_ref=this->ref+"_HOG";
-        ui->progress_generar->setValue(50);
-        pos_barra=50;
-    }
-    else if(ui->Tipo_Descrip->currentIndex()==11){
-        Puntos_Caracteristicos des(Tipo_Des,Tipo_Ext,Parametro);
-        e=des.Extract(IMAGENES,descriptores);
-        if(descriptores.size()!=IMAGENES.size()){
-            QMessageBox msgBox;
-            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
-            msgBox.exec();
-        }
-        this->result_ref=this->ref+"_PC";
-        ui->progress_generar->setValue(50);
-        pos_barra=50;
-    }
-    else if(ui->Tipo_Descrip->currentIndex()==12){
-        Basic_Transformations basic(info.Tipo_Datos,COLOR_PREDOMINANTE);
-        e=basic.Extract(IMAGENES,descriptores);
-        if(descriptores.size()!=IMAGENES.size()){
-            QMessageBox msgBox;
-            msgBox.setText("WARNING: No se ha podido extraer descriptores de todas las imagenes");
-            msgBox.exec();
-        }
-        this->result_ref=this->ref+"_COLOR_PREDOMINANTE";
-        ui->progress_generar->setValue(50);
-        pos_barra=50;
-    }
-    else{
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: Seleccione un tipo de descriptor");
-        msgBox.exec();
-        return;
-    }
-    if(e==1){
-        QMessageBox msgBox;
-        msgBox.setText("ERROR: No se han podido generar los descriptores");
-        msgBox.exec();
-        ui->progress_Clasificar->setValue(100);
-        ui->progress_Clasificar->setValue(0);
-        ui->progress_generar->setValue(100);
-        ui->progress_generar->setValue(0);
-        ui->progress_Cargar->setValue(100);
-        ui->progress_Cargar->setValue(0);
-        ui->progress_Clus->setValue(100);
-        ui->progress_Clus->setValue(0);
-        ui->progress_Dimensionalidad->setValue(100);
-        ui->progress_Dimensionalidad->setValue(0);
-        return;
-    }
-    int pos_bar_tor;
-    for(uint zzz=0; zzz<ref.size(); zzz++){
-        if(ref[zzz]=='_')
-            pos_bar_tor=zzz;
-    }
-    string tip_dat;
-    for(uint zzz=pos_bar_tor+1; zzz<ref.size(); zzz++){
-        tip_dat=tip_dat+ref[zzz];
-    }
-    if(tip_dat=="RGB")
-        info.Tipo_Datos=RGB;
-    else if(tip_dat=="GRAY")
-        info.Tipo_Datos=GRAY;
-    else if(tip_dat=="HSV")
-        info.Tipo_Datos=HSV;
-    else if(tip_dat=="H")
-        info.Tipo_Datos=H_CHANNEL;
-    else if(tip_dat=="S")
-        info.Tipo_Datos=S_CHANNEL;
-    else if(tip_dat=="V")
-        info.Tipo_Datos=V_CHANNEL;
-    else if(tip_dat=="THRESHOLD")
-        info.Tipo_Datos=THRESHOLD;
-    else if(tip_dat=="CANNY")
-        info.Tipo_Datos=CANNY;
-    else if(tip_dat=="SOBEL")
-        info.Tipo_Datos=SOBEL;
-    else if(tip_dat=="HOG")
-        info.Tipo_Datos=HOG_DES;
-    else if(tip_dat=="PC")
-        info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
-    else if(tip_dat=="COLOR_PREDOMINANTE")
-        info.Tipo_Datos=COLOR_PREDOMINANTE;
-//                if(tip_dat=="FAC")
-//                    info.Tipo_Datos=3;
-    info.Tam_X=descriptores[0].cols;
-    info.Tam_Y=descriptores[0].rows;
-    gen.total_progreso=IMAGENES.size();
-    gen.progreso=0;
-    gen.base_progreso=pos_barra;
-    gen.max_progreso=20;
-    gen.window=ui;
-    pos_barra=70;
-    gen.Guardar_Datos(ref,descriptores,LABELS,info);
-    referencia=QString::fromStdString(ref);
-    Dat_Ref=ref;
-    ui->label_Datos->setText("Datos ref: "+referencia);
-}
+//    }
+//    else if(descriptor==10){
+//        cv::Size size=cv::Size2i(size_x,size_y);
+//        cv::Size block=cv::Size(block_x,block_y);
+//        if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
+//            return 1;
+//        }
+//        HOG H(size,block, sigma,threshold, gamma, n_levels);
+//        int e=H.Extract(this->org_images,this->result_images);
+//        if(this->result_images.size()!=this->org_images.size() || e==1)
+//            return 1;
+//        this->result_ref=this->org_ref+"_HOG";
+//    }
+//    else if(descriptor==11){
+//        descriptor=descriptor-9;
+//        string descrip,extractor;
+//        float parameter;
+//        Puntos_Caracteristicos des(descrip,extractor,parameter);
+//        int e=des.Extract(this->org_images,this->result_images);
+//        if(this->result_images.size()!=this->org_images.size() || e==1)
+//            return 1;
+//        this->result_ref=this->org_ref+"_PC";
+//    }
+//    else
+//        return 1;
+
+
+//    int pos_bar_tor;
+//    for(uint pos=0; pos<this->result_ref.size(); pos++){
+//        if(result_ref[pos]=='_')
+//            pos_bar_tor=pos;
+//    }
+//    string tip_dat;
+//    for(uint pos=pos_bar_tor+1; pos<result_ref.size(); pos++){
+//        tip_dat=tip_dat+result_ref[pos];
+//    }
+//    if(tip_dat=="RGB")
+//        this->result_info.Tipo_Datos=RGB;
+//    else if(tip_dat=="GRAY")
+//        this->result_info.Tipo_Datos=GRAY;
+//    else if(tip_dat=="HSV")
+//        this->result_info.Tipo_Datos=HSV;
+//    else if(tip_dat=="H")
+//        this->result_info.Tipo_Datos=H_CHANNEL;
+//    else if(tip_dat=="S")
+//        this->result_info.Tipo_Datos=S_CHANNEL;
+//    else if(tip_dat=="V")
+//        this->result_info.Tipo_Datos=V_CHANNEL;
+//    else if(tip_dat=="THRESHOLD")
+//        this->result_info.Tipo_Datos=THRESHOLD;
+//    else if(tip_dat=="CANNY")
+//        this->result_info.Tipo_Datos=CANNY;
+//    else if(tip_dat=="SOBEL")
+//        this->result_info.Tipo_Datos=SOBEL;
+//    else if(tip_dat=="HOG")
+//        this->result_info.Tipo_Datos=HOG_DES;
+//    else if(tip_dat=="PC")
+//        this->result_info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
+//    else if(tip_dat=="PREDOMINANT_COLOR")
+//        this->result_info.Tipo_Datos=COLOR_PREDOMINANTE;
+////                if(tip_dat=="FAC")
+////                    info.Tipo_Datos=3;
+//    this->result_info.Tam_X=this->result_images[0].cols;
+//    this->result_info.Tam_Y=this->result_images[0].rows;
+//    ref=this->result_ref;
+//}
+
+//int MLT::Running::expand_dataset(string ref, string path, int num_clases, int num_data_clase, int size_x, int size_y, float ancho, float separacion_clases){
+
+
+
+
+//    vector<Mat> images;
+//    vector<float> labels;
+//    Generacion::Info_Datos info;
+//    int pos=0;
+//    for(uint i=0; i<path.size(); i++){
+//        if(path[i]=='/')
+//            pos=i;
+//    }
+//    std::string archivo_i;
+//    for(int i=0; i<pos+1; i++)
+//        archivo_i=archivo_i+Dir[i];
+//    archivo_i=archivo_i+"Info.xml";
+//    cv::FileStorage Archivo_i(archivo_i,CV_STORAGE_READ);
+//    if(!Archivo_i.isOpened())
+//        return 1;
+//    int num;
+//    Archivo_i["Num_Datos"]>>num;
+//    Archivo_i.release();
+//    this->gen.total_progreso=num;
+//    this->gen.progreso=0;
+//    this->base_progreso=0;
+//    this->max_progreso=30;
+
+//    std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,path,std::ref(images),std::ref(labels),std::ref(info));
+//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+//    while(this->gen.running==true)
+//        update_gen();
+
+//    thrd.join();
+
+//    if(this->gen.error==1)
+//        return 1;
+
+
+//    this->gen.total_progreso=Imagenes.size();
+//    this->gen.progreso=0;
+//    this->base_progreso=30;
+//    this->max_progreso=20;
+
+//    std::thread thrd(&MLT::Generacion::Synthethic_Data,&this->gen,ref,images,labels,this->result_images,this->result_labels,nframe,max_noise,max_blur,max_x,max_y,max_z,this->result_info,this->save_data);
+//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+//    while(this->gen.running==true)
+//        update_gen();
+
+//    thrd.join();
+
+//    e=gen.Synthethic_Data(ref,Imagenes,Lab,IMAGENES,LABELS,Num_frame,Max_Noise,Max_Blur,Max_X,Max_Y,Max_Z,info,save_data);
+
+
+
+
+
+
+
+
+
+//    Size size_img;
+//    size_img.width=size_x;
+//    size_img.height=size_y;
+//    if(size_img.height>1)
+//        size_img.height=1;
+
+
+//    this->base_progreso=1;
+//    this->max_progreso=100;
+
+
+//    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
+//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//    while(gen.running==true)
+//        update_gen();
+
+//    thrd.join();
+//    this->org_ref=ref;
+
+//    if(this->gen.error==1)
+//        return 1;
+
+//}

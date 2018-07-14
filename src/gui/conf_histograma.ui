@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -43,7 +43,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tamaño Celda</string>
+     <string>Cell size</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="Tam_Celda">
@@ -75,7 +75,7 @@
      <x>0</x>
      <y>0</y>
      <width>334</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

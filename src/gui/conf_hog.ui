@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -43,7 +43,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tamaño de ventana (X,Y)</string>
+     <string>Window Size (X,Y)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -56,7 +56,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Salto de bloque (X,Y)</string>
+     <string>Block Stride (X,Y)</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -95,7 +95,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Corrección gamma</string>
+     <string>Gamma Correction</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -108,7 +108,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Número de niveles</string>
+     <string>Number Levels</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="Sigma">
@@ -264,7 +264,7 @@
      <x>0</x>
      <y>0</y>
      <width>501</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

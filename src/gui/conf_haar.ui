@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Positivos</string>
+     <string>Positive</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -43,7 +43,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Negativos</string>
+     <string>Negative</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="Positivos">
@@ -94,7 +94,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Modo</string>
+     <string>Mode</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -107,7 +107,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Etapas</string>
+     <string>Stages</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="Etapas">
@@ -437,7 +437,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="Entrenar">
@@ -450,7 +450,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Sólo generar sistema</string>
+     <string>Generate model only</string>
     </property>
    </widget>
   </widget>
@@ -460,7 +460,7 @@
      <x>0</x>
      <y>0</y>
      <width>705</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

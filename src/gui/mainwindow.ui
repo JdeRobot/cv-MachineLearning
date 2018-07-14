@@ -1181,6 +1181,9 @@
            <string>Data Managing</string>
           </attribute>
           <widget class="QComboBox" name="i_tool">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -1275,40 +1278,11 @@
            <property name="title">
             <string>Data Type</string>
            </property>
-           <widget class="QRadioButton" name="Bot_Img_2">
+           <widget class="QToolButton" name="i_datamanaging_descriptortool">
             <property name="geometry">
              <rect>
-              <x>10</x>
+              <x>250</x>
               <y>30</y>
-              <width>116</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Images</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-           <widget class="QRadioButton" name="Bot_Descriptor_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>70</y>
-              <width>111</width>
-              <height>21</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Descriptor</string>
-            </property>
-           </widget>
-           <widget class="QToolButton" name="Config_Des">
-            <property name="geometry">
-             <rect>
-              <x>260</x>
-              <y>110</y>
               <width>23</width>
               <height>25</height>
              </rect>
@@ -1317,11 +1291,11 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QComboBox" name="Tipo_Descrip_2">
+           <widget class="QComboBox" name="i_datamanaging_descriptortype">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>110</y>
+              <x>0</x>
+              <y>30</y>
               <width>241</width>
               <height>27</height>
              </rect>
@@ -1821,7 +1795,7 @@
           <attribute name="title">
            <string>Plotting</string>
           </attribute>
-          <widget class="QGroupBox" name="groupBox_10">
+          <widget class="QGroupBox" name="i_plotting_selectdata">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -1833,7 +1807,7 @@
            <property name="title">
             <string>Select Data</string>
            </property>
-           <widget class="QRadioButton" name="radioButton_3">
+           <widget class="QRadioButton" name="i_plotting_dataset">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1845,8 +1819,11 @@
             <property name="text">
              <string>Dataset</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
-           <widget class="QRadioButton" name="radioButton_4">
+           <widget class="QRadioButton" name="i_plotting_result">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -1860,7 +1837,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QPushButton" name="Analizar_4">
+          <widget class="QPushButton" name="i_represent">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -1873,7 +1850,7 @@
             <string>Represent</string>
            </property>
           </widget>
-          <widget class="QLabel" name="label_47">
+          <widget class="QLabel" name="i_plotting_label_label">
            <property name="geometry">
             <rect>
              <x>30</x>
@@ -1886,7 +1863,7 @@
             <string>Label</string>
            </property>
           </widget>
-          <widget class="QSpinBox" name="Dim_X_3">
+          <widget class="QSpinBox" name="i_plotting_label">
            <property name="geometry">
             <rect>
              <x>170</x>
@@ -1904,10 +1881,13 @@
           </widget>
          </widget>
          <widget class="QWidget" name="i_detection">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
           <attribute name="title">
            <string>Detection</string>
           </attribute>
-          <widget class="QGroupBox" name="groupBox_17">
+          <widget class="QGroupBox" name="i_detection_configuration">
            <property name="geometry">
             <rect>
              <x>370</x>
@@ -1919,7 +1899,7 @@
            <property name="title">
             <string>Configuration</string>
            </property>
-           <widget class="QLabel" name="label_39">
+           <widget class="QLabel" name="i_detection_label_window">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1932,7 +1912,7 @@
              <string>Window Size (X,Y)</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Vent_X">
+           <widget class="QSpinBox" name="i_detection_windowx">
             <property name="geometry">
              <rect>
               <x>190</x>
@@ -1948,7 +1928,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Vent_Y">
+           <widget class="QSpinBox" name="i_detection_windowy">
             <property name="geometry">
              <rect>
               <x>280</x>
@@ -1964,7 +1944,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QLabel" name="label_40">
+           <widget class="QLabel" name="i_detection_label_jump">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1977,7 +1957,7 @@
              <string>Jump Scale</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Salto_3">
+           <widget class="QSpinBox" name="i_detection_jump">
             <property name="geometry">
              <rect>
               <x>190</x>
@@ -1993,7 +1973,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Rotacion">
+           <widget class="QSpinBox" name="i_detection_rotation">
             <property name="geometry">
              <rect>
               <x>190</x>
@@ -2006,7 +1986,7 @@
              <number>360</number>
             </property>
            </widget>
-           <widget class="QLabel" name="label_41">
+           <widget class="QLabel" name="i_detection_label_rotation">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2031,7 +2011,7 @@
             <property name="title">
              <string/>
             </property>
-            <widget class="QCheckBox" name="Solapamiento">
+            <widget class="QCheckBox" name="i_detection_overlap">
              <property name="geometry">
               <rect>
                <x>30</x>
@@ -2047,12 +2027,12 @@
               <bool>true</bool>
              </property>
             </widget>
-            <widget class="QCheckBox" name="Filtro_aislados">
+            <widget class="QCheckBox" name="i_detection_filteralone">
              <property name="geometry">
               <rect>
                <x>30</x>
                <y>90</y>
-               <width>141</width>
+               <width>161</width>
                <height>27</height>
               </rect>
              </property>
@@ -2063,7 +2043,7 @@
               <bool>true</bool>
              </property>
             </widget>
-            <widget class="QSpinBox" name="Rotacion_2">
+            <widget class="QSpinBox" name="i_detection_angle">
              <property name="geometry">
               <rect>
                <x>290</x>
@@ -2079,7 +2059,7 @@
               <number>360</number>
              </property>
             </widget>
-            <widget class="QLabel" name="label_42">
+            <widget class="QLabel" name="i_detection_label_angle">
              <property name="geometry">
               <rect>
                <x>210</x>
@@ -2092,7 +2072,7 @@
               <string>Angle</string>
              </property>
             </widget>
-            <widget class="QCheckBox" name="Postproceso">
+            <widget class="QCheckBox" name="i_detection_postprocess">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -2108,7 +2088,7 @@
               <bool>true</bool>
              </property>
             </widget>
-            <widget class="QDoubleSpinBox" name="Dist_cuadros">
+            <widget class="QDoubleSpinBox" name="i_detection_distance">
              <property name="geometry">
               <rect>
                <x>290</x>
@@ -2121,7 +2101,7 @@
               <double>999999.000000000000000</double>
              </property>
             </widget>
-            <widget class="QLabel" name="label_43">
+            <widget class="QLabel" name="i_detection_label_distance">
              <property name="geometry">
               <rect>
                <x>210</x>
@@ -2135,7 +2115,7 @@
              </property>
             </widget>
            </widget>
-           <widget class="QSpinBox" name="Escalas_2">
+           <widget class="QSpinBox" name="i_detection_pyramid">
             <property name="geometry">
              <rect>
               <x>190</x>
@@ -2151,7 +2131,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QLabel" name="label_48">
+           <widget class="QLabel" name="i_detection_label_pyramid">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2165,7 +2145,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="groupBox_19">
+          <widget class="QGroupBox" name="i_detectio_classifier">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -2177,7 +2157,7 @@
            <property name="title">
             <string>Classifier</string>
            </property>
-           <widget class="QToolButton" name="toolButton_19">
+           <widget class="QToolButton" name="i_detection_multiclassifier_tool">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -2190,7 +2170,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="Clasif_Cargado_4">
+           <widget class="QRadioButton" name="i_detection_loaded">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2206,7 +2186,7 @@
              <bool>true</bool>
             </property>
            </widget>
-           <widget class="QRadioButton" name="Multiclasif_4">
+           <widget class="QRadioButton" name="i_detection_multiclassifier">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2220,7 +2200,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="Tipo_Datos_3">
+          <widget class="QGroupBox" name="i_detection_datatype">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -2235,7 +2215,7 @@
            <property name="title">
             <string>Data Type</string>
            </property>
-           <widget class="QToolButton" name="Config_Des_3">
+           <widget class="QToolButton" name="i_detection_datatype_tool">
             <property name="geometry">
              <rect>
               <x>250</x>
@@ -2248,7 +2228,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QComboBox" name="Tipo_Descrip_3">
+           <widget class="QComboBox" name="i_detection_descriptor_type">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -2324,7 +2304,7 @@
             </item>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="groupBox_20">
+          <widget class="QGroupBox" name="i_detection_image">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -2336,7 +2316,7 @@
            <property name="title">
             <string>Image</string>
            </property>
-           <widget class="QToolButton" name="toolButton_busqueda">
+           <widget class="QToolButton" name="i_detection_file_tool">
             <property name="geometry">
              <rect>
               <x>290</x>
@@ -2349,7 +2329,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QLineEdit" name="Direccion_Carga_4">
+           <widget class="QLineEdit" name="i_detection_path">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -2362,7 +2342,7 @@
              <string>Image</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_44">
+           <widget class="QLabel" name="i_detection_label_nclasses">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2378,7 +2358,7 @@
              <string>N Classes</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Clases_aleatoria">
+           <widget class="QSpinBox" name="i_detection_nclasses">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2397,7 +2377,7 @@
              <number>999999</number>
             </property>
            </widget>
-           <widget class="QCheckBox" name="Aleatoria">
+           <widget class="QCheckBox" name="i_detection_random">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -2410,7 +2390,7 @@
              <string>Random Image</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_45">
+           <widget class="QLabel" name="i_detection_label_variance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2423,10 +2403,10 @@
              </rect>
             </property>
             <property name="text">
-             <string>Width</string>
+             <string>Variance</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_46">
+           <widget class="QLabel" name="i_detection_label_interclass">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2442,7 +2422,7 @@
              <string>Interclass Distance</string>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="Varianza_3">
+           <widget class="QDoubleSpinBox" name="i_detection_variance">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2461,7 +2441,7 @@
              <double>0.100000000000000</double>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="Separacion_3">
+           <widget class="QDoubleSpinBox" name="i_detectopm_interclass">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2481,7 +2461,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QGroupBox" name="groupBox_21">
+          <widget class="QGroupBox" name="i_detection_algorithm">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -2493,20 +2473,20 @@
            <property name="title">
             <string>Algorithm Type</string>
            </property>
-           <widget class="QRadioButton" name="radioTextura">
+           <widget class="QRadioButton" name="i_detection_segmentation">
             <property name="geometry">
              <rect>
               <x>20</x>
               <y>70</y>
-              <width>115</width>
+              <width>141</width>
               <height>27</height>
              </rect>
             </property>
             <property name="text">
-             <string>Texture</string>
+             <string>Segmentation</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="radioPosicion">
+           <widget class="QRadioButton" name="i_detection_position">
             <property name="geometry">
              <rect>
               <x>20</x>
@@ -2523,7 +2503,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QPushButton" name="Iniciar_9">
+          <widget class="QPushButton" name="i_detection_run">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -2559,7 +2539,7 @@
           <attribute name="title">
            <string>Classifiers</string>
           </attribute>
-          <widget class="QGroupBox" name="groupBox_22">
+          <widget class="QGroupBox" name="m_classifier_configuration">
            <property name="geometry">
             <rect>
              <x>310</x>
@@ -2571,7 +2551,7 @@
            <property name="title">
             <string>Configuration</string>
            </property>
-           <widget class="QToolButton" name="toolButton_12">
+           <widget class="QToolButton" name="m_classifier_config_multitool">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -2584,7 +2564,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QLineEdit" name="Nombre_Clasif_6">
+           <widget class="QLineEdit" name="m_classifier_configname">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2597,7 +2577,7 @@
              <string>Results Name</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="Clasif_Cargado_5">
+           <widget class="QRadioButton" name="m_classifier_config_loaded">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2613,7 +2593,7 @@
              <bool>true</bool>
             </property>
            </widget>
-           <widget class="QRadioButton" name="Multiclasif_5">
+           <widget class="QRadioButton" name="m_classifier_config_multi">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2626,7 +2606,7 @@
              <string>Multiclassifier</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="Iniciar_10">
+           <widget class="QPushButton" name="m_classifier_configclassify">
             <property name="geometry">
              <rect>
               <x>310</x>
@@ -2663,7 +2643,7 @@
             </rect>
            </property>
           </widget>
-          <widget class="QGroupBox" name="groupBox_23">
+          <widget class="QGroupBox" name="m_classifier_classifiertype">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -2675,7 +2655,7 @@
            <property name="title">
             <string>Classifier Type</string>
            </property>
-           <widget class="QToolButton" name="toolButton_16">
+           <widget class="QToolButton" name="m_classifier_typetool">
             <property name="geometry">
              <rect>
               <x>230</x>
@@ -2688,7 +2668,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="Iniciar_11">
+           <widget class="QPushButton" name="m_classifier_traoin">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -2701,7 +2681,7 @@
              <string>Train</string>
             </property>
            </widget>
-           <widget class="QComboBox" name="Tipo_Clasif_5">
+           <widget class="QComboBox" name="m_classifier_type">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -2777,7 +2757,7 @@
             </item>
            </widget>
           </widget>
-          <widget class="QLineEdit" name="Nombre_Clasif_7">
+          <widget class="QLineEdit" name="m_classifier_name">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -2808,7 +2788,7 @@
           <attribute name="title">
            <string>Optimize</string>
           </attribute>
-          <widget class="QRadioButton" name="Validation_3">
+          <widget class="QRadioButton" name="m_optimize_validation">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -2824,7 +2804,7 @@
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="QRadioButton" name="Validation2_3">
+          <widget class="QRadioButton" name="m_optimize_validation_multi">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -2835,19 +2815,6 @@
            </property>
            <property name="text">
             <string>Validation (Multiclassifier)</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="Ratios_Parametro_3">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>124</y>
-             <width>181</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Rates per parameter</string>
            </property>
           </widget>
           <widget class="QToolButton" name="toolButton_24">
@@ -2863,7 +2830,7 @@
             <string>...</string>
            </property>
           </widget>
-          <widget class="QGroupBox" name="groupBox_24">
+          <widget class="QGroupBox" name="m_optimize_configuration">
            <property name="geometry">
             <rect>
              <x>310</x>
@@ -2873,9 +2840,9 @@
             </rect>
            </property>
            <property name="title">
-            <string>Parameters</string>
+            <string>Configuration</string>
            </property>
-           <widget class="QComboBox" name="Tipo_Clasif_6">
+           <widget class="QComboBox" name="m_optimize_classifier">
             <property name="geometry">
              <rect>
               <x>0</x>
@@ -2940,7 +2907,7 @@
              </property>
             </item>
            </widget>
-           <widget class="QLabel" name="label_58">
+           <widget class="QLabel" name="m_optimize_label_validation">
             <property name="geometry">
              <rect>
               <x>230</x>
@@ -2953,7 +2920,7 @@
              <string>Validation %</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_59">
+           <widget class="QLabel" name="m_optimize_label_nfolds">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2966,10 +2933,10 @@
              </rect>
             </property>
             <property name="text">
-             <string>N Folders</string>
+             <string>N Folds</string>
             </property>
            </widget>
-           <widget class="QLabel" name="label_60">
+           <widget class="QLabel" name="m_optimize_label_foldsize">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -2982,10 +2949,10 @@
              </rect>
             </property>
             <property name="text">
-             <string>Folder Size</string>
+             <string>Fold Size</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="Parametros_3">
+           <widget class="QPushButton" name="m_optimize_parameters">
             <property name="geometry">
              <rect>
               <x>450</x>
@@ -2998,7 +2965,7 @@
              <string>Parameters</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="Salto_4">
+           <widget class="QPushButton" name="m_optimize_leap">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -3014,7 +2981,7 @@
              <string>Leap</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="Parada_3">
+           <widget class="QPushButton" name="m_optimize_stop">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -3049,7 +3016,7 @@
              <number>10</number>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Num_folds_3">
+           <widget class="QSpinBox" name="m_optimize_nfolds">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -3071,7 +3038,7 @@
              <number>5</number>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Tam_Folds_3">
+           <widget class="QSpinBox" name="m_optimize_foldsize">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -3094,7 +3061,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QPushButton" name="Iniciar_12">
+          <widget class="QPushButton" name="m_optimize_run">
            <property name="geometry">
             <rect>
              <x>1020</x>
@@ -3107,7 +3074,7 @@
             <string>Run</string>
            </property>
           </widget>
-          <widget class="QRadioButton" name="SC_Validation_3">
+          <widget class="QRadioButton" name="m_optimize_supercross">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -3133,20 +3100,7 @@
             <string>...</string>
            </property>
           </widget>
-          <widget class="QToolButton" name="toolButton_25">
-           <property name="geometry">
-            <rect>
-             <x>210</x>
-             <y>124</y>
-             <width>25</width>
-             <height>30</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="C_Validation_3">
+          <widget class="QRadioButton" name="m_optimize_crossvalidation">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -3159,7 +3113,7 @@
             <string>Cross Validation</string>
            </property>
           </widget>
-          <widget class="QTextBrowser" name="Texto_Result_3">
+          <widget class="QTextBrowser" name="m_optimize_text">
            <property name="geometry">
             <rect>
              <x>0</x>

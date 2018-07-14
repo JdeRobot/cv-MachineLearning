@@ -569,6 +569,7 @@ void MainWindow::on_v_dimensionality_quality_clicked()
 void MainWindow::on_i_tool_activated(int index)
 {
     if(index==0){
+        this->ui->i_dataname->setEnabled(false);
         this->ui->i_datatype->setEnabled(false);
         this->ui->i_datapath->setEnabled(false);
         this->ui->i_toolButton->setEnabled(false);
@@ -601,7 +602,8 @@ void MainWindow::on_i_tool_activated(int index)
 
     }
     else if(index==1 || index==12 || index==13){
-        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_dataname->setEnabled(false);
+        this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(true);
         this->ui->i_toolButton->setEnabled(true);
         this->ui->i_config_tool->setEnabled(false);
@@ -633,7 +635,7 @@ void MainWindow::on_i_tool_activated(int index)
     }
     else if(index==2){
         this->ui->i_dataname->setEnabled(true);
-        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(false);
         this->ui->i_toolButton->setEnabled(false);
         this->ui->i_config_tool->setEnabled(true);
@@ -665,7 +667,7 @@ void MainWindow::on_i_tool_activated(int index)
     }
     else if(index==3){
         this->ui->i_dataname->setEnabled(false);
-        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(true);
         this->ui->i_toolButton->setEnabled(true);
         this->ui->i_config_tool->setEnabled(true);
@@ -697,7 +699,7 @@ void MainWindow::on_i_tool_activated(int index)
     }
     else if(index>=4 && index<=9){
         this->ui->i_dataname->setEnabled(false);
-        this->ui->i_datatype->setEnabled(false);
+        this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(true);
         this->ui->i_toolButton->setEnabled(true);
         this->ui->i_config_tool->setEnabled(true);
@@ -791,8 +793,6 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_maxroty->setEnabled(true);
         this->ui->i_maxrotz->setEnabled(true);
     }
-    if(index==12 || index==13)
-        this->ui->i_dataname->setEnabled(true);
     if(index==5 || index==6 || index==8 || index==9)
         this->ui->i_square->setEnabled(true);
     else
@@ -801,7 +801,18 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_label_negatives->setEnabled(true);
         this->ui->i_negatives->setEnabled(true);
     }
-
+    if(index==10){
+        this->ui->i_datamanaging_descriptortype->setEnabled(true);
+        this->ui->i_datamanaging_descriptortool->setEnabled(true);
+    }
+    else{
+        this->ui->i_datamanaging_descriptortype->setEnabled(false);
+        this->ui->i_datamanaging_descriptortool->setEnabled(false);
+    }
+    if(index==0)
+        this->ui->i_datatype->setEnabled(false);
+    else
+        this->ui->i_datatype->setEnabled(true);
 }
 
 void MainWindow::on_i_toolButton_clicked()
@@ -862,33 +873,33 @@ void MainWindow::on_i_run_datamanaging_clicked()
         }
     }
     else if(this->ui->i_tool->currentIndex()>=3 && this->ui->i_tool->currentIndex()<=9){
-        int type=-1;
-        if(this->ui->i_tool->currentIndex()==3)
-            type=0;
-        else if(this->ui->i_tool->currentIndex()==4)
-            type=1;
-        else if(this->ui->i_tool->currentIndex()==5)
-            type=2;
-        else if(this->ui->i_tool->currentIndex()==6)
-            type=3;
-        else if(this->ui->i_tool->currentIndex()==7)
-            type=4;
-        else if(this->ui->i_tool->currentIndex()==8)
-            type=5;
-        else if(this->ui->i_tool->currentIndex()==9)
-            type=6;
+//        int type=-1;
+//        if(this->ui->i_tool->currentIndex()==3)
+//            type=0;
+//        else if(this->ui->i_tool->currentIndex()==4)
+//            type=1;
+//        else if(this->ui->i_tool->currentIndex()==5)
+//            type=2;
+//        else if(this->ui->i_tool->currentIndex()==6)
+//            type=3;
+//        else if(this->ui->i_tool->currentIndex()==7)
+//            type=4;
+//        else if(this->ui->i_tool->currentIndex()==8)
+//            type=5;
+//        else if(this->ui->i_tool->currentIndex()==9)
+//            type=6;
 
-        int scale_x=this->ui->i_size_x->value();
-        int scale_y=this->ui->i_size_y->value();
-        er=this->run.generate_data(ref,path.toStdString(),type,scale_x,scale_y,this->ui->i_square->isChecked(),this->ui->i_negatives->value());
-        if(er==1){
-            error_control("ERROR: Data could not be created");
-            return;
-        }
+//        int scale_x=this->ui->i_size_x->value();
+//        int scale_y=this->ui->i_size_y->value();
+//        er=this->run.generate_data(ref,path.toStdString(),type,scale_x,scale_y,this->ui->i_square->isChecked(),this->ui->i_negatives->value());
+//        if(er==1){
+//            error_control("ERROR: Data could not be created");
+//            return;
+//        }
     }
     else if(this->ui->i_tool->currentIndex()==10){
-
-//        er=this->run.save(ref);
+//        int descriptor=-1;
+//        er=this->run.descriptors(ref,descriptor,);
 //        if(er==1){
 //            error_control("ERROR: Data could not be created");
 //            return;
@@ -906,22 +917,22 @@ void MainWindow::on_i_run_datamanaging_clicked()
 //        }
     }
     else if(this->ui->i_tool->currentIndex()==11){
-//        er=this->run.join_data(ref,path.toStdString());
-//        if(er==1){
-//            error_control("ERROR: Data could not be created");
-//            return;
-//        }
-//        path="../Data/Imagenes/"+name;
-//        er=this->run.load_dataset(path.toStdString());
-//        if(er==1){
-//            error_control("ERROR: The folder has not the expected structure");
-//            return;
-//        }
+        er=this->run.join_data(ref,path.toStdString());
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
+        path="../Data/Imagenes/"+name;
+        er=this->run.load_dataset(path.toStdString());
+        if(er==1){
+            error_control("ERROR: The folder has not the expected structure");
+            return;
+        }
 
-//        if(er==2){
-//            error_control("ERROR: Data could not be loaded");
-//            return;
-//        }
+        if(er==2){
+            error_control("ERROR: Data could not be loaded");
+            return;
+        }
     }
     else if(this->ui->i_tool->currentIndex()==12){
         er=this->run.save(ref);
@@ -992,3 +1003,43 @@ void MainWindow::on_i_run_datamanaging_clicked()
 
     QApplication::restoreOverrideCursor();
 }
+
+void MainWindow::on_i_datamanaging_descriptortool_clicked()
+{
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void MainWindow::on_i_detection_postprocess_clicked(bool checked)
+{
+
+}
+
+void MainWindow::on_i_detection_overlap_clicked(bool checked)
+{
+
+}
+
+void MainWindow::on_i_detection_filteralone_clicked(bool checked)
+{
+
+}
+
+void MainWindow::on_i_detection_datatype_tool_clicked(bool checked)
+{
+
+}
+

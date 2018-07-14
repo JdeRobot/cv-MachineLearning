@@ -64,13 +64,13 @@ void Con_Multi::on_Anadir_clicked()
     }
     else{
         QMessageBox msgBox;
-        msgBox.setText("ERROR: La carpeta no tiene la estructura utilizada por el sistema");
+        msgBox.setText("ERROR: The folder hasn't got a proper structure");
         msgBox.exec();
         return;
     }
     id_clasificadores.push_back(id);
     nombres.push_back(nombre);
-    texto<<"Clasificador: "<<nombre<<"      Tipo: ";
+    texto<<"Classifier: "<<nombre<<"      Type: ";
     if(id==DISTANCIAS)
         texto<<"DISTANCIAS"<<endl;
     else if(id==GAUSSIANO)
@@ -111,32 +111,32 @@ void Con_Multi::on_Anadir_2_clicked()
     if(ui->Cascada->isChecked()){
         if(ui->Etiq_Ref->value()==0){
             QMessageBox msgBox;
-            msgBox.setText("ERROR: No se puede utilizar la etiqueta 0");
+            msgBox.setText("ERROR: Label 0 is not allowed");
             msgBox.exec();
             return;
         }
         multi.label_ref.push_back(ui->Etiq_Ref->value());
         if(ui->Regla->currentIndex()==0){
             multi.tipo_regla.push_back(IGUAL);
-            texto<<"Regla: IGUAL a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: EQUAL to "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==1){
             multi.tipo_regla.push_back(DISTINTO);
-            texto<<"Regla: DISTINTO a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: DIFFERENT to "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==2){
             multi.tipo_regla.push_back(MAYOR);
-            texto<<"Regla: MAYOR a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: GREATER than "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==3){
             multi.tipo_regla.push_back(MENOR);
-            texto<<"Regla: MENOR a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: LESS than "<<ui->Etiq_Ref->value();
         }
         ui->Aceptar->setEnabled(false);
     }
     else if(ui->Votacion->isChecked()){
         multi.w_clasif.push_back(ui->Peso->value());
-        texto<<"Peso="<<ui->Peso->value();
+        texto<<"Wight="<<ui->Peso->value();
         ui->Aceptar->setEnabled(true);
     }
     texto<<endl;
@@ -184,7 +184,7 @@ void Con_Multi::on_toolButton_clicked()
 {
     QString filename= QFileDialog::getExistingDirectory(
                 this,
-                tr("SELECCIONAR CARPETA"),
+                tr("CHOOSE FOLDER"),
                 QDir::currentPath()+"/../Data/Configuracion");
     ui->Direccion_Carga->setText(filename);
 }

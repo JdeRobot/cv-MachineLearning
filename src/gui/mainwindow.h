@@ -216,6 +216,16 @@ private slots:
 
     void on_i_run_datamanaging_clicked();
 
+    void on_i_detection_postprocess_clicked(bool checked);
+
+    void on_i_detection_overlap_clicked(bool checked);
+
+    void on_i_detection_filteralone_clicked(bool checked);
+
+    void on_i_detection_datatype_tool_clicked(bool checked);
+
+    void on_i_datamanaging_descriptortool_clicked();
+
 private:
     void error_control(QString error);
 

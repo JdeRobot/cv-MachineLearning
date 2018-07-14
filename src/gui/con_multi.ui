@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Reglas</string>
+     <string>Rules</string>
     </property>
     <widget class="QComboBox" name="Regla">
      <property name="geometry">
@@ -66,22 +66,22 @@
      </property>
      <item>
       <property name="text">
-       <string>IGUAL</string>
+       <string>EQUAL</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>DISTINTO</string>
+       <string>DIFFERENT</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>MAYOR</string>
+       <string>GREATER</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>MENOR</string>
+       <string>SMALLER</string>
       </property>
      </item>
     </widget>
@@ -95,7 +95,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Etiqueta Referencia</string>
+      <string>Label</string>
      </property>
     </widget>
     <widget class="QSpinBox" name="Etiq_Ref">
@@ -136,7 +136,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Peso</string>
+      <string>Weight</string>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="Peso">
@@ -174,7 +174,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Añadir</string>
+      <string>Add</string>
      </property>
     </widget>
    </widget>
@@ -191,7 +191,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox">
@@ -216,7 +216,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Dirección con la carpeta del clasificador</string>
+      <string>Classifier</string>
      </property>
     </widget>
     <widget class="QToolButton" name="toolButton">
@@ -242,7 +242,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Añadir</string>
+      <string>Add</string>
      </property>
     </widget>
    </widget>
@@ -268,7 +268,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Cascada</string>
+      <string>Cascade</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -284,7 +284,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Votación</string>
+      <string>Voting</string>
      </property>
      <property name="checked">
       <bool>false</bool>
@@ -298,7 +298,7 @@
      <x>0</x>
      <y>0</y>
      <width>823</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

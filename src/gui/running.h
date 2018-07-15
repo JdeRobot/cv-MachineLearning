@@ -50,8 +50,8 @@ namespace MLT {
         int dimensionality(string ref, int size_reduc, int type);
         int dimension_cuality(string ref, int size_reduc, int type_reduc, int type_measure, string &result);
         int generate_data(string ref, string input_directory, int type, int scale_x, int scale_y, bool square, int number);
-        int descriptors(string &ref, int descriptor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels);
-
+        int descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels);
+        int expand_dataset(string ref, int nframe, float max_noise, float max_blur, float max_x, float max_y, float max_z);
 
 
         Ui::MainWindow *window;

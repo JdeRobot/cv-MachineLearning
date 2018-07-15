@@ -77,13 +77,15 @@ public:
 //    string Dat_Ref;
 //    string result_ref;
 
-    String Tipo_Des,Tipo_Ext;
-    float Parametro;
+    //Parameters for Descriptors
+    String descriptor,extractor;
+    float descriptor_parameter;
 
-    Size Win_Size, Block_Stride;
-    double Win_Sigma, Threshold_L2hys;
-    bool Gamma_Correction;
-    int Nlevels;
+    int win_size_x,win_size_y, block_x,block_y;
+    double sigma, threhold_l2hys;
+    bool gamma;
+    int nlevels;
+    /////////////////
 
     float Hist_tam_celda;
 
@@ -218,11 +220,19 @@ private slots:
 
     void on_i_detection_postprocess_clicked(bool checked);
 
-    void on_i_detection_overlap_clicked(bool checked);
+    void on_i_detection_position_clicked(bool checked);
 
-    void on_i_detection_filteralone_clicked(bool checked);
+    void on_i_detection_segmentation_clicked(bool checked);
 
-    void on_i_detection_datatype_tool_clicked(bool checked);
+    void on_i_detection_random_clicked(bool checked);
+
+    void on_i_detection_file_tool_clicked();
+
+    void on_i_detection_datatype_tool_clicked();
+
+    void on_i_detection_multiclassifier_tool_clicked();
+
+    void on_i_detection_run_clicked();
 
     void on_i_datamanaging_descriptortool_clicked();
 

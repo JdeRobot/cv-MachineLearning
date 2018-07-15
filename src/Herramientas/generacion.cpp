@@ -58,6 +58,7 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
     Images=img;
     if(Images.size()==0){
         cout<<"ERROR en Cargar_Imagenes: Resultado de tamaño 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -521,8 +522,10 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
 }
 
 int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Datos_Imagenes: El tamaño del recorte debe ser mayor a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -544,6 +547,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -570,6 +574,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         }
         if(er==1){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -627,6 +632,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         }
         if(er==1){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -694,6 +700,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Datos_Imagenes: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -731,12 +738,17 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -758,6 +770,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -784,6 +797,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -841,6 +855,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -954,6 +969,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -991,12 +1007,16 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1021,6 +1041,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1045,6 +1066,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1102,6 +1124,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1127,6 +1150,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
             imagen = imread(strPrefix.c_str());
             if(imagen.empty()){
                 cout<<"ERROR en Recortar_Etiquetar: Imagen vacia"<<endl;
+                this->running=false;
                 this->error=1;
                 return this->error;
             }
@@ -1284,6 +1308,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Recortar_Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1321,18 +1346,23 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Recortar_Etiquetar: No se ha podido cargar el video"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1352,6 +1382,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1376,6 +1407,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1434,6 +1466,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1455,6 +1488,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
         cout<<"Imagen= "<<cont<<endl;
         if(imagen.empty()){
             cout<<"ERROR en Recortar_Etiquetar: Imagen vacia"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -1612,6 +1646,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Recortar_Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1649,7 +1684,9 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int num_data_clase, Size tam_img, float ancho, float separacion_clases, vector<Mat> &Data, vector<float> &Labels, Info_Datos &info, bool save){
@@ -1815,23 +1852,28 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
 }
 
 int MLT::Generacion::Random_Synthetic_Image(int num_clases, Size tam_img, float ancho, float separacion_clases,  Mat &Imagen){
+    this->running=true;
     if(num_clases<1){
         cout<<"ERROR en Random_Synthetic_Image: num_clases es menor a uno";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(tam_img.height<1 || tam_img.width<1){
         cout<<"ERROR en Random_Synthetic_Image: tam_img tiene un tamaño menor a uno";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(ancho<0){
         cout<<"ERROR en Random_Synthetic_Image: ancho es menor a cero";
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(separacion_clases<0){
         cout<<"ERROR en Random_Synthetic_Image: separacion_clases es menor a cero";
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -1847,15 +1889,20 @@ int MLT::Generacion::Random_Synthetic_Image(int num_clases, Size tam_img, float 
     }
     if(Imagen.empty()){
         cout<<"ERROR en Random_Synthetic_Image: No se ha podido generar la imagen"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<float> inputLabels, vector<Mat> &output, vector<float> &outputLabels, int num_by_frame, float max_noise, float max_blur, float max_rot_x, float max_rot_y, float max_rot_z, Info_Datos &info, bool save){
+    this->running=true;
     if(input.size()==0){
         cout<<"ERROR en Synthethic_Data: No hay datos de entrada"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -2036,21 +2083,26 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 
 
 
 int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Autopositivos: No se ha podido cargar el video"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(tam_recorte.height<1 || tam_recorte.width<1){
         cout<<"ERROR en Autopositivos: tamaño de recorte negativo o igual a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -2065,6 +2117,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2089,6 +2142,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2161,6 +2215,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2616,13 +2671,17 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 
 int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save){
+    this->running=true;
     if(num_recortes_imagen<1){
         cout<<"ERROR en Autonegativos: num_recortes_imagen es menor a 0";
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -2641,6 +2700,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
     }
     if(nombre_archivo!="Recortes.txt"){
         cout<<"ERROR en Autonegativos: El archivo de entrada no es del tipo esperado"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -2656,6 +2716,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2680,6 +2741,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2759,6 +2821,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2876,6 +2939,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
         Archivo_img_in[path_imagen.c_str()]>>imagen;
         if(imagen.empty()){
             cout<<"ERROR en Autonegativos: Imagen vecia"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -2906,6 +2970,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
                 cuenta_males++;
                 if(cuenta_males>100){
                     cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
+                    this->running=false;
                     this->error=1;
                     return this->error;
                 }
@@ -2987,6 +3052,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
                             cuenta_males++;
                             if(cuenta_males>100){
                                 cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
+                                this->running=false;
                                 this->error=1;
                                 return this->error;
                             }
@@ -3024,6 +3090,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
                             cuenta_males++;
                             if(cuenta_males>100){
                                 cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
+                                this->running=false;
                                 this->error=1;
                                 return this->error;
                             }
@@ -3141,18 +3208,23 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_negativos_imagen, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Autogeneracion: No se ha podido cargar el video"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
     if(tam_recorte.height<1 || tam_recorte.width<1){
         cout<<"ERROR en Autogeneracion: tamaño de recorte negativo o igual a 0"<<endl;
+        this->running=false;
         this->error=1;
         return this->error;
     }
@@ -3167,6 +3239,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -3191,6 +3264,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         }
         if(er==1){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -3275,6 +3349,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         }
         if(er==1){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
+            this->running=false;
             this->error=1;
             return this->error;
         }
@@ -3405,6 +3480,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         cuenta_males++;
                         if(cuenta_males>500){
                             cout<<"ERROR en Autogeneracion: No se ha podido generar negativo"<<endl;
+                            this->running=false;
                             this->error=1;
                             return this->error;
                         }
@@ -3488,6 +3564,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                     cuenta_males++;
                                     if(cuenta_males>500){
                                         cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
+                                        this->running=false;
                                         this->error=1;
                                         return this->error;
                                     }
@@ -3922,7 +3999,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 

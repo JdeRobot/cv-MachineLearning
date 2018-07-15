@@ -337,7 +337,7 @@ int MLT::Running::analyse_result(QStandardItemModel *model){
         Conf->appendRow(conf);
     }
     model->appendRow(Conf);
-    QStandardItem *Rati= new QStandardItem(QString("Ratios"));
+    QStandardItem *Rati= new QStandardItem(QString("Rates"));
     model->appendRow(Rati);
     for(int i=0; i<num; i++){
         int etiqueta;
@@ -349,12 +349,12 @@ int MLT::Running::analyse_result(QStandardItemModel *model){
         }
         else
             etiqueta=i+1;
-        QStandardItem *Lab = new QStandardItem(QString("Etiqueta %1").arg(etiqueta));
-        QStandardItem *VP = new QStandardItem(QString("VP"));
+        QStandardItem *Lab = new QStandardItem(QString("Label %1").arg(etiqueta));
+        QStandardItem *VP = new QStandardItem(QString("TP"));
         QStandardItem *vp = new QStandardItem(QString("%1").arg(rates[i].VP));
         VP->appendRow(vp);
         Lab->appendRow(VP);
-        QStandardItem *VN = new QStandardItem(QString("VN"));
+        QStandardItem *VN = new QStandardItem(QString("TN"));
         QStandardItem *vn = new QStandardItem(QString("%1").arg(rates[i].VN));
         VN->appendRow(vn);
         Lab->appendRow(VN);
@@ -627,184 +627,896 @@ int MLT::Running::generate_data(string ref, string input_directory, int type, in
     this->org_ref=ref;
 }
 
-//int MLT::Running::descriptors(string &ref, int descriptor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels){
-//    if(descriptor>=0 && descriptor<=9){
-//        Basic_Transformations basic(this->org_info.Tipo_Datos,descriptor);
-//        int e=basic.Extract(this->org_images,this->result_images);
-//        if(e==1)
-//            return 1;
+int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels){
+    if(descriptor>=0 && descriptor<=9){
+        Basic_Transformations basic(this->org_info.Tipo_Datos,descriptor);
+        int e=basic.Extract(this->org_images,this->result_images);
+        if(e==1)
+            return 1;
+    }
+    else if(descriptor==10){
+        cv::Size size=cv::Size(size_x,size_y);
+        cv::Size block=cv::Size(block_x,block_y);
+        if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
+            return 1;
+        }
+        HOG H(size,block, sigma,threshold, gamma, n_levels);
+        int e=H.Extract(this->org_images,this->result_images);
+        if(this->result_images.size()!=this->org_images.size() || e==1)
+            return 1;
+    }
+    else if(descriptor==11){
+        descriptor=descriptor-9;
+        float parameter;
+        Puntos_Caracteristicos des(pc_descriptor,extractor,parameter);
+        int e=des.Extract(this->org_images,this->result_images);
+        if(this->result_images.size()!=this->org_images.size() || e==1)
+            return 1;
+    }
+    else
+        return 1;
 
-//        if(descriptor==0)
-//            this->result_ref=this->org_ref+"_RGB";
-//        else if(descriptor==1)
-//            this->result_ref=this->org_ref+"_GRAY";
-//        else if(descriptor==2)
-//            this->result_ref=this->org_ref+"_HSV";
-//        else if(descriptor==3)
-//            this->result_ref=this->org_ref+"_H";
-//        else if(descriptor==4)
-//            this->result_ref=this->org_ref+"_S";
-//        else if(descriptor==5)
-//            this->result_ref=this->org_ref+"_V";
-//        else if(descriptor==6)
-//            this->result_ref=this->org_ref+"_THRESHOLD";
-//        else if(descriptor==7)
-//            this->result_ref=this->org_ref+"_CANNY";
-//        else if(descriptor==8)
-//            this->result_ref=this->org_ref+"_SOBEL";
-//        else if(descriptor==9)
-//            this->result_ref=this->org_ref+"_PREDOMINANT_COLOR";
+    if(descriptor==0){
+        this->result_ref=this->org_ref+"_RGB";
+        this->result_info.Tipo_Datos=RGB;
+    }
+    else if(descriptor==1){
+        this->result_ref=this->org_ref+"_GRAY";
+        this->result_info.Tipo_Datos=GRAY;
+    }
+    else if(descriptor==2){
+        this->result_ref=this->org_ref+"_HSV";
+        this->result_info.Tipo_Datos=HSV;
+    }
+    else if(descriptor==3){
+        this->result_ref=this->org_ref+"_H";
+        this->result_info.Tipo_Datos=H_CHANNEL;
+    }
+    else if(descriptor==4){
+        this->result_ref=this->org_ref+"_S";
+        this->result_info.Tipo_Datos=S_CHANNEL;
+    }
+    else if(descriptor==5){
+        this->result_ref=this->org_ref+"_V";
+        this->result_info.Tipo_Datos=V_CHANNEL;
+    }
+    else if(descriptor==6){
+        this->result_ref=this->org_ref+"_THRESHOLD";
+        this->result_info.Tipo_Datos=THRESHOLD;
+    }
+    else if(descriptor==7){
+        this->result_ref=this->org_ref+"_CANNY";
+        this->result_info.Tipo_Datos=CANNY;
+    }
+    else if(descriptor==8){
+        this->result_ref=this->org_ref+"_SOBEL";
+        this->result_info.Tipo_Datos=SOBEL;
+    }
+    else if(descriptor==9){
+        this->result_ref=this->org_ref+"_PREDOMINANT_COLOR";
+        this->result_info.Tipo_Datos=COLOR_PREDOMINANTE;
+    }
+    else if(descriptor==10){
+        this->result_ref=this->org_ref+"_HOG";
+        this->result_info.Tipo_Datos=HOG_DES;
+    }
+    else if(descriptor==11){
+        this->result_ref=this->org_ref+"_PC";
+        this->result_info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
+    }
 
+    this->result_info.Tam_X=this->result_images[0].cols;
+    this->result_info.Tam_Y=this->result_images[0].rows;
+    ref=this->result_ref;
+}
+
+int MLT::Running::expand_dataset(string ref, int nframe, float max_noise, float max_blur, float max_x, float max_y, float max_z){
+    this->gen.total_progreso=this->org_images.size();
+    this->gen.progreso=0;
+    this->base_progreso=30;
+    this->max_progreso=20;
+
+    std::thread thrd(&MLT::Generacion::Synthethic_Data,&this->gen,this->org_ref,this->org_images,this->org_labels,std::ref(this->result_images),std::ref(this->result_labels),nframe,max_noise,max_blur,max_x,max_y,max_z,std::ref(this->result_info),this->save_other);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    while(this->gen.running==true)
+        update_gen();
+
+    thrd.join();
+
+    this->result_ref=ref;
+
+    if(this->gen.error==1)
+        return 1;
+
+}
+
+//int MLT::Running::detect(string input, int classes, float variance, float interclass, int window_x, int wnidow_y, int descriptor_type){
+//    int e=0;
+//    cv::Mat salida;
+//    vector<cv::RotatedRect> detections;
+//    vector<float> labels_detections;
+
+//    int current_type=-1;
+//    cv::Mat image;
+//    if(input=="random_image"){
+//        this->gen.Random_Synthetic_Image(classes,Size(500,500),variance,interclass,imagen);
+//        current_type=GRAY;
 //    }
-//    else if(descriptor==10){
-//        cv::Size size=cv::Size2i(size_x,size_y);
-//        cv::Size block=cv::Size(block_x,block_y);
-//        if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
+//    else{
+//        image=cv::imread(input);
+//        if(imagen.empty()){
 //            return 1;
 //        }
-//        HOG H(size,block, sigma,threshold, gamma, n_levels);
-//        int e=H.Extract(this->org_images,this->result_images);
-//        if(this->result_images.size()!=this->org_images.size() || e==1)
+//        image.convertTo(image,CV_32F);
+//        if(image.cols<window_x || image.rows<window_y){
 //            return 1;
-//        this->result_ref=this->org_ref+"_HOG";
+//        }
+//        current_type=RGB;
 //    }
-//    else if(descriptor==11){
-//        descriptor=descriptor-9;
-//        string descrip,extractor;
-//        float parameter;
-//        Puntos_Caracteristicos des(descrip,extractor,parameter);
-//        int e=des.Extract(this->org_images,this->result_images);
-//        if(this->result_images.size()!=this->org_images.size() || e==1)
+
+//    Descriptor *descriptor;
+//    if(descriptor_type==RGB){
+//        descriptor=0;
+//    }
+//    else if(descriptor_type==GRAY){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,GRAY);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==HSV){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,HSV);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==H_CHANNEL){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,H_CHANNEL);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==S_CHANNEL){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,S_CHANNEL);
+//        descriptor=basic;
+//    }
+//    else if(udescriptor_type==V_CHANNEL){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,V_CHANNEL);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==THRESHOLD){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,THRESHOLD);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==CANNY){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,CANNY);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==SOBEL){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,SOBEL);
+//        descriptor=basic;
+//    }
+//    else if(descriptor_type==HOG_DES){
+//        if(Win_Size.height>ui->Vent_Y->value()|| Win_Size.width>ui->Vent_X->value())
 //            return 1;
-//        this->result_ref=this->org_ref+"_PC";
+//        HOG *Hoog=new HOG(Win_Size,Block_Stride, Win_Sigma,Threshold_L2hys, Gamma_Correction, Nlevels);
+//        descriptor= Hoog;
 //    }
-//    else
-//        return 1;
-
-
-//    int pos_bar_tor;
-//    for(uint pos=0; pos<this->result_ref.size(); pos++){
-//        if(result_ref[pos]=='_')
-//            pos_bar_tor=pos;
+//    else if(descriptor_type==PUNTOS_CARACTERISTICOS){
+//        Puntos_Caracteristicos *des=new Puntos_Caracteristicos(Tipo_Des,Tipo_Ext,Parametro);
+//        descriptor= des;
 //    }
-//    string tip_dat;
-//    for(uint pos=pos_bar_tor+1; pos<result_ref.size(); pos++){
-//        tip_dat=tip_dat+result_ref[pos];
+//    else if(descriptor_type==COLOR_PREDOMINANTE){
+//        Basic_Transformations *basic=new Basic_Transformations(current_type,COLOR_PREDOMINANTE);
+//        descriptor=basic;
 //    }
-//    if(tip_dat=="RGB")
-//        this->result_info.Tipo_Datos=RGB;
-//    else if(tip_dat=="GRAY")
-//        this->result_info.Tipo_Datos=GRAY;
-//    else if(tip_dat=="HSV")
-//        this->result_info.Tipo_Datos=HSV;
-//    else if(tip_dat=="H")
-//        this->result_info.Tipo_Datos=H_CHANNEL;
-//    else if(tip_dat=="S")
-//        this->result_info.Tipo_Datos=S_CHANNEL;
-//    else if(tip_dat=="V")
-//        this->result_info.Tipo_Datos=V_CHANNEL;
-//    else if(tip_dat=="THRESHOLD")
-//        this->result_info.Tipo_Datos=THRESHOLD;
-//    else if(tip_dat=="CANNY")
-//        this->result_info.Tipo_Datos=CANNY;
-//    else if(tip_dat=="SOBEL")
-//        this->result_info.Tipo_Datos=SOBEL;
-//    else if(tip_dat=="HOG")
-//        this->result_info.Tipo_Datos=HOG_DES;
-//    else if(tip_dat=="PC")
-//        this->result_info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
-//    else if(tip_dat=="PREDOMINANT_COLOR")
-//        this->result_info.Tipo_Datos=COLOR_PREDOMINANTE;
-////                if(tip_dat=="FAC")
-////                    info.Tipo_Datos=3;
-//    this->result_info.Tam_X=this->result_images[0].cols;
-//    this->result_info.Tam_Y=this->result_images[0].rows;
-//    ref=this->result_ref;
-//}
-
-//int MLT::Running::expand_dataset(string ref, string path, int num_clases, int num_data_clase, int size_x, int size_y, float ancho, float separacion_clases){
-
-
-
-
-//    vector<Mat> images;
-//    vector<float> labels;
-//    Generacion::Info_Datos info;
-//    int pos=0;
-//    for(uint i=0; i<path.size(); i++){
-//        if(path[i]=='/')
-//            pos=i;
+//    else{
+//        return 1;
 //    }
-//    std::string archivo_i;
-//    for(int i=0; i<pos+1; i++)
-//        archivo_i=archivo_i+Dir[i];
-//    archivo_i=archivo_i+"Info.xml";
-//    cv::FileStorage Archivo_i(archivo_i,CV_STORAGE_READ);
-//    if(!Archivo_i.isOpened())
-//        return 1;
-//    int num;
-//    Archivo_i["Num_Datos"]>>num;
-//    Archivo_i.release();
-//    this->gen.total_progreso=num;
-//    this->gen.progreso=0;
-//    this->base_progreso=0;
-//    this->max_progreso=30;
 
-//    std::thread thrd(&MLT::Generacion::Cargar_Fichero,&gen,path,std::ref(images),std::ref(labels),std::ref(info));
-//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-//    while(this->gen.running==true)
-//        update_gen();
-
-//    thrd.join();
-
-//    if(this->gen.error==1)
-//        return 1;
-
-
-//    this->gen.total_progreso=Imagenes.size();
-//    this->gen.progreso=0;
-//    this->base_progreso=30;
-//    this->max_progreso=20;
-
-//    std::thread thrd(&MLT::Generacion::Synthethic_Data,&this->gen,ref,images,labels,this->result_images,this->result_labels,nframe,max_noise,max_blur,max_x,max_y,max_z,this->result_info,this->save_data);
-//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-//    while(this->gen.running==true)
-//        update_gen();
-
-//    thrd.join();
-
-//    e=gen.Synthethic_Data(ref,Imagenes,Lab,IMAGENES,LABELS,Num_frame,Max_Noise,Max_Blur,Max_X,Max_Y,Max_Z,info,save_data);
-
-
-
-
-
-
-
-
-
-//    Size size_img;
-//    size_img.width=size_x;
-//    size_img.height=size_y;
-//    if(size_img.height>1)
-//        size_img.height=1;
-
-
-//    this->base_progreso=1;
-//    this->max_progreso=100;
-
-
-//    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
-//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//    while(gen.running==true)
-//        update_gen();
-
-//    thrd.join();
-//    this->org_ref=ref;
-
-//    if(this->gen.error==1)
-//        return 1;
-
+//    if(ui->radioPosicion->isChecked()){
+//        if(ui->Clasif_Cargado_2->isChecked()){
+//            if(ID==DISTANCIAS){
+//                D.progreso=0;
+//                D.max_progreso=100;
+//                D.base_progreso=0;
+//                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                D.window=ui;
+//                Busqueda bus(&D,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==GAUSSIANO){
+//                G.progreso=0;
+//                G.max_progreso=100;
+//                G.base_progreso=0;
+//                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                G.window=ui;
+//                Busqueda bus(&G,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==CASCADA_CLAS){
+//                HA.progreso=0;
+//                HA.max_progreso=100;
+//                HA.base_progreso=0;
+//                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                HA.window=ui;
+//                Busqueda bus(&HA,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==HISTOGRAMA){
+//                H.progreso=0;
+//                H.max_progreso=100;
+//                H.base_progreso=0;
+//                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                H.window=ui;
+//                Busqueda bus(&H,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==KNN){
+//                K.progreso=0;
+//                K.max_progreso=100;
+//                K.base_progreso=0;
+//                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                K.window=ui;
+//                Busqueda bus(&K,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==NEURONAL){
+//                N.progreso=0;
+//                N.max_progreso=100;
+//                N.base_progreso=0;
+//                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                N.window=ui;
+//                Busqueda bus(&N,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==C_SVM){
+//                S.progreso=0;
+//                S.max_progreso=100;
+//                S.base_progreso=0;
+//                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                S.window=ui;
+//                Busqueda bus(&S,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==RTREES){
+//                RT.progreso=0;
+//                RT.max_progreso=100;
+//                RT.base_progreso=0;
+//                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                RT.window=ui;
+//                Busqueda bus(&RT,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==DTREES){
+//                DT.progreso=0;
+//                DT.max_progreso=100;
+//                DT.base_progreso=0;
+//                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                DT.window=ui;if(ui->radioPosicion->isChecked()){
+//                    if(ui->Clasif_Cargado_2->isChecked()){
+//                        if(ID==DISTANCIAS){
+//                            D.progreso=0;
+//                            D.max_progreso=100;
+//                            D.base_progreso=0;
+//                            D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            D.window=ui;
+//                            Busqueda bus(&D,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==GAUSSIANO){
+//                            G.progreso=0;
+//                            G.max_progreso=100;
+//                            G.base_progreso=0;
+//                            G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            G.window=ui;
+//                            Busqueda bus(&G,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==CASCADA_CLAS){
+//                            HA.progreso=0;
+//                            HA.max_progreso=100;
+//                            HA.base_progreso=0;
+//                            HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            HA.window=ui;
+//                            Busqueda bus(&HA,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==HISTOGRAMA){
+//                            H.progreso=0;
+//                            H.max_progreso=100;
+//                            H.base_progreso=0;
+//                            H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            H.window=ui;
+//                            Busqueda bus(&H,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==KNN){
+//                            K.progreso=0;
+//                            K.max_progreso=100;
+//                            K.base_progreso=0;
+//                            K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            K.window=ui;
+//                            Busqueda bus(&K,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==NEURONAL){
+//                            N.progreso=0;
+//                            N.max_progreso=100;
+//                            N.base_progreso=0;
+//                            N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            N.window=ui;
+//                            Busqueda bus(&N,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==C_SVM){
+//                            S.progreso=0;
+//                            S.max_progreso=100;
+//                            S.base_progreso=0;
+//                            S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            S.window=ui;
+//                            Busqueda bus(&S,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==RTREES){
+//                            RT.progreso=0;
+//                            RT.max_progreso=100;
+//                            RT.base_progreso=0;
+//                            RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            RT.window=ui;
+//                            Busqueda bus(&RT,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==DTREES){
+//                            DT.progreso=0;
+//                            DT.max_progreso=100;
+//                            DT.base_progreso=0;
+//                            DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            DT.window=ui;
+//                            Busqueda bus(&DT,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==BOOSTING){
+//                            B.progreso=0;
+//                            B.max_progreso=100;
+//                            B.base_progreso=0;
+//                            B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            B.window=ui;
+//                            Busqueda bus(&B,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==EXP_MAX){
+//                            E.progreso=0;
+//                            E.max_progreso=100;
+//                            E.base_progreso=0;
+//                            E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            E.window=ui;
+//                            Busqueda bus(&E,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else if(ID==MICLASIFICADOR){
+//                            MC.progreso=0;
+//                            MC.max_progreso=100;
+//                            MC.base_progreso=0;
+//                            MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            MC.window=ui;
+//                            Busqueda bus(&MC,tipo_dato,descriptor);
+//                            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                        }
+//                        else{
+//                            return 1;
+//                        }
+//                        if(e==1){
+//                            return 1;
+//                        }
+//                    }
+//                    else if(ui->Multiclasif_2->isChecked()){
+//                        vector<Clasificador*> clasificadores;
+//                        for(uint i=0; i<id_clasificadores.size(); i++){
+//                            if(id_clasificadores[i]==DISTANCIAS){
+//                                Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==GAUSSIANO){
+//                                Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==CASCADA_CLAS){
+//                                Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==HISTOGRAMA){
+//                                Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==KNN){
+//                                Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==NEURONAL){
+//                                Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==C_SVM){
+//                                Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==RTREES){
+//                                Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==DTREES){
+//                                Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                            else if(id_clasificadores[i]==BOOSTING){
+//                                Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                    //        else if(id_clasificadores[i]==GBT){
+//                    //            Clasificador_GBTrees *clasi=new Clasificador_GBTrees(nombres[i]);
+//                //                clasi->Read_Data();
+//                //                clasificadores.push_back(clasi);
+//                    //        }
+//                    //        else if(id_clasificadores[i]==ERTREES){
+//                    //            Clasificador_ERTrees *clasi=new Clasificador_ERTrees(nombres[i]);
+//                //                clasi->Read_Data();
+//                //                clasificadores.push_back(clasi);
+//                    //        }
+//                            else if(id_clasificadores[i]==EXP_MAX){
+//                                Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
+//                                clasi->Read_Data();
+//                                clasificadores.push_back(clasi);
+//                            }
+//                        }
+//                        MultiClasificador multi(clasificadores);
+//                        multi.progreso=0;
+//                        multi.max_progreso=100;
+//                        multi.base_progreso=0;
+//                        multi.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                        multi.window=ui;
+//                        Busqueda bus(&multi,tipo_dato,Tipo_Descriptor,&Multi_tipo);
+//                        e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//                    }
+//                    Representacion rep;
+//                    Mat mostrar;
+//                    imagen.convertTo(imagen,CV_32F);
+//                    double minval,maxval;
+//                    cv::minMaxLoc(imagen,&minval,&maxval);
+//                    imagen=(imagen-minval)/(maxval-minval);
+//                    imshow("Imagen",imagen);
+//                    rep.Recuadros(imagen,recuadros,labels_recuadros,Col,mostrar,show_graphics);
+//                }
+//                else if(ui->radioTextura->isChecked()){
+//                    if(ui->Clasif_Cargado_2->isChecked()){
+//                        if(ID==DISTANCIAS){
+//                            D.progreso=0;
+//                            D.max_progreso=100;
+//                            D.base_progreso=0;
+//                            D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            D.window=ui;
+//                            Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==GAUSSIANO){
+//                            G.progreso=0;
+//                            G.max_progreso=100;
+//                            G.base_progreso=0;
+//                            G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            G.window=ui;
+//                            Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==CASCADA_CLAS){
+//                            HA.progreso=0;
+//                            HA.max_progreso=100;
+//                            HA.base_progreso=0;
+//                            HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            HA.window=ui;
+//                            Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==HISTOGRAMA){
+//                            H.progreso=0;
+//                            H.max_progreso=100;
+//                            H.base_progreso=0;
+//                            H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            H.window=ui;
+//                            Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==KNN){
+//                            K.progreso=0;
+//                            K.max_progreso=100;
+//                            K.base_progreso=0;
+//                            K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            K.window=ui;
+//                            Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==NEURONAL){
+//                            N.progreso=0;
+//                            N.max_progreso=100;
+//                            N.base_progreso=0;
+//                            N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            N.window=ui;
+//                            Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==C_SVM){
+//                            S.progreso=0;
+//                            S.max_progreso=100;
+//                            S.base_progreso=0;
+//                            S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            S.window=ui;
+//                            Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
+//                            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//                        }
+//                        else if(ID==RTREES){
+//                            RT.progreso=0;
+//                            RT.max_progreso=100;
+//                            RT.base_progreso=0;
+//                            RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                            RT.window=ui;
+//                            Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
+//                Busqueda bus(&DT,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==BOOSTING){
+//                B.progreso=0;
+//                B.max_progreso=100;
+//                B.base_progreso=0;
+//                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                B.window=ui;
+//                Busqueda bus(&B,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==EXP_MAX){
+//                E.progreso=0;
+//                E.max_progreso=100;
+//                E.base_progreso=0;
+//                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                E.window=ui;
+//                Busqueda bus(&E,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else if(ID==MICLASIFICADOR){
+//                MC.progreso=0;
+//                MC.max_progreso=100;
+//                MC.base_progreso=0;
+//                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                MC.window=ui;
+//                Busqueda bus(&MC,tipo_dato,descriptor);
+//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//            }
+//            else{
+//                return 1;
+//            }
+//            if(e==1){
+//                return 1;
+//            }
+//        }
+//        else if(ui->Multiclasif_2->isChecked()){
+//            vector<Clasificador*> clasificadores;
+//            for(uint i=0; i<id_clasificadores.size(); i++){
+//                if(id_clasificadores[i]==DISTANCIAS){
+//                    Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==GAUSSIANO){
+//                    Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==CASCADA_CLAS){
+//                    Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==HISTOGRAMA){
+//                    Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==KNN){
+//                    Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==NEURONAL){
+//                    Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==C_SVM){
+//                    Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==RTREES){
+//                    Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==DTREES){
+//                    Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==BOOSTING){
+//                    Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//        //        else if(id_clasificadores[i]==GBT){
+//        //            Clasificador_GBTrees *clasi=new Clasificador_GBTrees(nombres[i]);
+//    //                clasi->Read_Data();
+//    //                clasificadores.push_back(clasi);
+//        //        }
+//        //        else if(id_clasificadores[i]==ERTREES){
+//        //            Clasificador_ERTrees *clasi=new Clasificador_ERTrees(nombres[i]);
+//    //                clasi->Read_Data();
+//    //                clasificadores.push_back(clasi);
+//        //        }
+//                else if(id_clasificadores[i]==EXP_MAX){
+//                    Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//            }
+//            MultiClasificador multi(clasificadores);
+//            multi.progreso=0;
+//            multi.max_progreso=100;
+//            multi.base_progreso=0;
+//            multi.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//            multi.window=ui;
+//            Busqueda bus(&multi,tipo_dato,Tipo_Descriptor,&Multi_tipo);
+//            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
+//        }
+//        Representacion rep;
+//        Mat mostrar;
+//        imagen.convertTo(imagen,CV_32F);
+//        double minval,maxval;
+//        cv::minMaxLoc(imagen,&minval,&maxval);
+//        imagen=(imagen-minval)/(maxval-minval);
+//        imshow("Imagen",imagen);
+//        rep.Recuadros(imagen,recuadros,labels_recuadros,Col,mostrar,show_graphics);
+//    }
+//    else if(ui->radioTextura->isChecked()){
+//        if(ui->Clasif_Cargado_2->isChecked()){
+//            if(ID==DISTANCIAS){
+//                D.progreso=0;
+//                D.max_progreso=100;
+//                D.base_progreso=0;
+//                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                D.window=ui;
+//                Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==GAUSSIANO){
+//                G.progreso=0;
+//                G.max_progreso=100;
+//                G.base_progreso=0;
+//                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                G.window=ui;
+//                Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==CASCADA_CLAS){
+//                HA.progreso=0;
+//                HA.max_progreso=100;
+//                HA.base_progreso=0;
+//                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                HA.window=ui;
+//                Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==HISTOGRAMA){
+//                H.progreso=0;
+//                H.max_progreso=100;
+//                H.base_progreso=0;
+//                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                H.window=ui;
+//                Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==KNN){
+//                K.progreso=0;
+//                K.max_progreso=100;
+//                K.base_progreso=0;
+//                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                K.window=ui;
+//                Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==NEURONAL){
+//                N.progreso=0;
+//                N.max_progreso=100;
+//                N.base_progreso=0;
+//                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                N.window=ui;
+//                Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==C_SVM){
+//                S.progreso=0;
+//                S.max_progreso=100;
+//                S.base_progreso=0;
+//                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                S.window=ui;
+//                Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==RTREES){
+//                RT.progreso=0;
+//                RT.max_progreso=100;
+//                RT.base_progreso=0;
+//                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                RT.window=ui;
+//                Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==DTREES){
+//                DT.progreso=0;
+//                DT.max_progreso=100;
+//                DT.base_progreso=0;
+//                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                DT.window=ui;
+//                Busqueda bus(&DT,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==BOOSTING){
+//                B.progreso=0;
+//                B.max_progreso=100;
+//                B.base_progreso=0;
+//                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                B.window=ui;
+//                Busqueda bus(&B,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==EXP_MAX){
+//                E.progreso=0;
+//                E.max_progreso=100;
+//                E.base_progreso=0;
+//                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                E.window=ui;
+//                Busqueda bus(&E,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else if(ID==MICLASIFICADOR){
+//                MC.progreso=0;
+//                MC.max_progreso=100;
+//                MC.base_progreso=0;
+//                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//                MC.window=ui;
+//                Busqueda bus(&MC,tipo_dato,Tipo_Descriptor);
+//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//            }
+//            else{
+//                QMessageBox msgBox;
+//                msgBox.setText("ERROR: No se ha cargado ningun clasificador");
+//                msgBox.exec();
+//                QApplication::restoreOverrideCursor();
+//                return;
+//            }
+//            if(e==1){
+//                QMessageBox msgBox;
+//                msgBox.setText("ERROR: No se ha podido clasificar la imagen");
+//                msgBox.exec();
+//                QApplication::restoreOverrideCursor();
+//                return;
+//            }
+//        }
+//        else if(ui->Multiclasif_2->isChecked()){
+//            vector<Clasificador*> clasificadores;
+//            for(uint i=0; i<id_clasificadores.size(); i++){
+//                if(id_clasificadores[i]==DISTANCIAS){
+//                    Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==GAUSSIANO){
+//                    Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==CASCADA_CLAS){
+//                    Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==HISTOGRAMA){
+//                    Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==KNN){
+//                    Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==NEURONAL){
+//                    Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==C_SVM){
+//                    Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==RTREES){
+//                    Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==DTREES){
+//                    Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==BOOSTING){
+//                    Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//                else if(id_clasificadores[i]==EXP_MAX){
+//                    Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
+//                    clasi->Read_Data();
+//                    clasificadores.push_back(clasi);
+//                }
+//        //        else if(id_clasificadores[i]==GBT){
+//        //            Clasificador_GBTrees *clasi=new Clasificador_GBTrees(nombres[i]);
+//    //                clasi->Read_Data();
+//    //                clasificadores.push_back(clasi);
+//        //        }
+//        //        else if(id_clasificadores[i]==ERTREES){
+//        //            Clasificador_ERTrees *clasi=new Clasificador_ERTrees(nombres[i]);
+//    //                clasi->Read_Data();
+//    //                clasificadores.push_back(clasi);
+//        //        }
+//            }
+//            MultiClasificador multi(clasificadores);
+//            multi.progreso=0;
+//            multi.max_progreso=100;
+//            multi.base_progreso=0;
+//            multi.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
+//            multi.window=ui;
+//            Busqueda bus(&multi,tipo_dato,Tipo_Descriptor,&Multi_tipo);
+//            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
+//        }
+//        if(!salida.empty()){
+//            Mat mostrar;
+//            Representacion rep;
+//            imagen.convertTo(imagen,CV_32F);
+//            double minval,maxval;
+//            cv::minMaxLoc(imagen,&minval,&maxval);
+//            imagen=(imagen-minval)/(maxval-minval);
+//            imshow("Imagen",imagen);
+//            e=rep.Color(salida,Col,mostrar,show_graphics);
+//            if(e==1){
+//                QMessageBox msgBox;
+//                msgBox.setText("ERROR: No se ha podido representar la imagen clasificada");
+//                msgBox.exec();
+//                QApplication::restoreOverrideCursor();
+//                return;
+//            }
+//            QApplication::restoreOverrideCursor();
+//        }
+//        else{
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: No se ha podido clasificar la imagen");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            return;
+//        }
+//    }
+//    ui->progress_Clasificar->setValue(100);
+//    ui->progress_Clasificar->setValue(0);
+//    QApplication::restoreOverrideCursor();
 //}

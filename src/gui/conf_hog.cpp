@@ -39,14 +39,14 @@ Conf_HOG::~Conf_HOG()
 
 void Conf_HOG::on_Aceptar_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
-//    window->Win_Size.width=ui->Win_Size_X->value();
-//    window->Win_Size.height=ui->Win_Size_Y->value();
-//    window->Block_Stride.width=ui->Block_Stride_X->value();
-//    window->Block_Stride.height=ui->Block_Stride_Y->value();
-//    window->Win_Sigma=ui->Sigma->value();
-//    window->Threshold_L2hys=ui->Threshold->value();
-//    window->Gamma_Correction=ui->Gamma->isChecked();
-//    window->Nlevels=ui->NLevels->value();
-//    delete this;
+    MainWindow *window=(MainWindow*) punt;
+    window->win_size_x=ui->Win_Size_X->value();
+    window->win_size_y=ui->Win_Size_Y->value();
+    window->block_x=ui->Block_Stride_X->value();
+    window->block_y=ui->Block_Stride_Y->value();
+    window->sigma=ui->Sigma->value();
+    window->threhold_l2hys=ui->Threshold->value();
+    window->gamma=ui->Gamma->isChecked();
+    window->nlevels=ui->NLevels->value();
+    delete this;
 }

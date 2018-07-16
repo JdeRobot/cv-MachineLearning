@@ -39,7 +39,7 @@ namespace MLT {
     public:
         Running();
         int load_dataset(string path);
-        int synthetic_data(string ref, int num_classes, int num_data_class, int size_x, int size_y, float ancho, float separacion_clases);
+        int synthetic_data(string ref, int classes, int number, int size_x, int size_y, float variance, float interclass);
         int save(string ref);
         int join_data(string ref, string path);
         int plot_data(int type_plot, vector<int> dim);
@@ -52,7 +52,7 @@ namespace MLT {
         int generate_data(string ref, string input_directory, int type, int scale_x, int scale_y, bool square, int number);
         int descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels);
         int expand_dataset(string ref, int nframe, float max_noise, float max_blur, float max_x, float max_y, float max_z);
-
+        int represent_images(int type, int label);
 
         Ui::MainWindow *window;
 

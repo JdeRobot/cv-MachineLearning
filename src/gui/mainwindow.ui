@@ -52,11 +52,11 @@
      <item>
       <widget class="QTabWidget" name="Tipo_Herr2">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="vectors_tab">
         <attribute name="title">
-         <string>Work with Vectors</string>
+         <string>Work as Vectors</string>
         </attribute>
         <widget class="QTabWidget" name="tabWidget_3">
          <property name="geometry">
@@ -1162,7 +1162,7 @@
        </widget>
        <widget class="QWidget" name="images_tab">
         <attribute name="title">
-         <string>Work with Images</string>
+         <string>Work as Images</string>
         </attribute>
         <widget class="QTabWidget" name="tabWidget_2">
          <property name="geometry">
@@ -1873,10 +1873,10 @@
             </rect>
            </property>
            <property name="minimum">
-            <number>1</number>
+            <number>-1</number>
            </property>
            <property name="maximum">
-            <number>999999</number>
+            <number>9</number>
            </property>
           </widget>
          </widget>

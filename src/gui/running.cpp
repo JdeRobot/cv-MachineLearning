@@ -75,19 +75,16 @@ int MLT::Running::load_dataset(string path){
     return 0;
 }
 
-int MLT::Running::synthetic_data(string ref, int num_clases, int num_data_clase, int size_x, int size_y, float ancho, float separacion_clases){
+int MLT::Running::synthetic_data(string ref, int classes, int number, int size_x, int size_y, float variance, float interclass){
     Size size_img;
     size_img.width=size_x;
     size_img.height=size_y;
-    if(size_img.height>1)
-        size_img.height=1;
-
 
     this->base_progreso=1;
     this->max_progreso=100;
     this->gen.progreso=0;
 
-    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, num_clases, num_data_clase, size_img, ancho, separacion_clases, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
+    std::thread thrd(&MLT::Generacion::Random_Synthetic_Data,&gen, ref, classes, number, size_img, variance, interclass, std::ref(this->org_images), std::ref(this->org_labels),std::ref(this->org_info), this->save_data);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(gen.running==true)
         update_gen();
@@ -595,34 +592,33 @@ int MLT::Running::generate_data(string ref, string input_directory, int type, in
     std::thread thrd;
     if(type==0){
         thrd=std::thread(&MLT::Generacion::Datos_Imagenes,&this->gen, ref, input_directory,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        while(this->gen.running==true)
+            update_gen();
+
+        thrd.join();
     }
     else if(type==1){
-        thrd=std::thread(&MLT::Generacion::Etiquetar,&this->gen, ref, input_directory,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        this->gen.Etiquetar(ref, input_directory,scale,this->org_labels,this->org_images,this->org_info,this->save_data);
     }
     else if(type==2){
-        thrd=std::thread(&MLT::Generacion::Recortar_Etiquetar_imagenes,&this->gen, ref, input_directory,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        this->gen.Recortar_Etiquetar_imagenes(ref, input_directory,square,scale,this->org_labels,this->org_images,this->org_info,this->save_data);
     }
     else if(type==3){
         cv::VideoCapture cap(input_directory);
-        thrd=std::thread(&MLT::Generacion::Recortar_Etiquetar_video,&this->gen, ref, cap,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        this->gen.Recortar_Etiquetar_video(ref, cap,square,scale,this->org_labels,this->org_images,this->org_info,this->save_data);
     }
     else if(type==4){
-        thrd=std::thread(&MLT::Generacion::Autonegativos,&this->gen, ref, input_directory, scale, number,std::ref(this->org_images),std::ref(this->org_labels),std::ref(this->org_info),this->save_data);
+        this->gen.Autonegativos(ref, input_directory, scale, number,this->org_images,this->org_labels,this->org_info,this->save_data);
     }
     else if(type==5){
         cv::VideoCapture cap(input_directory);
-        thrd=std::thread(&MLT::Generacion::Autopositivos,&this->gen, ref, cap,square,scale,std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        this->gen.Autopositivos(ref, cap,square,scale,this->org_labels,this->org_images,this->org_info,this->save_data);
     }
     else if(type==6){
         cv::VideoCapture cap(input_directory);
-        thrd=std::thread(&MLT::Generacion::Autogeneracion,&this->gen, ref, cap, number, square, scale, std::ref(this->org_labels),std::ref(this->org_images),std::ref(this->org_info),this->save_data);
+        this->gen.Autogeneracion(ref, cap, number, square, scale, this->org_labels,this->org_images,this->org_info,this->save_data);
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    while(this->gen.running==true)
-        update_gen();
-
-    thrd.join();
 
     this->org_ref=ref;
 }
@@ -714,9 +710,9 @@ int MLT::Running::expand_dataset(string ref, int nframe, float max_noise, float 
     this->gen.total_progreso=this->org_images.size();
     this->gen.progreso=0;
     this->base_progreso=30;
-    this->max_progreso=20;
+    this->max_progreso=100;
 
-    std::thread thrd(&MLT::Generacion::Synthethic_Data,&this->gen,this->org_ref,this->org_images,this->org_labels,std::ref(this->result_images),std::ref(this->result_labels),nframe,max_noise,max_blur,max_x,max_y,max_z,std::ref(this->result_info),this->save_other);
+    std::thread thrd(&MLT::Generacion::Synthethic_Data,&this->gen,ref,this->org_images,this->org_labels,std::ref(this->result_images),std::ref(this->result_labels),nframe,max_noise,max_blur,max_x,max_y,max_z,std::ref(this->result_info),this->save_other);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     while(this->gen.running==true)
         update_gen();
@@ -727,7 +723,6 @@ int MLT::Running::expand_dataset(string ref, int nframe, float max_noise, float 
 
     if(this->gen.error==1)
         return 1;
-
 }
 
 //int MLT::Running::detect(string input, int classes, float variance, float interclass, int window_x, int wnidow_y, int descriptor_type){
@@ -1520,3 +1515,19 @@ int MLT::Running::expand_dataset(string ref, int nframe, float max_noise, float 
 //    ui->progress_Clasificar->setValue(0);
 //    QApplication::restoreOverrideCursor();
 //}
+
+int MLT::Running::represent_images(int type, int label){
+    int e=0;
+    Representacion rep;
+    if(type==0){
+        if(this->org_images.empty() || this->org_labels.empty())
+            return 1;
+        e=rep.Imagen(this->org_images,this->org_labels,label);
+    }
+    else if(type==1){
+        if(this->result_images.empty() || this->result_labels.empty())
+            return 1;
+        e=rep.Imagen(this->result_images,this->result_labels,label);
+    }
+    return e;
+}

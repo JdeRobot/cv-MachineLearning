@@ -1364,7 +1364,16 @@ int MLT::Representacion::Histogram_represent(string nombre, vector<vector<Mat> >
     return 0;
 }
 
-int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
+int MLT::Representacion::Imagen(vector<Mat> Imagenes, vector<float> etiquetas, int etiqueta){
+    Auxiliares aux;
+    bool negativa;
+    int n=aux.numero_etiquetas(etiquetas,negativa);
+
+    if(etiqueta>n || etiqueta==0 || etiqueta< -1 || etiqueta>9){
+        cout<<"ERROR en Imagen: Etiqueta fuera de rango"<<endl;
+        return 1;
+    }
+
     string nombre="IMAGEN";
     double minimo=999999999,maximo=0;
     double minval, maxval;
@@ -1375,15 +1384,17 @@ int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
         if(maxval>maximo)
             maximo=maxval;
     }
-    if(numero>(int)Imagenes.size()-1 || numero<0){
-        cout<<"ERROR en Imagen: El numero esta fuera del rango de las Imagenes"<<endl;
-        return 1;
+
+    int numero=0;
+    for(int i=0; i<etiquetas.size(); i++){
+        if(etiquetas[i]==etiqueta)
+            numero=i;
+        if(numero>(int)Imagenes.size()-1){
+            cout<<"ERROR en Imagen: Etiqueta fuera de rango"<<endl;
+            return 1;
+        }
     }
     while(true){
-        if(numero>(int)Imagenes.size()-1)
-            numero=(int)Imagenes.size()-1;
-        if(numero<0)
-            numero=0;
         Mat Mostrar=Mat::zeros(Imagenes[numero].rows,Imagenes[numero].cols,CV_32FC1);
         Mostrar=((Imagenes[numero]-minimo)/(maximo-minimo));
         Muestra:
@@ -1404,10 +1415,26 @@ int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
             destroyWindow("Info");
             goto Muestra;
         }
-        else if(z=='s')
-            numero++;
-        else if(z=='a')
-            numero--;
+        else if(z=='s'){
+            bool sigue=true;
+            while(sigue){
+                numero++;
+                if(numero>(int)Imagenes.size()-1)
+                    numero=0;
+                if(etiquetas[numero]==etiqueta)
+                    sigue=false;
+            }
+        }
+        else if(z=='a'){
+            bool sigue=true;
+            while(sigue){
+                numero--;
+                if(numero<0)
+                    numero=(int)Imagenes.size()-1;
+                if(etiquetas[numero]==etiqueta)
+                    sigue=false;
+            }
+        }
         else if(a==27){
             cv::destroyWindow(nombre);
             break;

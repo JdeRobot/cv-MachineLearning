@@ -652,40 +652,8 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_maxroty->setEnabled(false);
         this->ui->i_maxrotz->setEnabled(false);
     }
-    else if(index==3){
-        this->ui->i_dataname->setEnabled(false);
-        this->ui->i_datatype->setEnabled(true);
-        this->ui->i_datapath->setEnabled(true);
-        this->ui->i_toolButton->setEnabled(true);
-        this->ui->i_config_tool->setEnabled(true);
-
-        this->ui->i_label_clases->setEnabled(false);
-        this->ui->i_label_dataperclass->setEnabled(false);
-        this->ui->i_label_size->setEnabled(true);
-        this->ui->i_label_variance->setEnabled(false);
-        this->ui->i_label_interclassdistance->setEnabled(false);
-        this->ui->i_label_images->setEnabled(false);
-        this->ui->i_label_maxnoise->setEnabled(false);
-        this->ui->i_label_maxblur->setEnabled(false);
-        this->ui->i_label_maxrotx->setEnabled(false);
-        this->ui->i_label_maxroty->setEnabled(false);
-        this->ui->i_label_maxrotz->setEnabled(false);
-
-        this->ui->i_clases->setEnabled(false);
-        this->ui->i_dataperclass->setEnabled(false);
-        this->ui->i_size_x->setEnabled(true);
-        this->ui->i_size_y->setEnabled(true);
-        this->ui->i_variance->setEnabled(false);
-        this->ui->i_interclassdistance->setEnabled(false);
-        this->ui->i_images->setEnabled(false);
-        this->ui->i_maxnoise->setEnabled(false);
-        this->ui->i_maxblur->setEnabled(false);
-        this->ui->i_maxrotx->setEnabled(false);
-        this->ui->i_maxroty->setEnabled(false);
-        this->ui->i_maxrotz->setEnabled(false);
-    }
-    else if(index>=4 && index<=9){
-        this->ui->i_dataname->setEnabled(false);
+    else if(index>=3 && index<=9){
+        this->ui->i_dataname->setEnabled(true);
         this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(true);
         this->ui->i_toolButton->setEnabled(true);
@@ -928,11 +896,17 @@ void MainWindow::on_i_run_datamanaging_clicked()
         }
     }
     else if(this->ui->i_tool->currentIndex()==11){
-//        er=this->run.join_data(ref,path.toStdString());
-//        if(er==1){
-//            error_control("ERROR: Data could not be created");
-//            return;
-//        }
+        int nframe=this->ui->i_images->value();
+        float max_noise=this->ui->i_maxnoise->value();
+        float max_blur=this->ui->i_maxblur->value();
+        float max_x=this->ui->i_maxrotx->value();
+        float max_y=this->ui->i_maxroty->value();
+        float max_z=this->ui->i_maxrotz->value();
+        er=this->run.expand_dataset(ref,nframe,max_noise,max_blur,max_x,max_y,max_z);
+        if(er==1){
+            error_control("ERROR: Data could not be created");
+            return;
+        }
 //        path="../Data/Imagenes/"+name;
 //        er=this->run.load_dataset(path.toStdString());
 //        if(er==1){
@@ -981,7 +955,6 @@ void MainWindow::on_i_run_datamanaging_clicked()
             return;
         }
     }
-
 
     this->ui->v_plotting_x->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
     this->ui->v_plotting_y->setMaximum(this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels());
@@ -1160,3 +1133,13 @@ void MainWindow::on_i_detection_run_clicked()
 //    }
 }
 
+
+void MainWindow::on_i_represent_clicked()
+{
+    int type=-1;
+    if(this->ui->i_plotting_dataset->isChecked())
+        type=0;
+    else if(this->ui->i_plotting_result->isChecked())
+        type=1;
+    this->run.represent_images(type,(int)this->ui->i_plotting_label->value());
+}

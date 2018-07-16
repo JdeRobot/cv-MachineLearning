@@ -236,6 +236,8 @@ private slots:
 
     void on_i_datamanaging_descriptortool_clicked();
 
+    void on_i_represent_clicked();
+
 private:
     void error_control(QString error);
 

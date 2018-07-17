@@ -588,7 +588,7 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_maxrotz->setEnabled(false);
 
     }
-    else if(index==1 || index==12 || index==13){
+    else if(index==1 || index==13){
         this->ui->i_dataname->setEnabled(false);
         this->ui->i_datatype->setEnabled(true);
         this->ui->i_datapath->setEnabled(true);
@@ -687,7 +687,7 @@ void MainWindow::on_i_tool_activated(int index)
     else if(index==10){
         this->ui->i_dataname->setEnabled(true);
         this->ui->i_datatype->setEnabled(true);
-        this->ui->i_datapath->setEnabled(true);
+        this->ui->i_datapath->setEnabled(false);
         this->ui->i_toolButton->setEnabled(true);
         this->ui->i_config_tool->setEnabled(false);
 
@@ -747,6 +747,38 @@ void MainWindow::on_i_tool_activated(int index)
         this->ui->i_maxrotx->setEnabled(true);
         this->ui->i_maxroty->setEnabled(true);
         this->ui->i_maxrotz->setEnabled(true);
+    }
+    else if(index==12){
+        this->ui->i_dataname->setEnabled(true);
+        this->ui->i_datatype->setEnabled(true);
+        this->ui->i_datapath->setEnabled(false);
+        this->ui->i_toolButton->setEnabled(true);
+        this->ui->i_config_tool->setEnabled(false);
+
+        this->ui->i_label_clases->setEnabled(false);
+        this->ui->i_label_dataperclass->setEnabled(false);
+        this->ui->i_label_size->setEnabled(false);
+        this->ui->i_label_variance->setEnabled(false);
+        this->ui->i_label_interclassdistance->setEnabled(false);
+        this->ui->i_label_images->setEnabled(false);
+        this->ui->i_label_maxnoise->setEnabled(false);
+        this->ui->i_label_maxblur->setEnabled(false);
+        this->ui->i_label_maxrotx->setEnabled(false);
+        this->ui->i_label_maxroty->setEnabled(false);
+        this->ui->i_label_maxrotz->setEnabled(false);
+
+        this->ui->i_clases->setEnabled(false);
+        this->ui->i_dataperclass->setEnabled(false);
+        this->ui->i_size_x->setEnabled(false);
+        this->ui->i_size_y->setEnabled(false);
+        this->ui->i_variance->setEnabled(true);
+        this->ui->i_interclassdistance->setEnabled(false);
+        this->ui->i_images->setEnabled(false);
+        this->ui->i_maxnoise->setEnabled(false);
+        this->ui->i_maxblur->setEnabled(false);
+        this->ui->i_maxrotx->setEnabled(false);
+        this->ui->i_maxroty->setEnabled(false);
+        this->ui->i_maxrotz->setEnabled(false);
     }
     if(index==5 || index==6 || index==8 || index==9)
         this->ui->i_square->setEnabled(true);
@@ -883,17 +915,19 @@ void MainWindow::on_i_run_datamanaging_clicked()
             error_control("ERROR: Data could not be created");
             return;
         }
-        path="../Data/Imagenes/"+name;
-        er=this->run.load_dataset(path.toStdString());
-        if(er==1){
-            error_control("ERROR: The folder has not the expected structure");
-            return;
-        }
+        QString reference=QString::fromStdString(ref);
+        this->ui->results_lab->setText("Dataset: "+reference);
+//        path="../Data/Imagenes/"+name;
+//        er=this->run.load_dataset(path.toStdString());
+//        if(er==1){
+//            error_control("ERROR: The folder has not the expected structure");
+//            return;
+//        }
 
-        if(er==2){
-            error_control("ERROR: Data could not be loaded");
-            return;
-        }
+//        if(er==2){
+//            error_control("ERROR: Data could not be loaded");
+//            return;
+//        }
     }
     else if(this->ui->i_tool->currentIndex()==11){
         int nframe=this->ui->i_images->value();
@@ -907,6 +941,8 @@ void MainWindow::on_i_run_datamanaging_clicked()
             error_control("ERROR: Data could not be created");
             return;
         }
+        QString reference=QString::fromStdString(ref);
+        this->ui->results_lab->setText("Dataset: "+reference);
 //        path="../Data/Imagenes/"+name;
 //        er=this->run.load_dataset(path.toStdString());
 //        if(er==1){

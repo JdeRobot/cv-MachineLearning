@@ -38,23 +38,14 @@ void MLT::Running::update_analysis(){
 }
 
 int MLT::Running::load_dataset(string path){
-    this->org_ref="";
     int pos=0;
     for(uint i=0; i<path.size(); i++){
         if(path[i]=='/')
             pos=i;
     }
+    this->org_ref="";
     for(uint i=pos+1; i<path.size(); i++)
         this->org_ref=this->org_ref+path[i];
-    string archivo_i=path+"/Info.xml";
-    cv::FileStorage Archivo_i(archivo_i,CV_STORAGE_READ);
-
-    if(!Archivo_i.isOpened())
-        return 1;
-
-    int num;
-    Archivo_i["Num_Datos"]>>num;
-    Archivo_i.release();
 
     string input_directory=path+"/Recortes.txt";
 
@@ -701,8 +692,26 @@ int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor,
         this->result_info.Tipo_Datos=PUNTOS_CARACTERISTICOS;
     }
 
+    this->result_labels.clear();
+    for(int i=0; i<this->org_labels.size(); i++){
+        this->result_labels.push_back(this->org_labels[i]);
+    }
+    this->result_ref=ref;
+    this->result_info.Tipo_Datos=this->org_info.Tipo_Datos;
+    this->result_info.Num_Datos=this->org_info.Num_Datos;
     this->result_info.Tam_X=this->result_images[0].cols;
     this->result_info.Tam_Y=this->result_images[0].rows;
+    this->result_info.Tam_Orig_X=this->org_info.Tam_Orig_X;
+    this->result_info.Tam_Orig_Y=this->org_info.Tam_Orig_Y;
+    this->result_info.si_lda=this->org_info.si_lda;
+    this->result_info.si_pca=this->org_info.si_pca;
+    this->result_info.si_dist=this->org_info.si_dist;
+    this->result_info.si_d_prime=this->org_info.si_d_prime;
+    this->org_info.LDA.copyTo(this->result_info.LDA);
+    this->org_info.PCA.copyTo(this->result_info.PCA);
+    this->org_info.DS.copyTo(this->result_info.DS);
+    this->org_info.D_PRIME.copyTo(this->result_info.D_PRIME);
+
     ref=this->result_ref;
 }
 
@@ -719,10 +728,31 @@ int MLT::Running::expand_dataset(string ref, int nframe, float max_noise, float 
 
     thrd.join();
 
-    this->result_ref=ref;
 
     if(this->gen.error==1)
         return 1;
+
+    this->result_ref=ref;
+
+    this->result_labels.clear();
+    for(int i=0; i<this->org_labels.size(); i++){
+        this->result_labels.push_back(this->org_labels[i]);
+    }
+    this->result_ref=ref;
+    this->result_info.Tipo_Datos=this->org_info.Tipo_Datos;
+    this->result_info.Num_Datos=this->org_info.Num_Datos;
+    this->result_info.Tam_X=this->org_info.Tam_X;
+    this->result_info.Tam_Y=this->org_info.Tam_Y;
+    this->result_info.Tam_Orig_X=this->org_info.Tam_Orig_X;
+    this->result_info.Tam_Orig_Y=this->org_info.Tam_Orig_Y;
+    this->result_info.si_lda=this->org_info.si_lda;
+    this->result_info.si_pca=this->org_info.si_pca;
+    this->result_info.si_dist=this->org_info.si_dist;
+    this->result_info.si_d_prime=this->org_info.si_d_prime;
+    this->org_info.LDA.copyTo(this->result_info.LDA);
+    this->org_info.PCA.copyTo(this->result_info.PCA);
+    this->org_info.DS.copyTo(this->result_info.DS);
+    this->org_info.D_PRIME.copyTo(this->result_info.D_PRIME);
 }
 
 //int MLT::Running::detect(string input, int classes, float variance, float interclass, int window_x, int wnidow_y, int descriptor_type){

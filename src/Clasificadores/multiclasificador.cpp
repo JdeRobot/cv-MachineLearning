@@ -55,13 +55,13 @@ int MLT::MultiClasificador::Cascada(vector<Mat> Data, vector<int> tipo_regla, ve
         }
     }
 #ifdef GUI
-    for(int i=0; i<clasificadores.size();i++){
-        clasificadores[i]->progreso=progreso;
-        clasificadores[i]->max_progreso=max_progreso;
-        clasificadores[i]->base_progreso=base_progreso;
-        clasificadores[i]->total_progreso=total_progreso;
-        clasificadores[i]->window=window;
-    }
+//    for(int i=0; i<clasificadores.size();i++){
+//        clasificadores[i]->progreso=progreso;
+//        clasificadores[i]->max_progreso=max_progreso;
+//        clasificadores[i]->base_progreso=base_progreso;
+//        clasificadores[i]->total_progreso=total_progreso;
+//        clasificadores[i]->window=window;
+//    }
 #endif
     vector<vector<float> > labels;
     for(uint i=0; i<clasificadores.size(); i++){
@@ -137,13 +137,13 @@ int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, v
         return 1;
     }
 #ifdef GUI
-    for(int i=0; i<clasificadores.size();i++){
-        clasificadores[i]->progreso=progreso;
-        clasificadores[i]->max_progreso=max_progreso;
-        clasificadores[i]->base_progreso=base_progreso;
-        clasificadores[i]->total_progreso=total_progreso;
-        clasificadores[i]->window=window;
-    }
+//    for(int i=0; i<clasificadores.size();i++){
+//        clasificadores[i]->progreso=progreso;
+//        clasificadores[i]->max_progreso=max_progreso;
+//        clasificadores[i]->base_progreso=base_progreso;
+//        clasificadores[i]->total_progreso=total_progreso;
+//        clasificadores[i]->window=window;
+//    }
 #endif
     vector<vector<float> > labels;
     for(uint i=0; i<clasificadores.size(); i++){

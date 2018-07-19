@@ -52,7 +52,7 @@
      <item>
       <widget class="QTabWidget" name="Tipo_Herr2">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="vectors_tab">
         <attribute name="title">
@@ -2668,7 +2668,7 @@
              <string>...</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="m_classifier_traoin">
+           <widget class="QPushButton" name="m_classifier_train">
             <property name="geometry">
              <rect>
               <x>160</x>

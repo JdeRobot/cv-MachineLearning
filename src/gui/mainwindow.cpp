@@ -518,12 +518,6 @@ void MainWindow::on_v_dimensionality_quality_clicked()
     }
     QString name=this->ui->v_dimensionality_dataname->displayText();
     string ref=name.toStdString();
-//    for(uint i=0; i<ref.size(); i++){
-//        if(ref[i]==' '){
-//            error_control("ERROR: Name must not have spaces");
-//            return;
-//        }
-//    }
 
     int type=-1;
     if(this->ui->v_dimensionality_lda->isChecked())
@@ -917,17 +911,6 @@ void MainWindow::on_i_run_datamanaging_clicked()
         }
         QString reference=QString::fromStdString(ref);
         this->ui->results_lab->setText("Dataset: "+reference);
-//        path="../Data/Imagenes/"+name;
-//        er=this->run.load_dataset(path.toStdString());
-//        if(er==1){
-//            error_control("ERROR: The folder has not the expected structure");
-//            return;
-//        }
-
-//        if(er==2){
-//            error_control("ERROR: Data could not be loaded");
-//            return;
-//        }
     }
     else if(this->ui->i_tool->currentIndex()==11){
         int nframe=this->ui->i_images->value();
@@ -943,17 +926,6 @@ void MainWindow::on_i_run_datamanaging_clicked()
         }
         QString reference=QString::fromStdString(ref);
         this->ui->results_lab->setText("Dataset: "+reference);
-//        path="../Data/Imagenes/"+name;
-//        er=this->run.load_dataset(path.toStdString());
-//        if(er==1){
-//            error_control("ERROR: The folder has not the expected structure");
-//            return;
-//        }
-
-//        if(er==2){
-//            error_control("ERROR: Data could not be loaded");
-//            return;
-//        }
     }
     else if(this->ui->i_tool->currentIndex()==12){
         er=this->run.save(ref);
@@ -1009,6 +981,15 @@ void MainWindow::on_i_run_datamanaging_clicked()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_i_represent_clicked()
+{
+    int type=-1;
+    if(this->ui->i_plotting_dataset->isChecked())
+        type=0;
+    else if(this->ui->i_plotting_result->isChecked())
+        type=1;
+    this->run.represent_images(type,(int)this->ui->i_plotting_label->value());
+}
 
 
 
@@ -1098,6 +1079,7 @@ void MainWindow::on_i_detection_random_clicked(bool checked)
     }
 }
 
+
 void MainWindow::on_i_detection_file_tool_clicked()
 {
     QString filename = QFileDialog::getOpenFileName(
@@ -1169,13 +1151,13 @@ void MainWindow::on_i_detection_run_clicked()
 //    }
 }
 
-
-void MainWindow::on_i_represent_clicked()
+void MainWindow::on_m_classifier_train_clicked()
 {
-    int type=-1;
-    if(this->ui->i_plotting_dataset->isChecked())
-        type=0;
-    else if(this->ui->i_plotting_result->isChecked())
-        type=1;
-    this->run.represent_images(type,(int)this->ui->i_plotting_label->value());
+
+
+}
+
+void MainWindow::on_m_classifier_configclassify_clicked()
+{
+
 }

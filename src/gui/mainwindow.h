@@ -238,6 +238,10 @@ private slots:
 
     void on_i_represent_clicked();
 
+    void on_m_classifier_train_clicked();
+
+    void on_m_classifier_configclassify_clicked();
+
 private:
     void error_control(QString error);
 

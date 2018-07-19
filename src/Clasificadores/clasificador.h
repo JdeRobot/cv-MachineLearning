@@ -45,7 +45,7 @@ enum{
         int base_progreso;
         int total_progreso;
 
-        Ui::MainWindow *window;
+//        Ui::MainWindow *window;
     #endif
 
     private:

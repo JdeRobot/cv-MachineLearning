@@ -61,7 +61,6 @@ private slots:
 private:
     Ui::Conf_Multi *ui;
     MultiClasificador::Multi_type multi;
-    vector<int> id_clasificadores;
     stringstream texto;
     void *punt;
 };

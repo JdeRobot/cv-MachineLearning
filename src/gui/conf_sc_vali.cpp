@@ -65,6 +65,6 @@ void Conf_SC_Vali::on_Iniciar_2_clicked()
         this->id_clasificadores.push_back(EXP_MAX);
 //    if(ui->ERT->isChecked())
 //        id_clasificadores.push_back(ERTREES);
-    window->id_clasificadores=this->id_clasificadores;
+    window->multi_type.identificadores=this->id_clasificadores;
     delete this;
 }

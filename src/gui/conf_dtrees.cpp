@@ -40,15 +40,15 @@ Conf_DTrees::~Conf_DTrees()
 
 void Conf_DTrees::on_Aceptar_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
-//    window->DTrees_priors=0;
-//    window->DTrees_cv_folds=ui->cv_folds->value();
-//    window->DTrees_max_categories=ui->max_categories->value();
-//    window->DTrees_max_depth=ui->max_depth->value();
-//    window->DTrees_min_sample_count=ui->min_sample_count->value();
-//    window->DTrees_regression_accuracy=ui->regression_accuracy->value();
-//    window->DTrees_truncate_pruned_tree=ui->truncate_pruned_tree->isChecked();
-//    window->DTrees_use_1se_rule=ui->use_1se_rule->isChecked();
-//    window->DTrees_use_surrogates=ui->use_surrogates->isChecked();
-//    delete this;
+    MainWindow *window=(MainWindow*) punt;
+    window->parameters.DTrees_priors=0;
+    window->parameters.DTrees_cv_folds=ui->cv_folds->value();
+    window->parameters.DTrees_max_categories=ui->max_categories->value();
+    window->parameters.DTrees_max_depth=ui->max_depth->value();
+    window->parameters.DTrees_min_sample_count=ui->min_sample_count->value();
+    window->parameters.DTrees_regression_accuracy=ui->regression_accuracy->value();
+    window->parameters.DTrees_truncate_pruned_tree=ui->truncate_pruned_tree->isChecked();
+    window->parameters.DTrees_use_1se_rule=ui->use_1se_rule->isChecked();
+    window->parameters.DTrees_use_surrogates=ui->use_surrogates->isChecked();
+    delete this;
 }

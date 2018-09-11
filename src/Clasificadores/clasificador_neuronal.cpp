@@ -194,11 +194,13 @@ int MLT::Clasificador_Neuronal::Autotrain(vector<Mat> Data, vector<float> Labels
 }
 
 int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+    this->running=true;
     int e=0;
     if(read){
         e=Read_Data();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
+            this->running=false;
             return 1;
         }
     }
@@ -208,6 +210,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
     e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
         cout<<"ERROR en Autoclasificacion: Error en Image2Lexic"<<endl;
+        this->running=false;
         return 1;
     }
     Mat trainingDataMat;
@@ -218,6 +221,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,LDA_DIM,reduccion.LDA);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -228,6 +232,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,PCA_DIM,reduccion.PCA);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -238,6 +243,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,MAXDIST_DIM,reduccion.DS);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -248,6 +254,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,D_PRIME_DIM,reduccion.D_PRIME);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -265,6 +272,7 @@ int MLT::Clasificador_Neuronal::Autoclasificacion(vector<Mat> Data, vector<float
 //            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
+    this->running=false;
     return 0;
 }
 

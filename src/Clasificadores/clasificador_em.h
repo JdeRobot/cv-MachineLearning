@@ -20,15 +20,6 @@ namespace MLT {
         int numero_etiquetas,ventana_x,ventana_y,ventana_o_x,ventana_o_y,tipo_dato;
         string nombre;
 
-    #ifdef GUI
-        int progreso;
-        int max_progreso;
-        int base_progreso;
-        int total_progreso;
-
-        Ui::MainWindow *window;
-    #endif
-
     private:
         void Entrenamiento(Mat trainingDataMat, Mat labelsMat);
         float Clasificacion(Mat Data);

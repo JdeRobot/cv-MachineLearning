@@ -30,11 +30,6 @@ Con_Multi::Con_Multi(void *puntero, QWidget *parent) :
 {
     punt=puntero;
     texto.str("");
-    id_clasificadores.clear();
-    nombres.clear();
-    multi.tipo=CASCADA;
-    multi.label_ref.clear();
-    multi.tipo_regla.clear();
     ui->setupUi(this);
     ui->Informacion->clear();
 }
@@ -68,8 +63,8 @@ void Con_Multi::on_Anadir_clicked()
         msgBox.exec();
         return;
     }
-    id_clasificadores.push_back(id);
-    nombres.push_back(nombre);
+    multi.identificadores.push_back(id);
+    multi.nombres.push_back(nombre);
     texto<<"Classifier: "<<nombre<<"      Type: ";
     if(id==DISTANCIAS)
         texto<<"DISTANCIAS"<<endl;
@@ -149,8 +144,8 @@ void Con_Multi::on_Cascada_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
-    nombres.clear();
+    multi.identificadores.clear();
+    multi.nombres.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.tipo=CASCADA;
@@ -167,8 +162,8 @@ void Con_Multi::on_Votacion_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
-    nombres.clear();
+    multi.identificadores.clear();
+    multi.nombres.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.tipo=VOTACION;
@@ -193,8 +188,8 @@ void Con_Multi::on_reset_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
-    nombres.clear();
+    multi.identificadores.clear();
+    multi.nombres.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.label_ref.clear();
@@ -208,9 +203,7 @@ void Con_Multi::on_reset_clicked()
 
 void Con_Multi::on_Aceptar_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
-//    window->id_clasificadores=id_clasificadores;
-//    window->nombres=nombres;
-//    window->Multi_tipo=multi;
+    MainWindow *window=(MainWindow*) punt;
+    window->multi_type=multi;
     delete this;
 }

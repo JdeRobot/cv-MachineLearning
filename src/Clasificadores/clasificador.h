@@ -30,27 +30,25 @@ enum{
     public:
         Clasificador(){}
 
-        int virtual Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true){}
-        int virtual Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){}
-        int virtual Save_Data(){}
-        int virtual Read_Data(){}
+        virtual int Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save=true){}
+        virtual int Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){}
+        virtual int Save_Data(){}
+        virtual int Read_Data(){}
 
 
         int tipo_clasificador,numero_etiquetas,ventana_x,ventana_y,ventana_o_x,ventana_o_y,tipo_dato;
         string nombre;
 
-    #ifdef GUI
-        int progreso;
-        int max_progreso;
-        int base_progreso;
-        int total_progreso;
-
-//        Ui::MainWindow *window;
-    #endif
+#ifdef GUI
+    int progreso;
+    int total_progreso;
+    int error;
+    bool running;
+#endif
 
     private:
-        void virtual Entrenamiento(Mat trainingDataMat, Mat labelsMat){}
-        float virtual Clasificacion(Mat Data){}
+        virtual void Entrenamiento(Mat trainingDataMat, Mat labelsMat){}
+        virtual float Clasificacion(Mat Data){}
     };
 }
 

@@ -28,7 +28,7 @@
 #include <thread>
 #include <QStandardItem>
 #include "../ClasificationSystem.h"
-#include "../Clasificadores/miclasificador.h"
+//#include "../Clasificadores/miclasificador.h"
 
 using namespace std;
 using namespace cv;
@@ -50,10 +50,24 @@ namespace MLT {
         int dimensionality(string ref, int size_reduc, int type);
         int dimension_cuality(string ref, int size_reduc, int type_reduc, int type_measure, string &result);
         int generate_data(string ref, string input_directory, int type, int scale_x, int scale_y, bool square, int number);
-        int descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels);
+        int descriptors(string &ref, int descriptor, string pc_descriptor, string extractor,
+                        int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels, bool descriptor_parameter);
         int expand_dataset(string ref, int nframe, float max_noise, float max_blur, float max_x, float max_y, float max_z);
         int represent_images(int type, int label);
-        int train(string ref, int classifier_type, Optimizacion::Parametros params);
+        int detect_image(int type_running, int input_type, string input_path, int descriptor_type, MultiClasificador::Multi_type multi_params,
+                         int n_classes, float variance, float interclass,
+                         int window_x, int window_y, int jump, int pyramid, int rotation,
+                         bool postprocess, bool overlap, bool isolated, float dist_boxes,
+                         int dist_rotation, string pc_descriptor, string extractor,
+                         int size_x, int size_y, int block_x, int block_y, double sigma,
+                         double threhold_l2hys, bool gamma, int n_levels, bool descriptor_parameter, Mat &image, Mat &output, vector<RotatedRect> &detections, vector<float> &labels_detections);
+        int train(string ref, int classifier_type, Clasificadores::Parametros params);
+        int load_model(string path, string &name);
+        int classify(string ref, int type_classification, stringstream &txt, MultiClasificador::Multi_type multi_params);
+        int optimize(int type, int id_classifier, MultiClasificador::Multi_type multi_type, stringstream &text,
+                     Clasificadores::Parametros start, Clasificadores::Parametros leap, Clasificadores::Parametros stop,
+                     int percentage, int num_folds, int size_fold);
+
 
 
         Ui::MainWindow *window;
@@ -75,14 +89,15 @@ namespace MLT {
         Generacion::Info_Datos result_info;
         std::vector<cv::Mat> result_images;
         std::vector<float> result_labels;
-//        std::vector<float> resultado;
 
         vector<cv::Scalar> colors;
+
 
 
     private:
         void update_gen();
         void update_analysis();
+        void update_classifier(int progress, int total_progress);
 
         Generacion gen;
         Analisis ana;

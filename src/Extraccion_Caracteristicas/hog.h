@@ -46,6 +46,8 @@ namespace MLT
         int Extract(vector<Mat> imagenes, vector<Mat>& descriptores) override;
 
         int Mostrar(vector<Mat> images, int scaleimage, int scalelines);
+
+        int error;
     private:
         cv::HOGDescriptor hog;
         vector<Mat> valores;

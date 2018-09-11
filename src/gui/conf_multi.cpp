@@ -30,7 +30,7 @@ Conf_Multi::Conf_Multi(void *puntero, QWidget *parent) :
 {
     punt=puntero;
     texto.str("");
-    id_clasificadores.clear();
+    multi.identificadores.clear();
     multi.tipo=CASCADA;
     multi.label_ref.clear();
     multi.tipo_regla.clear();
@@ -70,7 +70,7 @@ void Conf_Multi::on_Anadir_clicked()
         id=EXP_MAX;
 //    if(ui->ERT_2->isChecked())
 //        id=ERTREES;
-    id_clasificadores.push_back(id);
+    multi.identificadores.push_back(id);
     texto<<"Clasificador tipo: ";
     if(id==DISTANCIAS)
         texto<<"DISTANCIAS"<<endl;
@@ -112,32 +112,32 @@ void Conf_Multi::on_Anadir_2_clicked()
     if(ui->Cascada_2->isChecked()){
         if(ui->Etiq_Ref->value()==0){
             QMessageBox msgBox;
-            msgBox.setText("ERROR: No se puede utilizar la etiqueta 0");
+            msgBox.setText("ERROR: You can not use label 0");
             msgBox.exec();
             return;
         }
         multi.label_ref.push_back(ui->Etiq_Ref->value());
         if(ui->Regla->currentIndex()==0){
             multi.tipo_regla.push_back(IGUAL);
-            texto<<"Regla: IGUAL a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: EQUAL to "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==1){
             multi.tipo_regla.push_back(DISTINTO);
-            texto<<"Regla: DISTINTO a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: DIFFERENT to "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==2){
             multi.tipo_regla.push_back(MAYOR);
-            texto<<"Regla: MAYOR a "<<ui->Etiq_Ref->value();
+            texto<<"Rule: GREATER a "<<ui->Etiq_Ref->value();
         }
         if(ui->Regla->currentIndex()==3){
             multi.tipo_regla.push_back(MENOR);
-            texto<<"Regla: MENOR a "<<ui->Etiq_Ref->value();
+            texto<<"Regla: LOWER a "<<ui->Etiq_Ref->value();
         }
         ui->Aceptar_2->setEnabled(false);
     }
     else if(ui->Votacion_2->isChecked()){
         multi.w_clasif.push_back(ui->Peso->value());
-        texto<<"Peso="<<ui->Peso->value();
+        texto<<"Weight="<<ui->Peso->value();
         ui->Aceptar_2->setEnabled(true);
     }
     texto<<endl;
@@ -150,7 +150,7 @@ void Conf_Multi::on_Cascada_2_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
+    multi.identificadores.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.tipo=CASCADA;
@@ -167,7 +167,7 @@ void Conf_Multi::on_Votacion_2_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
+    multi.identificadores.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.tipo=VOTACION;
@@ -183,7 +183,7 @@ void Conf_Multi::on_reset_2_clicked()
 {
     texto.str("");
     ui->Informacion->clear();
-    id_clasificadores.clear();
+    multi.identificadores.clear();
     ui->Anadir->setEnabled(true);
     ui->Anadir_2->setEnabled(false);
     multi.label_ref.clear();
@@ -197,9 +197,8 @@ void Conf_Multi::on_reset_2_clicked()
 
 void Conf_Multi::on_Aceptar_2_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
-//    window->id_clasificadores=id_clasificadores;
-//    window->Multi_tipo=multi;
-//    delete this;
+    MainWindow *window=(MainWindow*) punt;
+    window->multi_type=multi;
+    delete this;
 }
 

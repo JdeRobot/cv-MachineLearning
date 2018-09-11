@@ -39,13 +39,13 @@ Conf_EM::~Conf_EM()
 
 void Conf_EM::on_Aceptar_clicked()
 {
-//    MainWindow *window=(MainWindow*) punt;
-//    if(ui->Tipo_Cov->currentIndex()==0)
-//        window->EM_covMatType=ml::EM::COV_MAT_SPHERICAL;
-//    if(ui->Tipo_Cov->currentIndex()==1)
-//        window->EM_covMatType=ml::EM::COV_MAT_DIAGONAL;
-//    if(ui->Tipo_Cov->currentIndex()==2)
-//        window->EM_covMatType=ml::EM::COV_MAT_GENERIC;
-//    window->EM_nclusters=ui->Num_Clus->value();
-//    delete this;
+    MainWindow *window=(MainWindow*) punt;
+    if(ui->Tipo_Cov->currentIndex()==0)
+        window->parameters.EM_covMatType=ml::EM::COV_MAT_SPHERICAL;
+    if(ui->Tipo_Cov->currentIndex()==1)
+        window->parameters.EM_covMatType=ml::EM::COV_MAT_DIAGONAL;
+    if(ui->Tipo_Cov->currentIndex()==2)
+        window->parameters.EM_covMatType=ml::EM::COV_MAT_GENERIC;
+    window->parameters.EM_nclusters=ui->Num_Clus->value();
+    delete this;
 }

@@ -37,6 +37,8 @@ namespace MLT
 
         int Extract(vector<Mat> imagenes, vector<Mat>& descriptores) override;
 
+        int error;
+
     private:
         int input;
         int output;

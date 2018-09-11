@@ -204,7 +204,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Clasificador</string>
+     <string>Classifier</string>
     </property>
     <widget class="QLineEdit" name="Direccion_Carga">
      <property name="geometry">
@@ -256,7 +256,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Tipo</string>
+     <string>Type</string>
     </property>
     <widget class="QRadioButton" name="Cascada">
      <property name="geometry">

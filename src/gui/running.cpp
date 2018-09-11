@@ -26,6 +26,7 @@
 MLT::Running::Running(){}
 
 void MLT::Running::update_gen(){
+    this->window->g_progress_datamanaging->setValue(this->base_progreso+(this->max_progreso*this->gen.progreso/this->gen.total_progreso));
     this->window->v_progress_datamanaging->setValue(this->base_progreso+(this->max_progreso*this->gen.progreso/this->gen.total_progreso));
     this->window->i_progress_datamanaging->setValue(this->base_progreso+(this->max_progreso*this->gen.progreso/this->gen.total_progreso));
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -33,9 +34,15 @@ void MLT::Running::update_gen(){
 
 void MLT::Running::update_analysis(){
     this->window->v_progress_Analysis->setValue(this->ana.progreso);
-//    this->window->i_progress_Analysis->setValue(this->ana->progreso);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
+
+void MLT::Running::update_classifier(int progress,int total_progress){
+    this->window->m_progress_classifiers->setValue(this->base_progreso+(this->max_progreso*progress/total_progress));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+}
+
+
 
 int MLT::Running::load_dataset(string path){
     int pos=0;
@@ -565,10 +572,10 @@ int MLT::Running::dimension_cuality(string ref, int size_reduc, int type_reduc, 
         accumulative.row(i-1).copyTo(sep.row(separability.rows-1+i));
     Mat most=Mat::zeros(150,400,CV_8UC3);
     most=most+Scalar(255,255,255);
-    String texto="SEPARABILITY";
-    putText(most,texto,Point(10,50),1,1.5,colors[0],2);
-    texto="ACCUMULATIVE SEPARABILITY";
-    putText(most,texto,Point(10,100),1,1.5,colors[1],2);
+    String text="SEPARABILITY";
+    putText(most,text,Point(10,50),1,1.5,colors[0],2);
+    text="ACCUMULATIVE SEPARABILITY";
+    putText(most,text,Point(10,100),1,1.5,colors[1],2);
     imshow("LEGEND",most);
     rep.Continuous_data_represent("DIMENSION QUALITY "+this->org_ref, sep, graphic, colors);
 
@@ -614,11 +621,14 @@ int MLT::Running::generate_data(string ref, string input_directory, int type, in
     this->org_ref=ref;
 }
 
-int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels){
+int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels, bool descriptor_parameter){
+    this->result_images.clear();
     if(descriptor>=0 && descriptor<=9){
         Basic_Transformations basic(this->org_info.Tipo_Datos,descriptor);
-        int e=basic.Extract(this->org_images,this->result_images);
-        if(e==1)
+        std::thread thrd(&MLT::Basic_Transformations::Extract,basic,this->org_images,std::ref(this->result_images));
+        thrd.join();
+
+        if(basic.error==1)
             return 1;
     }
     else if(descriptor==10){
@@ -627,17 +637,19 @@ int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor,
         if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
             return 1;
         }
-        HOG H(size,block, sigma,threshold, gamma, n_levels);
-        int e=H.Extract(this->org_images,this->result_images);
-        if(this->result_images.size()!=this->org_images.size() || e==1)
+        HOG hog(size,block, sigma,threshold, gamma, n_levels);
+        std::thread thrd(&MLT::HOG::Extract,hog,this->org_images,std::ref(this->result_images));
+        thrd.join();
+
+        if(this->result_images.size()!=this->org_images.size() || hog.error==1)
             return 1;
     }
     else if(descriptor==11){
-        descriptor=descriptor-9;
-        float parameter;
-        Puntos_Caracteristicos des(pc_descriptor,extractor,parameter);
-        int e=des.Extract(this->org_images,this->result_images);
-        if(this->result_images.size()!=this->org_images.size() || e==1)
+        Puntos_Caracteristicos des(pc_descriptor,extractor,descriptor_parameter);
+        std::thread thrd(&MLT::Puntos_Caracteristicos::Extract,des,this->org_images,std::ref(this->result_images));
+        thrd.join();
+
+        if(this->result_images.size()!=this->org_images.size() || des.error==1)
             return 1;
     }
     else
@@ -771,568 +783,203 @@ int MLT::Running::represent_images(int type, int label){
     return e;
 }
 
-//int MLT::Running::detect_image(int input_type, string input_path, int descriptor_type, int classifier_type, int classes, float variance, float interclass, int window_x, int window_y, int jump){
-//    int e=0;
-//    cv::Mat salida;
-//    vector<cv::RotatedRect> detections;
-//    vector<float> labels_detections;
-
-//    int current_type=-1;
-//    cv::Mat image;
-//    if(input_type==0){
-//        this->gen.Random_Synthetic_Image(classes,Size(500,500),variance,interclass,image);
-//        current_type=GRAY;
-//    }
-//    else if(input_type==1){
-//        image=cv::imread(input_path);
-//        if(imagen.empty()){
-//            return 1;
-//        }
-//        image.convertTo(image,CV_32F);
-//        if(image.cols<window_x || image.rows<window_y){
-//            return 1;
-//        }
-//        current_type=RGB;
-//    }
+int MLT::Running::detect_image(int type_running, int input_type, string input_path, int descriptor_type, MultiClasificador::Multi_type multi_params,
+                               int n_classes, float variance, float interclass,
+                               int window_x, int window_y, int jump, int pyramid, int rotation,
+                               bool postprocess, bool overlap, bool isolated, float dist_boxes, int dist_rotation,
+                               string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y,
+                               double sigma, double threhold_l2hys, bool gamma, int n_levels, bool descriptor_parameter,
+                               cv::Mat &image, cv::Mat &output, vector<cv::RotatedRect> &detections, vector<float> &labels_detections){
 
 
-//    Descriptor *descriptor;
-//    if(descriptor_type==RGB){
-//        descriptor=0;
-//    }
-//    else if(descriptor_type==GRAY){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,GRAY);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==HSV){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,HSV);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==H_CHANNEL){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,H_CHANNEL);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==S_CHANNEL){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,S_CHANNEL);
-//        descriptor=basic;
-//    }
-//    else if(udescriptor_type==V_CHANNEL){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,V_CHANNEL);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==THRESHOLD){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,THRESHOLD);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==CANNY){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,CANNY);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==SOBEL){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,SOBEL);
-//        descriptor=basic;
-//    }
-//    else if(descriptor_type==HOG_DES){
-//        if(Win_Size.height>ui->Vent_Y->value()|| Win_Size.width>ui->Vent_X->value())
-//            return 1;
-//        HOG *Hoog=new HOG(Win_Size,Block_Stride, Win_Sigma,Threshold_L2hys, Gamma_Correction, Nlevels);
-//        descriptor= Hoog;
-//    }
-//    else if(descriptor_type==PUNTOS_CARACTERISTICOS){
-//        Puntos_Caracteristicos *des=new Puntos_Caracteristicos(Tipo_Des,Tipo_Ext,Parametro);
-//        descriptor= des;
-//    }
-//    else if(descriptor_type==COLOR_PREDOMINANTE){
-//        Basic_Transformations *basic=new Basic_Transformations(current_type,COLOR_PREDOMINANTE);
-//        descriptor=basic;
-//    }
-//    else{
-//        return 1;
-//    }
 
-//    if(ui->radioPosicion->isChecked()){
-//        if(ui->Clasif_Cargado_2->isChecked()){
-//            if(classifier_type==DISTANCIAS){
-//                D.progreso=0;
-//                D.max_progreso=100;
-//                D.base_progreso=0;
-//                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                D.window=ui;
-//                Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==GAUSSIANO){
-//                G.progreso=0;
-//                G.max_progreso=100;
-//                G.base_progreso=0;
-//                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                G.window=ui;
-//                Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==CASCADA_CLAS){
-//                HA.progreso=0;
-//                HA.max_progreso=100;
-//                HA.base_progreso=0;
-//                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                HA.window=ui;
-//                Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==HISTOGRAMA){
-//                H.progreso=0;
-//                H.max_progreso=100;
-//                H.base_progreso=0;
-//                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                H.window=ui;
-//                Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==KNN){
-//                K.progreso=0;
-//                K.max_progreso=100;
-//                K.base_progreso=0;
-//                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                K.window=ui;
-//                Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==NEURONAL){
-//                N.progreso=0;
-//                N.max_progreso=100;
-//                N.base_progreso=0;
-//                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                N.window=ui;
-//                Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==C_SVM){
-//                S.progreso=0;
-//                S.max_progreso=100;
-//                S.base_progreso=0;
-//                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                S.window=ui;
-//                Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==RTREES){
-//                RT.progreso=0;
-//                RT.max_progreso=100;
-//                RT.base_progreso=0;
-//                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                RT.window=ui;
-//                Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==DTREES){
-//                DT.progreso=0;
-//                DT.max_progreso=100;
-//                DT.base_progreso=0;
-//                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                DT.window=ui;
-//                Busqueda bus(&DT,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==BOOSTING){
-//                B.progreso=0;
-//                B.max_progreso=100;
-//                B.base_progreso=0;
-//                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                B.window=ui;
-//                Busqueda bus(&B,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else if(classifier_type==EXP_MAX){
-//                E.progreso=0;
-//                E.max_progreso=100;
-//                E.base_progreso=0;
-//                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                E.window=ui;
-//                Busqueda bus(&E,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-////            else if(classifier_type==GBT){
-////                GB.progreso=0;
-////                GB.max_progreso=100;
-////                GB.base_progreso=0;
-////                GB.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-////                GB.window=ui;
-////                Busqueda bus(GBT,&GB,tipo_dato,Tipo_Descriptor);
-////                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-////            }
-////            else if(classifier_type==ERTREES){
-////                ER.progreso=0;
-////                ER.max_progreso=100;
-////                ER.base_progreso=0;
-////                ER.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-////                ER.window=ui;
-////                Busqueda bus(ERTREES,&ER,tipo_dato,Tipo_Descriptor);
-////                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-////            }
-//            else if(classifier_type==MICLASIFICADOR){
-//                MC.progreso=0;
-//                MC.max_progreso=100;
-//                MC.base_progreso=0;
-//                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                MC.window=ui;
-//                Busqueda bus(&MC,tipo_dato,Tipo_Descriptor);
-//                e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//            }
-//            else{
-//                QMessageBox msgBox;
-//                msgBox.setText("ERROR: No se ha cargado ningun clasificador");
-//                msgBox.exec();
-//                QApplication::restoreOverrideCursor();
-//                return;
-//            }
-//            if(e==1){
-//                QMessageBox msgBox;
-//                msgBox.setText("ERROR: No se ha podido clasificar la imagen");
-//                msgBox.exec();
-//                QApplication::restoreOverrideCursor();
-//                return;
-//            }
-//        }
-//        else if(ui->Multiclasif_2->isChecked()){
-//            vector<Clasificador*> clasificadores;
-//            for(uint i=0; i<id_clasificadores.size(); i++){
-//                if(id_clasificadores[i]==DISTANCIAS){
-//                    Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==GAUSSIANO){
-//                    Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==CASCADA_CLAS){
-//                    Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==HISTOGRAMA){
-//                    Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==KNN){
-//                    Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==NEURONAL){
-//                    Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==C_SVM){
-//                    Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==RTREES){
-//                    Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==DTREES){
-//                    Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==BOOSTING){
-//                    Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//        //        else if(id_clasificadores[i]==GBT){
-//        //            Clasificador_GBTrees *clasi=new Clasificador_GBTrees(nombres[i]);
-//    //                clasi->Read_Data();
-//    //                clasificadores.push_back(clasi);
-//        //        }
-//        //        else if(id_clasificadores[i]==ERTREES){
-//        //            Clasificador_ERTrees *clasi=new Clasificador_ERTrees(nombres[i]);
-//    //                clasi->Read_Data();
-//    //                clasificadores.push_back(clasi);
-//        //        }
-//                else if(id_clasificadores[i]==EXP_MAX){
-//                    Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//            }
-//            MultiClasificador multi(clasificadores);
-//            multi.progreso=0;
-//            multi.max_progreso=100;
-//            multi.base_progreso=0;
-//            multi.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//            multi.window=ui;
-//            Busqueda bus(&multi,tipo_dato,Tipo_Descriptor,&Multi_tipo);
-//            e=bus.Posicion(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),ui->Solapamiento->isChecked(),ui->Filtro_aislados->isChecked(),ui->Dist_cuadros->value(),ui->Rotacion_2->value(),recuadros,labels_recuadros);
-//        }
-//        Representacion rep;
-//        Mat mostrar;
-//        imagen.convertTo(imagen,CV_32F);
-//        double minval,maxval;
-//        cv::minMaxLoc(imagen,&minval,&maxval);
-//        imagen=(imagen-minval)/(maxval-minval);
-//        imshow("Imagen",imagen);
-//        rep.Recuadros(imagen,recuadros,labels_recuadros,Col,mostrar,show_graphics);
-//    }
-//    else if(ui->radioTextura->isChecked()){
-//        if(ui->Clasif_Cargado_2->isChecked()){
-//            if(classifier_type==DISTANCIAS){
-//                D.progreso=0;
-//                D.max_progreso=100;
-//                D.base_progreso=0;
-//                D.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                D.window=ui;
-//                Busqueda bus(&D,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==GAUSSIANO){
-//                G.progreso=0;
-//                G.max_progreso=100;
-//                G.base_progreso=0;
-//                G.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                G.window=ui;
-//                Busqueda bus(&G,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==CASCADA_CLAS){
-//                HA.progreso=0;
-//                HA.max_progreso=100;
-//                HA.base_progreso=0;
-//                HA.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                HA.window=ui;
-//                Busqueda bus(&HA,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==HISTOGRAMA){
-//                H.progreso=0;
-//                H.max_progreso=100;
-//                H.base_progreso=0;
-//                H.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                H.window=ui;
-//                Busqueda bus(&H,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==KNN){
-//                K.progreso=0;
-//                K.max_progreso=100;
-//                K.base_progreso=0;
-//                K.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                K.window=ui;
-//                Busqueda bus(&K,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==NEURONAL){
-//                N.progreso=0;
-//                N.max_progreso=100;
-//                N.base_progreso=0;
-//                N.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                N.window=ui;
-//                Busqueda bus(&N,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==C_SVM){
-//                S.progreso=0;
-//                S.max_progreso=100;
-//                S.base_progreso=0;
-//                S.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                S.window=ui;
-//                Busqueda bus(&S,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==RTREES){
-//                RT.progreso=0;
-//                RT.max_progreso=100;
-//                RT.base_progreso=0;
-//                RT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                RT.window=ui;
-//                Busqueda bus(&RT,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==DTREES){
-//                DT.progreso=0;
-//                DT.max_progreso=100;
-//                DT.base_progreso=0;
-//                DT.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                DT.window=ui;
-//                Busqueda bus(&DT,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==BOOSTING){
-//                B.progreso=0;
-//                B.max_progreso=100;
-//                B.base_progreso=0;
-//                B.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                B.window=ui;
-//                Busqueda bus(&B,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else if(classifier_type==EXP_MAX){
-//                E.progreso=0;
-//                E.max_progreso=100;
-//                E.base_progreso=0;
-//                E.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                E.window=ui;
-//                Busqueda bus(&E,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-////            else if(classifier_type==GBT){
-////                GB.progreso=0;
-////                GB.max_progreso=100;
-////                GB.base_progreso=0;
-////                GB.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-////                GB.window=ui;
-////                Busqueda bus(GBT,&GB,tipo_dato,Tipo_Descriptor);
-////                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-////            }
-////            else if(classifier_type==ERTREES){
-////                ER.progreso=0;
-////                ER.max_progreso=100;
-////                ER.base_progreso=0;
-////                ER.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-////                ER.window=ui;
-////                Busqueda bus(ERTREES,&ER,tipo_dato,Tipo_Descriptor);
-////                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-////            }
-//            else if(classifier_type==MICLASIFICADOR){
-//                MC.progreso=0;
-//                MC.max_progreso=100;
-//                MC.base_progreso=0;
-//                MC.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//                MC.window=ui;
-//                Busqueda bus(&MC,tipo_dato,Tipo_Descriptor);
-//                e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//            }
-//            else{
-//                QMessageBox msgBox;
-//                msgBox.setText("ERROR: No se ha cargado ningun clasificador");
-//                msgBox.exec();
-//                QApplication::restoreOverrideCursor();
-//                return;
-//            }
-//            if(e==1){
-//                QMessageBox msgBox;
-//                msgBox.setText("ERROR: No se ha podido clasificar la imagen");
-//                msgBox.exec();
-//                QApplication::restoreOverrideCursor();
-//                return;
-//            }
-//        }
-//        else if(ui->Multiclasif_2->isChecked()){
-//            vector<Clasificador*> clasificadores;
-//            for(uint i=0; i<id_clasificadores.size(); i++){
-//                if(id_clasificadores[i]==DISTANCIAS){
-//                    Clasificador_Distancias *clasi=new Clasificador_Distancias(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==GAUSSIANO){
-//                    Clasificador_Gaussiano *clasi=new Clasificador_Gaussiano(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==CASCADA_CLAS){
-//                    Clasificador_Cascada *clasi=new Clasificador_Cascada(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==HISTOGRAMA){
-//                    Clasificador_Histograma *clasi=new Clasificador_Histograma(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==KNN){
-//                    Clasificador_KNN *clasi=new Clasificador_KNN(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==NEURONAL){
-//                    Clasificador_Neuronal *clasi=new Clasificador_Neuronal(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==C_SVM){
-//                    Clasificador_SVM *clasi=new Clasificador_SVM(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==RTREES){
-//                    Clasificador_RTrees *clasi=new Clasificador_RTrees(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==DTREES){
-//                    Clasificador_DTrees *clasi=new Clasificador_DTrees(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==BOOSTING){
-//                    Clasificador_Boosting *clasi=new Clasificador_Boosting(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//                else if(id_clasificadores[i]==EXP_MAX){
-//                    Clasificador_EM *clasi=new Clasificador_EM(nombres[i]);
-//                    clasi->Read_Data();
-//                    clasificadores.push_back(clasi);
-//                }
-//        //        else if(id_clasificadores[i]==GBT){
-//        //            Clasificador_GBTrees *clasi=new Clasificador_GBTrees(nombres[i]);
-//    //                clasi->Read_Data();
-//    //                clasificadores.push_back(clasi);
-//        //        }
-//        //        else if(id_clasificadores[i]==ERTREES){
-//        //            Clasificador_ERTrees *clasi=new Clasificador_ERTrees(nombres[i]);
-//    //                clasi->Read_Data();
-//    //                clasificadores.push_back(clasi);
-//        //        }
-//            }
-//            MultiClasificador multi(clasificadores);
-//            multi.progreso=0;
-//            multi.max_progreso=100;
-//            multi.base_progreso=0;
-//            multi.total_progreso=((imagen.cols-ui->Vent_X->value())/ui->Salto_2->value())*((imagen.rows-ui->Vent_Y->value())/ui->Salto_2->value());
-//            multi.window=ui;
-//            Busqueda bus(&multi,tipo_dato,Tipo_Descriptor,&Multi_tipo);
-//            e=bus.Textura(imagen,Size(ui->Vent_X->value(),ui->Vent_Y->value()),ui->Escalas->value(),ui->Salto_2->value(),ui->Rotacion->value(),ui->Postproceso->isChecked(),salida);
-//        }
-//        if(!salida.empty()){
-//            Mat mostrar;
-//            Representacion rep;
-//            imagen.convertTo(imagen,CV_32F);
-//            double minval,maxval;
-//            cv::minMaxLoc(imagen,&minval,&maxval);
-//            imagen=(imagen-minval)/(maxval-minval);
-//            imshow("Imagen",imagen);
-//            e=rep.Color(salida,Col,mostrar,show_graphics);
-//            if(e==1){
-//                QMessageBox msgBox;
-//                msgBox.setText("ERROR: No se ha podido representar la imagen clasificada");
-//                msgBox.exec();
-//                QApplication::restoreOverrideCursor();
-//                return;
-//            }
-//            QApplication::restoreOverrideCursor();
-//        }
-//        else{
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: No se ha podido clasificar la imagen");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            return;
-//        }
-//    }
-//    ui->progress_Clasificar->setValue(100);
-//    ui->progress_Clasificar->setValue(0);
-//    QApplication::restoreOverrideCursor();
-//}
 
-int MLT::Running::train(string ref, int classifier_type, Optimizacion::Parametros params){
+
+
+    int e=0;
+    int current_type=-1;
+    if(input_type==1){
+        this->gen.Random_Synthetic_Image(n_classes,Size(500,500),variance,interclass,image);
+        current_type=GRAY;
+    }
+    else if(input_type==2){
+        image=cv::imread(input_path);
+        if(image.empty()){
+            return 1;
+        }
+        image.convertTo(image,CV_32F);
+        if(image.cols<window_x || image.rows<window_y){
+            return 1;
+        }
+        current_type=RGB;
+    }
+
+
+    Descriptor *descriptor;
+    if(descriptor_type==RGB){
+        descriptor=0;
+    }
+    else if(descriptor_type==GRAY){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,GRAY);
+        descriptor=basic;
+    }
+    else if(descriptor_type==HSV){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,HSV);
+        descriptor=basic;
+    }
+    else if(descriptor_type==H_CHANNEL){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,H_CHANNEL);
+        descriptor=basic;
+    }
+    else if(descriptor_type==S_CHANNEL){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,S_CHANNEL);
+        descriptor=basic;
+    }
+    else if(descriptor_type==V_CHANNEL){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,V_CHANNEL);
+        descriptor=basic;
+    }
+    else if(descriptor_type==THRESHOLD){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,THRESHOLD);
+        descriptor=basic;
+    }
+    else if(descriptor_type==CANNY){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,CANNY);
+        descriptor=basic;
+    }
+    else if(descriptor_type==SOBEL){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,SOBEL);
+        descriptor=basic;
+    }
+    else if(descriptor_type==COLOR_PREDOMINANTE){
+        Basic_Transformations *basic=new Basic_Transformations(current_type,COLOR_PREDOMINANTE);
+        descriptor=basic;
+    }
+    else if(descriptor_type==HOG_DES){
+        cv::Size size=cv::Size(size_x,size_y);
+        cv::Size block=cv::Size(block_x,block_y);
+        if(size.height>window_y || size.width>window_x){
+            return 1;
+        }
+        HOG *hog=new HOG(size,block, sigma, threhold_l2hys, gamma, n_levels);
+        descriptor= hog;
+    }
+    else if(descriptor_type==PUNTOS_CARACTERISTICOS){
+        Puntos_Caracteristicos *des= new Puntos_Caracteristicos(pc_descriptor,extractor,descriptor_parameter);
+        descriptor= des;
+    }
+    else{
+        return 1;
+    }
+
+    if(type_running==1){
+        if(this->classifier->nombre!=""){
+            Busqueda bus(this->classifier,current_type,descriptor);
+            e=bus.Posicion(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,detections,labels_detections);
+        }
+    }
+    else if(type_running==2){
+        Busqueda bus(this->classifier,current_type,descriptor);
+        e=bus.Textura(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,output);
+    }
+    else if(type_running==3 || type_running==4){
+        if(multi_params.identificadores.empty())
+            return 1;
+        vector<Clasificador*> classifiers;
+        for(uint i=0; i<multi_params.identificadores.size(); i++){
+            if(multi_params.identificadores[i]==DISTANCIAS){
+                Clasificador_Distancias *classifier=new Clasificador_Distancias(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==GAUSSIANO){
+                Clasificador_Gaussiano *classifier=new Clasificador_Gaussiano(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==CASCADA_CLAS){
+                Clasificador_Cascada *classifier=new Clasificador_Cascada(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==HISTOGRAMA){
+                Clasificador_Histograma *classifier=new Clasificador_Histograma(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==KNN){
+                Clasificador_KNN *classifier=new Clasificador_KNN(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==NEURONAL){
+                Clasificador_Neuronal *classifier=new Clasificador_Neuronal(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==C_SVM){
+                Clasificador_SVM *classifier=new Clasificador_SVM(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==RTREES){
+                Clasificador_RTrees *classifier=new Clasificador_RTrees(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==DTREES){
+                Clasificador_DTrees *classifier=new Clasificador_DTrees(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==BOOSTING){
+                Clasificador_Boosting *classifier=new Clasificador_Boosting(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==EXP_MAX){
+                Clasificador_EM *classifier=new Clasificador_EM(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+    //        else if(multi_params.identificadores[i]==GBT){
+    //            Clasificador_GBTrees *classifier=new Clasificador_GBTrees(multi_params.nombres[i]);
+    //                classifier->Read_Data();
+    //                classifiers.push_back(classifier);
+    //        }
+    //        else if(multi_params.identificadores[i]==ERTREES){
+    //            Clasificador_ERTrees *classifier=new Clasificador_ERTrees(multi_params.nombres[i]);
+    //                classifier->Read_Data();
+    //                classifiers.push_back(classifier);
+    //        }
+            MultiClasificador multi(classifiers);
+            multi.progreso=0;
+            this->max_progreso=100;
+            this->base_progreso=1;
+            multi.total_progreso=this->org_images.size();
+
+
+
+            if(type_running==3){
+                Busqueda bus(&multi,current_type,descriptor,&multi_params);
+                e=bus.Posicion(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,detections,labels_detections);
+            }
+            else if(type_running==4){
+                Busqueda bus(&multi,current_type,descriptor,&multi_params);
+                e=bus.Textura(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,output);
+            }
+        }
+    }
+
+    image.convertTo(image,CV_32F);
+    double minval,maxval;
+    cv::minMaxLoc(image,&minval,&maxval);
+    image=(image-minval)/(maxval-minval);
+
+    return 0;
+}
+
+int MLT::Running::train(string ref, int classifier_type, Clasificadores::Parametros params){
     if(this->org_images.empty()){
         return 1;
     }
@@ -1344,27 +991,44 @@ int MLT::Running::train(string ref, int classifier_type, Optimizacion::Parametro
             return 1;
         }
     }
-    this->classifier->nombre=ref;
+//    delete this->classifier;
+    this->classifier=new Clasificador;
     int e=0;
     if(classifier_type==1){
-        Clasificador_Distancias classifier;
-        e=classifier.Parametrizar();
-        this->classifier=&classifier;
+        Clasificador_Distancias *classifier= new MLT::Clasificador_Distancias;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar();
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Distancias::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
     }
     else if(classifier_type==2){
-        Clasificador_Gaussiano classifier;
-        e=classifier.Parametrizar();
-        this->classifier=&classifier;
+        Clasificador_Gaussiano *classifier= new MLT::Clasificador_Gaussiano;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar();
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Gaussiano::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
     }
     else if(classifier_type==3){
-        Clasificador_Histograma classifier;
-        e=classifier.Parametrizar(params.Hist_tam_celda);
-        this->classifier= &classifier;
+        Clasificador_Histograma *classifier= new MLT::Clasificador_Histograma;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.Hist_tam_celda);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Histograma::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
     }
     else if(classifier_type==4){
-        Clasificador_KNN classifier;
-        e=classifier.Parametrizar(params.KNN_k,params.KNN_regression);
-        this->classifier= &classifier;
+        Clasificador_KNN *classifier= new MLT::Clasificador_KNN;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.KNN_k,params.KNN_regression);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_KNN::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
     }
     else if(classifier_type==5){
         if(params.Neuronal_layerSize.rows<3){
@@ -1376,117 +1040,715 @@ int MLT::Running::train(string ref, int classifier_type, Optimizacion::Parametro
         int numero=aux.numero_etiquetas(this->org_labels,negativa);
         params.Neuronal_layerSize.row(params.Neuronal_layerSize.rows-1)=numero;
 
-        Clasificador_Neuronal classifier;
-        e=classifier.Parametrizar(params.Neuronal_layerSize,params.Neuronal_Method,params.Neuronal_Function,params.Neuronal_bp_dw_scale,params.Neuronal_bp_moment_scale,
+        Clasificador_Neuronal *classifier= new MLT::Clasificador_Neuronal;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.Neuronal_layerSize,params.Neuronal_Method,params.Neuronal_Function,params.Neuronal_bp_dw_scale,params.Neuronal_bp_moment_scale,
                                   params.Neuronal_rp_dw0,params.Neuronal_rp_dw_max,params.Neuronal_rp_dw_min,params.Neuronal_rp_dw_minus,params.Neuronal_rp_dw_plus,
                                   params.Neuronal_fparam1,params.Neuronal_fparam2);
-        this->classifier= &classifier;
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Neuronal::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
     }
-//    else if(classifier_type==6){
-//        Clasificador_SV, classifier;
-//        e=classifier.Parametrizar(params.SVM_train,params.SVM_Type,params.SVM_kernel_type,Mat(),params.SVM_degree,params.SVM_gamma,params.SVM_coef0,params.SVM_C,params.SVM_nu,params.SVM_p);
-//        this->classifier= &classifier;
-//    }
-//    else if(classifier_type==7){
-//        Clasificador_DTREES classifier;
-//        e=classifier.Parametrizar(params.DTrees_max_depth,params.DTrees_min_sample_count,params.DTrees_regression_accuracy,params.DTrees_use_surrogates,params.DTrees_max_categories,
-//                                  params.DTrees_cv_folds,params.DTrees_use_1se_rule,params.DTrees_truncate_pruned_tree,params.DTrees_priors);
-//        this->classifier= &classifier;
-//    }
-//    else if(classifier_type==8){
-//        ID=RTREES;
-//        RT.nombre=ref;
-//        e=RT.Parametrizar(RTrees_max_depth,RTrees_min_sample_count,RTrees_regression_accuracy,RTrees_use_surrogates,RTrees_max_categories,RTrees_cv_folds,RTrees_use_1se_rule,RTrees_truncate_pruned_tree,RTrees_priors,RTrees_calc_var_importance,RTrees_native_vars);
-//        if(e==0){
-//            Dimensionalidad::Reducciones reduc;
-//            e=RT.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
-//        }
-//    }
-//    else if(classifier_type==9){
-//        Auxiliares aux;
-//        bool neg;
-//        if(aux.numero_etiquetas(LABELS,neg)!=2){
+    else if(classifier_type==6){
+        Clasificador_SVM *classifier= new MLT::Clasificador_SVM;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.SVM_train,params.SVM_Type,params.SVM_kernel_type,Mat(),params.SVM_degree,params.SVM_gamma,params.SVM_coef0,params.SVM_C,params.SVM_nu,params.SVM_p);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_SVM::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==7){
+        Clasificador_DTrees *classifier= new MLT::Clasificador_DTrees;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.DTrees_max_depth,params.DTrees_min_sample_count,params.DTrees_regression_accuracy,params.DTrees_use_surrogates,params.DTrees_max_categories,
+                                  params.DTrees_cv_folds,params.DTrees_use_1se_rule,params.DTrees_truncate_pruned_tree,params.DTrees_priors);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_DTrees::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==8){
+        Clasificador_RTrees *classifier= new MLT::Clasificador_RTrees;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.RTrees_max_depth,params.RTrees_min_sample_count,params.RTrees_regression_accuracy,params.RTrees_use_surrogates,params.RTrees_max_categories,
+                                  params.RTrees_cv_folds,params.RTrees_use_1se_rule,params.RTrees_truncate_pruned_tree,params.RTrees_priors,params.RTrees_calc_var_importance,
+                                  params.RTrees_native_vars);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_RTrees::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==9){
+        Auxiliares aux;
+        bool negative;
+        if(aux.numero_etiquetas(this->org_labels,negative)!=2){
+            return 1;
+        }
+        Clasificador_Boosting *classifier= new MLT::Clasificador_Boosting;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.Boosting_boost_type,params.Boosting_weak_count,params.Boosting_weight_trim_rate,params.Boosting_max_depth,params.Boosting_use_surrogates,
+                                  params.Boosting_priors);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Boosting::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==10){
+        Clasificador_Cascada *classifier= new MLT::Clasificador_Cascada;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar("HAAR",true,params.Cascada_NumPos,params.Cascada_NumNeg,params.Cascada_Mode,params.Cascada_NumStage,params.Cascada_MinHitRate,
+                                  params.Cascada_MaxFalseAlarmRate,params.Cascada_WeightTrimRate,params.Cascada_MaxWeakCount,params.Cascada_MaxDepth,params.Cascada_Bt,
+                                  params.Cascada_PrecalcValBufSize,params.Cascada_PrecalcidxBufSize);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Cascada::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==11){
+        Clasificador_Cascada *classifier= new MLT::Clasificador_Cascada;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar("LBP",true,params.Cascada_NumPos,params.Cascada_NumNeg,params.Cascada_Mode,params.Cascada_NumStage,params.Cascada_MinHitRate,
+                                  params.Cascada_MaxFalseAlarmRate,params.Cascada_WeightTrimRate,params.Cascada_MaxWeakCount,params.Cascada_MaxDepth,params.Cascada_Bt,
+                                  params.Cascada_PrecalcValBufSize,params.Cascada_PrecalcidxBufSize);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_Cascada::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else if(classifier_type==12){
+        Clasificador_EM *classifier= new MLT::Clasificador_EM;
+        classifier->nombre=ref;
+        e=classifier->Parametrizar(params.EM_nclusters,params.EM_covMatType);
+        Dimensionalidad::Reducciones reduc;
+        std::thread thrd(&MLT::Clasificador_EM::Autotrain,classifier,this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+        thrd.join();
+        this->classifier=classifier;
+    }
+    else
+        return 1;
+    if(e==1)
+        return 1;
+    return 0;
+}
+
+int MLT::Running::load_model(string path, string &name){
+//    delete this->classifier;
+    this->classifier=new Clasificador;
+    int pos=0;
+    for(uint i=0; i<path.size(); i++){
+        if(path[i]=='/')
+            pos=i;
+    }
+    name.clear();
+    for(uint i=pos+1; i<path.size(); i++)
+        name=name+path[i];
+    string archivo=path+"/Clasificador.xml";
+    cv::FileStorage archivo_r(archivo,CV_STORAGE_READ);
+    int id;
+    if(archivo_r.isOpened()){
+        archivo_r["Tipo"]>>id;
+    }
+    else
+        return 1;
+
+    int e=0;
+    if(id==DISTANCIAS){
+        MLT::Clasificador_Distancias *classifier= new MLT::Clasificador_Distancias;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==GAUSSIANO){
+        MLT::Clasificador_Gaussiano *classifier= new MLT::Clasificador_Gaussiano;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==CASCADA_CLAS){
+        MLT::Clasificador_Cascada *classifier= new MLT::Clasificador_Cascada;
+        classifier->nombre=name;
+        classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==HISTOGRAMA){
+        MLT::Clasificador_Histograma *classifier= new MLT::Clasificador_Histograma;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==KNN){
+        MLT::Clasificador_KNN *classifier= new MLT::Clasificador_KNN;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==NEURONAL){
+        MLT::Clasificador_Neuronal *classifier= new MLT::Clasificador_Neuronal;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==C_SVM){
+        MLT::Clasificador_SVM *classifier= new MLT::Clasificador_SVM;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==RTREES){
+        MLT::Clasificador_RTrees *classifier= new MLT::Clasificador_RTrees;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==DTREES){
+        MLT::Clasificador_DTrees *classifier= new MLT::Clasificador_DTrees;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==BOOSTING){
+        MLT::Clasificador_Boosting *classifier= new MLT::Clasificador_Boosting;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else if(id==EXP_MAX){
+        MLT::Clasificador_EM *classifier= new MLT::Clasificador_EM;
+        classifier->nombre=name;
+        e=classifier->Read_Data();
+        this->classifier=classifier;
+    }
+    else
+        return 1;
+    if(e==1)
+        return 1;
+    return 0;
+}
+
+int MLT::Running::classify(string ref, int type_classification, stringstream &txt, MultiClasificador::Multi_type multi_params){
+    if(this->org_images.empty()){
+        return 1;
+    }
+    for(uint i=0; i<ref.size(); i++){
+        if(ref[i]==' '){
+            return 2;
+        }
+    }
+    int e=0;
+
+    this->result_labels.clear();
+    if(type_classification==1){
+        if(this->classifier->nombre=="")
+            return 1;
+        this->classifier->progreso=0;
+        this->max_progreso=100;
+        this->base_progreso=0;
+        this->classifier->total_progreso=this->org_images.size();
+        std::thread thrd(&MLT::Clasificador::Autoclasificacion,this->classifier,this->org_images,std::ref(this->result_labels),this->ifreduc,this->read);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        while(this->classifier->running==true)
+            update_classifier(this->classifier->progreso,this->classifier->total_progreso);
+        thrd.join();
+    }
+    else if(type_classification==2){
+        if(multi_params.identificadores.empty())
+            return 1;
+        vector<Clasificador*> classifiers;
+        for(uint i=0; i<multi_params.identificadores.size(); i++){
+            if(multi_params.identificadores[i]==DISTANCIAS){
+                Clasificador_Distancias *classifier=new Clasificador_Distancias(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==GAUSSIANO){
+                Clasificador_Gaussiano *classifier=new Clasificador_Gaussiano(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==CASCADA_CLAS){
+                Clasificador_Cascada *classifier=new Clasificador_Cascada(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==HISTOGRAMA){
+                Clasificador_Histograma *classifier=new Clasificador_Histograma(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==KNN){
+                Clasificador_KNN *classifier=new Clasificador_KNN(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==NEURONAL){
+                Clasificador_Neuronal *classifier=new Clasificador_Neuronal(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==C_SVM){
+                Clasificador_SVM *classifier=new Clasificador_SVM(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==RTREES){
+                Clasificador_RTrees *classifier=new Clasificador_RTrees(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==DTREES){
+                Clasificador_DTrees *classifier=new Clasificador_DTrees(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==BOOSTING){
+                Clasificador_Boosting *classifier=new Clasificador_Boosting(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+            else if(multi_params.identificadores[i]==EXP_MAX){
+                Clasificador_EM *classifier=new Clasificador_EM(multi_params.nombres[i]);
+                classifier->Read_Data();
+                classifiers.push_back(classifier);
+            }
+    //        else if(multi_params.identificadores[i]==GBT){
+    //            Clasificador_GBTrees *classifier=new Clasificador_GBTrees(multi_params.nombres[i]);
+    //                classifier->Read_Data();
+    //                classifiers.push_back(classifier);
+    //        }
+    //        else if(multi_params.identificadores[i]==ERTREES){
+    //            Clasificador_ERTrees *classifier=new Clasificador_ERTrees(multi_params.nombres[i]);
+    //                classifier->Read_Data();
+    //                classifiers.push_back(classifier);
+    //        }
+        }
+        MultiClasificador multi(classifiers);
+        multi.progreso=0;
+        this->max_progreso=100;
+        this->base_progreso=1;
+        multi.total_progreso=this->org_images.size();
+        if(multi_params.tipo==CASCADA){
+//            e=multi.Cascada(this->org_images,multi_params.tipo_regla,multi_params.label_ref,this->result_labels);
+
+            std::thread thrd(&MLT::MultiClasificador::Cascada,multi,this->org_images,multi_params.tipo_regla,multi_params.label_ref,std::ref(this->result_labels));
+            bool running=true;
+            while(running==true){
+//                update_classifier(multi.progreso,multi.total_progreso);
+                int progress=0;
+                running=false;
+                for(int j=0; j<classifiers.size(); j++){
+                    progress=progress+classifiers[j]->progreso;
+                    if(classifiers[j]->running==true)
+                        running=true;
+                }
+                progress=progress/classifiers.size();
+                update_classifier(progress,multi.total_progreso);
+            }
+            thrd.join();
+        }
+        else if(multi_params.tipo==VOTACION){
+//            e=multi.Votacion(this->org_images,multi_params.w_clasif,this->result_labels);
+            std::thread thrd(&MLT::MultiClasificador::Votacion,multi,this->org_images,multi_params.w_clasif,std::ref(this->result_labels));
+            bool running=true;
+            while(running==true){
+//                update_classifier(multi.progreso,multi.total_progreso);
+                int progress=0;
+                running=false;
+                for(int j=0; j<classifiers.size(); j++){
+                    progress=progress+classifiers[j]->progreso;
+                    if(classifiers[j]->running==true)
+                        running=true;
+                }
+                progress=progress/classifiers.size();
+                update_classifier(progress,multi.total_progreso);
+            }
+            thrd.join();
+        }
+    }
+
+    if(this->org_labels.size()==this->result_labels.size()){
+        txt<<"N Data      Original Label      Result"<<endl;
+        for(uint i=0; i<this->result_labels.size(); i++){
+            txt<<i+1<<"                               "<<this->org_labels[i]<<"                       "<<this->result_labels[i]<<endl;
+            if(this->result_labels[i]==0)
+                e=1;
+        }
+    }
+    else{
+        txt<<"N Data      Result"<<endl;
+        for(uint i=0; i<this->result_labels.size(); i++){
+            txt<<i+1<<"                       "<<this->result_labels[i]<<endl;
+            if(this->result_labels[i]==0)
+                e=1;
+        }
+    }
+
+    this->result_images.clear();
+    for(int i=0; i<this->org_images.size(); i++){
+        cv::Mat image;
+        this->org_images[i].copyTo(image);
+        this->result_images.push_back(image);
+    }
+    return 0;
+}
+
+int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi_type multi_type, stringstream &text,
+                           Clasificadores::Parametros start, Clasificadores::Parametros leap, Clasificadores::Parametros stop,
+                           int percentage, int num_folds, int size_fold){
+    if(this->org_images.empty())
+        return 1;
+    if(this->org_images.empty())
+        return 1;
+    int e=0;
+    Optimizacion op;
+    op.total_progreso=this->org_images.size();
+    op.progreso=0;
+    this->base_progreso=0;
+    this->max_progreso=100;
+
+    Auxiliares aux;
+    bool negative;
+    int num=aux.numero_etiquetas(this->org_labels,negative);
+
+    float error;
+    Mat confusion;
+    if(type==1 || type==2){
+        vector<Analisis::Ratios_data> rates;
+        if(type==1){
+
+            if(id_classifier==NEURONAL){
+                if(start.Neuronal_layerSize.rows<3){
+                    return 1;
+                }
+                start.Neuronal_layerSize.row(0)=this->org_images[0].cols*this->org_images[0].rows*this->org_images[0].channels();
+                start.Neuronal_layerSize.row(start.Neuronal_layerSize.rows-1)=num;
+            }
+            e=op.Validation(this->org_images,this->org_labels,percentage,id_classifier,start,error,confusion,rates);
+            if(e==1)
+                return 1;
+        }
+        else if(type==2){
+            e=op.Validation(this->org_images,this->org_labels,percentage,multi_type.identificadores,start,multi_type,error,confusion,rates);
+            if(e==1)
+                return 1;
+        }
+        text<<"Error=";
+        text<<error;
+        text<<endl;
+        text<<"Confusion="<<endl;
+        for(int i=0; i<confusion.cols; i++){
+            for(int j=0; j<confusion.rows; j++){
+                text<<confusion.at<float>(j,i);
+                text<<"    ";
+            }
+            text<<endl;
+        }
+
+        for(int i=0; i<num; i++){
+            int etiqueta;
+            if(negative){
+                if(i==0)
+                    etiqueta=-1;
+                else
+                    etiqueta=i;
+            }
+            else
+                etiqueta=i+1;
+            text<<"Etiqueta "<<etiqueta<<":"<<endl;
+            text<<"VP="<<rates[i].VP;
+            text<<"    VN="<<rates[i].VN;
+            text<<"    FP="<<rates[i].FP;
+            text<<"    FN="<<rates[i].FN;
+            text<<"    TAR="<<rates[i].TAR;
+            text<<"    TRR="<<rates[i].TRR;
+            text<<"    FAR="<<rates[i].FAR;
+            text<<"    FRR="<<rates[i].FRR;
+            text<<"    PPV="<<rates[i].PPV;
+            text<<"    NPV="<<rates[i].NPV;
+            text<<"    FDR="<<rates[i].FDR;
+            text<<"    F1="<<rates[i].F1;
+            text<<"    INFORMEDNESS="<<rates[i].INFORMEDNESS;
+            text<<"    MARKEDNESS="<<rates[i].MARKEDNESS;
+            text<<"    EXP_ERROR="<<rates[i].EXP_ERROR;
+            text<<"    LR_POS="<<rates[i].LR_POS;
+            text<<"    LR_NEG="<<rates[i].LR_NEG;
+            text<<"    DOR="<<rates[i].DOR;
+            text<<"    ACC="<<rates[i].ACC;
+            text<<"    PREVALENCE="<<rates[i].PREVALENCE<<endl;
+        }
+    }
+
+    else if(type==3){
+
+
+        if(num_folds*size_fold>this->org_images.size())
+            return 1;
+        Clasificadores::Parametros parameters;
+        e=op.Cross_Validation(this->org_images,this->org_labels,num_folds,size_fold,id_classifier,start,stop,leap,parameters,error,confusion);
+        if(e==1){
+            return 2;
+        }
+        if(id_classifier==DISTANCIAS){
 //            QMessageBox msgBox;
-//            msgBox.setText("ERROR: Boosting solo se puede usar con dos clases");
+//            msgBox.setText("ERROR: El clasificador Distancias no tiene parametros");
 //            msgBox.exec();
 //            QApplication::restoreOverrideCursor();
-//            return;
+//            ui->progress_Clasificar->setValue(0);
+            return 3;
+        }
+        else if(id_classifier==GAUSSIANO){
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: El clasificador Bayesiano(Gauss) no tiene parametros");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            ui->progress_Clasificar->setValue(0);
+            return 4;
+        }
+        else if(id_classifier==CASCADA_CLAS){
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: No implementado");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            ui->progress_Clasificar->setValue(0);
+            return 5;
+        }
+        else if(id_classifier==HISTOGRAMA){
+            text<<"Best Parameters"<<endl;
+            text<<"Hist_tam_celdea= "<<parameters.Hist_tam_celda<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==KNN){
+            text<<"Best Parameters"<<endl;
+            text<<"KNN_k= "<<parameters.KNN_k<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==NEURONAL){
+            text<<"Best Parameters"<<endl;
+            text<<"Neuronal_bp_dw_scale= "<<parameters.Neuronal_bp_dw_scale<<endl;
+            text<<"Neuronal_bp_moment_scale= "<<parameters.Neuronal_bp_moment_scale<<endl;
+            text<<"Neuronal_rp_dw0= "<<parameters.Neuronal_rp_dw0<<endl;
+            text<<"Neuronal_rp_dw_max= "<<parameters.Neuronal_rp_dw_max<<endl;
+            text<<"Neuronal_rp_dw_min= "<<parameters.Neuronal_rp_dw_min<<endl;
+            text<<"Neuronal_rp_dw_minus= "<<parameters.Neuronal_rp_dw_minus<<endl;
+            text<<"Neuronal_rp_dw_plus= "<<parameters.Neuronal_rp_dw_plus<<endl;
+            text<<"Neuronal_fparam1= "<<parameters.Neuronal_fparam1<<endl;
+            text<<"Neuronal_fparam2= "<<parameters.Neuronal_fparam2<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==C_SVM){
+            text<<"Best Parameters"<<endl;
+            text<<"SVM_C= "<<parameters.SVM_C<<endl;
+            text<<"SVM_gamma= "<<parameters.SVM_gamma<<endl;
+            text<<"SVM_p= "<<parameters.SVM_p<<endl;
+            text<<"SVM_nu= "<<parameters.SVM_nu<<endl;
+            text<<"SVM_coef0= "<<parameters.SVM_coef0<<endl;
+            text<<"SVM_degree= "<<parameters.SVM_degree<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==RTREES){
+            text<<"Best Parameters"<<endl;
+            text<<"RTrees_max_depth= "<<parameters.RTrees_max_depth<<endl;
+            text<<"RTrees_min_sample_count= "<<parameters.RTrees_min_sample_count<<endl;
+            text<<"RTrees_regression_accuracy= "<<parameters.RTrees_regression_accuracy<<endl;
+            text<<"RTrees_max_categories= "<<parameters.RTrees_max_categories<<endl;
+            text<<"RTrees_cv_folds= "<<parameters.RTrees_cv_folds<<endl;
+            text<<"RTrees_native_vars= "<<parameters.RTrees_native_vars<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==DTREES){
+            text<<"Best Parameters"<<endl;
+            text<<"DTrees_max_depth= "<<parameters.DTrees_max_depth<<endl;
+            text<<"DTrees_min_sample_count= "<<parameters.DTrees_min_sample_count<<endl;
+            text<<"DTrees_regression_accuracy= "<<parameters.DTrees_regression_accuracy<<endl;
+            text<<"DTrees_max_categories= "<<parameters.DTrees_max_categories<<endl;
+            text<<"DTrees_cv_folds= "<<parameters.DTrees_cv_folds<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==BOOSTING){
+            text<<"Best Parameters"<<endl;
+            text<<"Boosting_max_depth= "<<parameters.Boosting_max_depth<<endl;
+            text<<"Boosting_weak_count= "<<parameters.Boosting_weak_count<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(id_classifier==EXP_MAX){
+            text<<"Best Parameters"<<endl;
+            text<<"EM_nclusters= "<<parameters.EM_nclusters<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+//        else if(id_classifier==GBT){
+//            text<<"Best Parameters"<<endl;
+//            text<<"GBT_weak_count= "<<parameters.GBT_weak_count<<endl;
+//            text<<"GBT_shrinkage= "<<parameters.GBT_shrinkage<<endl;
+//            text<<"GBT_max_depth= "<<parameters.GBT_max_depth<<endl;
+//            text<<"Error= "<<error<<endl;
+//            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
 //        }
-//        ID=BOOSTING;
-//        B.nombre=ref;
-//        e=B.Parametrizar(Boosting_boost_type,Boosting_weak_count,Boosting_weight_trim_rate,Boosting_max_depth,Boosting_use_surrogates,Boosting_priors);
-//        if(e==0){
-//            Dimensionalidad::Reducciones reduc;
-//            e=B.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
+//        else if(id_classifier==ERTREES){
+//            text<<"Best Parameters"<<endl;
+//            text<<"ERTrees_max_depth= "<<parameters.ERTrees_max_depth<<endl;
+//            text<<"ERTrees_min_sample_count= "<<parameters.ERTrees_min_sample_count<<endl;
+//            text<<"ERTrees_regression_accuracy= "<<parameters.ERTrees_regression_accuracy<<endl;
+//            text<<"ERTrees_max_categories= "<<parameters.ERTrees_max_categories<<endl;
+//            text<<"ERTrees_cv_folds= "<<parameters.ERTrees_cv_folds<<endl;
+//            text<<"ERTrees_native_vars= "<<parameters.ERTrees_native_vars<<endl;
+//            text<<"Error= "<<error<<endl;
+//            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
 //        }
-//    }
-//    else if(classifier_type==10){
-//        ID=CASCADA_CLAS;
-//        HA.nombre=ref;
-//        e=HA.Parametrizar("HAAR",si_entrenar,Cascada_NumPos,Cascada_NumNeg,Cascada_Mode,Cascada_NumStage,Cascada_MinHitRate,Cascada_MaxFalseAlarmRate,Cascada_WeightTrimRate,Cascada_MaxWeakCount,Cascada_MaxDepth,Cascada_Bt,Cascada_PrecalcValBufSize,Cascada_PrecalcidxBufSize);
-//        if(e==0){
-//            Dimensionalidad::Reducciones reduc;
-//            e=HA.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
+    }
+    else if(type==4){
+        if(num_folds*size_fold>this->org_images.size()){
+            return 1;
+        }
+        Clasificadores::Parametros parameters;
+        e=op.Super_Cross_Validation(this->org_images,this->org_labels,num_folds,size_fold,multi_type.identificadores,start,stop,leap,parameters,error,confusion);
+        if(e==1){
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: No se han podido obtener los datos estadisticos");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            ui->progress_Clasificar->setValue(0);
+            return 1;
+        }
+        if(multi_type.identificadores[0]==DISTANCIAS){
+            text<<"El mejor clasificador es Clasificador_Distancias"<<endl;
+        }
+        else if(multi_type.identificadores[0]==GAUSSIANO){
+            text<<"El mejor clasificador es Clasificador_Gaussiano"<<endl;
+        }
+        else if(multi_type.identificadores[0]==CASCADA_CLAS){
+//            QMessageBox msgBox;
+//            msgBox.setText("ERROR: No implementado");
+//            msgBox.exec();
+//            QApplication::restoreOverrideCursor();
+//            ui->progress_Clasificar->setValue(0);
+            return 1;
+        }
+        else if(multi_type.identificadores[0]==HISTOGRAMA){
+            text<<"El mejor clasificador es Clasificador_Histograma"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"Hist_tam_celdea= "<<parameters.Hist_tam_celda<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==KNN){
+            text<<"El mejor clasificador es Clasificador_KNN"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"KNN_k= "<<parameters.KNN_k<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==NEURONAL){
+            text<<"El mejor clasificador es Clasificador_Neuronal"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"Neuronal_bp_dw_scale= "<<parameters.Neuronal_bp_dw_scale<<endl;
+            text<<"Neuronal_bp_moment_scale= "<<parameters.Neuronal_bp_moment_scale<<endl;
+            text<<"Neuronal_rp_dw0= "<<parameters.Neuronal_rp_dw0<<endl;
+            text<<"Neuronal_rp_dw_max= "<<parameters.Neuronal_rp_dw_max<<endl;
+            text<<"Neuronal_rp_dw_min= "<<parameters.Neuronal_rp_dw_min<<endl;
+            text<<"Neuronal_rp_dw_minus= "<<parameters.Neuronal_rp_dw_minus<<endl;
+            text<<"Neuronal_rp_dw_plus= "<<parameters.Neuronal_rp_dw_plus<<endl;
+            text<<"Neuronal_fparam1= "<<parameters.Neuronal_fparam1<<endl;
+            text<<"Neuronal_fparam2= "<<parameters.Neuronal_fparam2<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==C_SVM){
+            text<<"El mejor clasificador es Clasificador_SVM"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"SVM_C= "<<parameters.SVM_C<<endl;
+            text<<"SVM_gamma= "<<parameters.SVM_gamma<<endl;
+            text<<"SVM_p= "<<parameters.SVM_p<<endl;
+            text<<"SVM_nu= "<<parameters.SVM_nu<<endl;
+            text<<"SVM_coef0= "<<parameters.SVM_coef0<<endl;
+            text<<"SVM_degree= "<<parameters.SVM_degree<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==RTREES){
+            text<<"El mejor clasificador es Clasificador_RTrees"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"RTrees_max_depth= "<<parameters.RTrees_max_depth<<endl;
+            text<<"RTrees_min_sample_count= "<<parameters.RTrees_min_sample_count<<endl;
+            text<<"RTrees_regression_accuracy= "<<parameters.RTrees_regression_accuracy<<endl;
+            text<<"RTrees_max_categories= "<<parameters.RTrees_max_categories<<endl;
+            text<<"RTrees_cv_folds= "<<parameters.RTrees_cv_folds<<endl;
+            text<<"RTrees_native_vars= "<<parameters.RTrees_native_vars<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==DTREES){
+            text<<"El mejor clasificador es Clasificador_DTrees"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"DTrees_max_depth= "<<parameters.DTrees_max_depth<<endl;
+            text<<"DTrees_min_sample_count= "<<parameters.DTrees_min_sample_count<<endl;
+            text<<"DTrees_regression_accuracy= "<<parameters.DTrees_regression_accuracy<<endl;
+            text<<"DTrees_max_categories= "<<parameters.DTrees_max_categories<<endl;
+            text<<"DTrees_cv_folds= "<<parameters.DTrees_cv_folds<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==BOOSTING){
+            text<<"El mejor clasificador es Clasificador_Boosting"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"Boosting_max_depth= "<<parameters.Boosting_max_depth<<endl;
+            text<<"Boosting_weak_count= "<<parameters.Boosting_weak_count<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+        else if(multi_type.identificadores[0]==EXP_MAX){
+            text<<"El mejor clasificador es Clasificador_EM"<<endl;
+            text<<"Best Parameters"<<endl;
+            text<<"EM_nclusters= "<<parameters.EM_nclusters<<endl;
+            text<<"Error= "<<error<<endl;
+            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
+        }
+//        else if(multi_type.identificadores[0]==GBT){
+//            cout<<"El mejor clasificador es Clasificador_GBT"<<endl;
+//            text<<"Best Parameters"<<endl;
+//            text<<"GBT_weak_count= "<<parameters.GBT_weak_count<<endl;
+//            text<<"GBT_shrinkage= "<<parameters.GBT_shrinkage<<endl;
+//            text<<"GBT_max_depth= "<<parameters.GBT_max_depth<<endl;
+//            text<<"Error= "<<error<<endl;
+//            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
 //        }
-//    }
-//    else if(classifier_type==11){
-//        ID=CASCADA_CLAS;
-//        HA.nombre=ref;
-//        e=HA.Parametrizar("LBP",si_entrenar,Cascada_NumPos,Cascada_NumNeg,Cascada_Mode,Cascada_NumStage,Cascada_MinHitRate,Cascada_MaxFalseAlarmRate,Cascada_WeightTrimRate,Cascada_MaxWeakCount,Cascada_MaxDepth,Cascada_Bt,Cascada_PrecalcValBufSize,Cascada_PrecalcidxBufSize);
-//        if(e==0){
-//            Dimensionalidad::Reducciones reduc;
-//            e=HA.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
+//        else if(multi_type.identificadores[0]==ERTREES){
+//            text<<"El mejor clasificador es Clasificador_ERTrees"<<endl;
+//            text<<"Best Parameters"<<endl;
+//            text<<"ERTrees_max_depth= "<<parameters.ERTrees_max_depth<<endl;
+//            text<<"ERTrees_min_sample_count= "<<parameters.ERTrees_min_sample_count<<endl;
+//            text<<"ERTrees_regression_accuracy= "<<parameters.ERTrees_regression_accuracy<<endl;
+//            text<<"ERTrees_max_categories= "<<parameters.ERTrees_max_categories<<endl;
+//            text<<"ERTrees_cv_folds= "<<parameters.ERTrees_cv_folds<<endl;
+//            text<<"ERTrees_native_vars= "<<parameters.ERTrees_native_vars<<endl;
+//            text<<"Error= "<<error<<endl;
+//            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
 //        }
-//    }
-//    else if(classifier_type==12){
-//        ID=EXP_MAX;
-//        E.nombre=ref;
-//        e=E.Parametrizar(EM_nclusters,EM_covMatType);
-//        if(e==0){
-//            Dimensionalidad::Reducciones reduc;
-//            e=E.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
-//        }
-//    }
-////    else if(classifier_type==13){
-////        Auxiliares aux;
-////        bool neg;
-////        if(aux.numero_etiquetas(LABELS,neg)!=2){
-////            QMessageBox msgBox;
-////            msgBox.setText("ERROR: GBTrees solo se puede usar con dos clases");
-////            msgBox.exec();
-////            QApplication::restoreOverrideCursor();
-////            return;
-////        }
-////        ID=GBT;
-////        GB.nombre=nombre;
-////        e=GB.Parametrizar(GBT_loss_function_type,GBT_weak_count,GBT_shrinkage,GBT_subsample_portion,GBT_max_depth,GBT_use_surrogates);
-////        if(e==0){
-////            Dimensionalidad::Reducciones reduc;
-////            e=GB.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
-////        }
-////    }
-////    else if(classifier_type==14){
-////        ID=ERTREES;
-////        ER.nombre=nombre;
-////        e=ER.Parametrizar(ERTrees_max_depth,ERTrees_min_sample_count,ERTrees_regression_accuracy,ERTrees_use_surrogates,ERTrees_max_categories,ERTrees_cv_folds,ERTrees_use_1se_rule,ERTrees_truncate_pruned_tree,ERTrees_priors,ERTrees_calc_var_importance,ERTrees_native_vars);
-////        if(e==0){
-////            Dimensionalidad::Reducciones reduc;
-////            e=ER.Autotrain(IMAGENES,LABELS,reduc,info,save_clasif);
-////        }
-////    }
-//    else{
+    }
+    else{
 //        QMessageBox msgBox;
-//        msgBox.setText("ERROR: Selecciona un clasificador");
+//        msgBox.setText("ERROR: No se ha podido ejecutar");
 //        msgBox.exec();
 //        QApplication::restoreOverrideCursor();
-//        return;
-//    }
-//    if(e==1){
-//        return 1;
-//    }
-//    QApplication::restoreOverrideCursor();
-    if(e==0){
-        Dimensionalidad::Reducciones reduc;
-        this->classifier->Autotrain(this->org_images,this->org_labels,reduc,this->org_info,this->save_clasif);
+//        ui->progress_Clasificar->setValue(0);
+        return 1;
     }
+    if(e==1){
+//        QMessageBox msgBox;
+//        msgBox.setText("ERROR: No se ha podido ejecutar la herramienta");
+//        msgBox.exec();
+//        QApplication::restoreOverrideCursor();
+//        ui->progress_Clasificar->setValue(0);
+        return 1;
+    }
+    text<<endl;
+    return 0;
 }

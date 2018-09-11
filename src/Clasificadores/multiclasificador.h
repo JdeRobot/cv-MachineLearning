@@ -3,6 +3,7 @@
 
 #include <dirent.h>
 #include "Clasificadores.h"
+#include <thread>
 
 
 using namespace std;
@@ -27,9 +28,20 @@ namespace MLT {
     public:
         struct Multi_type {
            int tipo;
+           vector<int> identificadores;
+           vector<string> nombres;
            vector<int> tipo_regla;
            vector<float> label_ref;
            vector<float> w_clasif;
+
+           Multi_type(){
+               tipo=CASCADA;
+               identificadores.clear();
+               nombres.clear();
+               tipo_regla.clear();
+               label_ref.clear();
+               w_clasif.clear();
+           }
         };
 
 
@@ -39,16 +51,17 @@ namespace MLT {
 
         int numero_etiquetas,ventana_x,ventana_y,tipo_dato;
 
-    #ifdef GUI
-        int progreso;
-        int max_progreso;
-        int base_progreso;
-        int total_progreso;
-
-        Ui::MainWindow *window;
-    #endif
+#ifdef GUI
+    int progreso;
+    int total_progreso;
+    int error;
+    bool running;
+#endif
 
     private:
+        void update_progress();
+        bool classifier_running;
+
         vector<Clasificador*> clasificadores;
         vector<int> ventanas_x,ventanas_y,n_etiquetas,tipos_dato;
 

@@ -116,11 +116,13 @@ int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels,
 }
 
 int MLT::Clasificador_Cascada::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+    this->running=true;
     int e=0;
     if(read){
         e=Read_Data();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
+            this->running=false;
             return 1;
         }
     }
@@ -132,6 +134,7 @@ int MLT::Clasificador_Cascada::Autoclasificacion(vector<Mat> Data, vector<float>
 //            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
+    this->running=false;
     return 0;
 }
 

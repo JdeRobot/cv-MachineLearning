@@ -1,5 +1,18 @@
 #include "multiclasificador.h"
 
+#ifdef GUI
+void MLT::MultiClasificador::update_progress(){
+    this->classifier_running=false;
+    int progress=0;
+    for(int j=0; j<this->clasificadores.size(); j++){
+        progress=progress+this->clasificadores[j]->progreso;
+        if(this->clasificadores[j]->running==true)
+            this->classifier_running=true;
+    }
+    this->progreso=progress/this->clasificadores.size();
+}
+
+#endif
 
 //MULTICLASIFICADOR REQUIERE TENER UN ARCHIVO DE CONFIGURACIÓN PARA LOS CLASIFICADORES YA GENERADO.
 MLT::MultiClasificador::MultiClasificador(vector<Clasificador *> Clasificadores){
@@ -31,44 +44,58 @@ MLT::MultiClasificador::MultiClasificador(vector<Clasificador *> Clasificadores)
 
 
 int MLT::MultiClasificador::Cascada(vector<Mat> Data, vector<int> tipo_regla, vector<float> labels_ref, vector<float> &Labels){
+    this->running=true;
     int e=0;
     if(Error==true){
         cout<<"ERROR en Multiclasificador: No se ha inicializado bien la clase"<<endl;
+        this->running=false;
         return 1;
     }
     if(Data.size()==0){
         cout<<"ERROR en Multiclasificador Cascada: Data esta vacio"<<endl;
+        this->running=false;
         return 1;
     }
     if(labels_ref.size()!=tipo_regla.size()){
         cout<<"ERROR en Multiclasificador Cascada: El numero de reglas y labels de referencia es distinto"<<endl;
+        this->running=false;
         return 1;
     }
     if(clasificadores.size()-1!=tipo_regla.size()){
         cout<<"ERROR en Multiclasificador Cascada: El numero de reglas no coincide con el numero de clasificadores establecidos"<<endl;
+        this->running=false;
         return 1;
     }
     for(uint i=0; i<tipo_regla.size(); i++){
         if(tipo_regla[i]!=IGUAL && tipo_regla[i]!=DISTINTO && tipo_regla[i]!=MENOR && tipo_regla[i]!=MAYOR){
             cout<<"ERROR en Multiclasificador Cascada: El tipo de regla es erróneo"<<endl;
+            this->running=false;
             return 1;
         }
     }
 #ifdef GUI
-//    for(int i=0; i<clasificadores.size();i++){
-//        clasificadores[i]->progreso=progreso;
-//        clasificadores[i]->max_progreso=max_progreso;
-//        clasificadores[i]->base_progreso=base_progreso;
-//        clasificadores[i]->total_progreso=total_progreso;
-//        clasificadores[i]->window=window;
-//    }
+    for(int i=0; i<clasificadores.size();i++){
+        clasificadores[i]->progreso=this->progreso;
+        clasificadores[i]->total_progreso=this->total_progreso;
+    }
 #endif
     vector<vector<float> > labels;
     for(uint i=0; i<clasificadores.size(); i++){
         vector<float> l;
+//        std::thread thrd(&MLT::Clasificador::Autoclasificacion,this->clasificadores[i],Data,std::ref(l),false,false);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//        this->classifier_running=true;
+//        while(this->classifier_running==true){
+//            update_progress();
+//            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//        }
+//        thrd.join();
         e=clasificadores[i]->Autoclasificacion(Data,l,false,false);
-        if(e==1){
+
+
+        if(this->clasificadores[i]->error==1){
             cout<<"Error en "+clasificadores[i]->nombre+": Error en Autoclasificacion"<<endl;
+            this->running=false;
             return 1;
         }
         labels.push_back(l);
@@ -119,38 +146,49 @@ int MLT::MultiClasificador::Cascada(vector<Mat> Data, vector<int> tipo_regla, ve
             pos++;
         }
     }
+    this->running=false;
     return 0;
 }
 
 int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, vector<float> &Labels){
+    this->running=true;
     int e=0;
     if(Error==true){
         cout<<"ERROR en Multiclasificador: No se ha inicializado bien la clase"<<endl;
+        this->running=false;
         return 1;
     }
     if(clasificadores.size()!=w_clasif.size()){
         cout<<"ERROR en Multiclasificador Votacion: El número de clasificadores es distinto al de w_clasif"<<endl;
+        this->running=false;
         return 1;
     }
     if(Data.size()==0){
         cout<<"ERROR en Multiclasificador Votacion: Data esta vacio"<<endl;
+        this->running=false;
         return 1;
     }
 #ifdef GUI
-//    for(int i=0; i<clasificadores.size();i++){
-//        clasificadores[i]->progreso=progreso;
-//        clasificadores[i]->max_progreso=max_progreso;
-//        clasificadores[i]->base_progreso=base_progreso;
-//        clasificadores[i]->total_progreso=total_progreso;
-//        clasificadores[i]->window=window;
-//    }
+    for(int i=0; i<clasificadores.size();i++){
+        clasificadores[i]->progreso=this->progreso;
+        clasificadores[i]->total_progreso=this->total_progreso;
+    }
 #endif
     vector<vector<float> > labels;
     for(uint i=0; i<clasificadores.size(); i++){
         vector<float> l;
+//        std::thread thrd(&MLT::Clasificador::Autoclasificacion,this->clasificadores[i],Data,std::ref(l),false,false);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//        this->classifier_running=true;
+//        while(this->classifier_running==true){
+//            update_progress();
+//            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//        }
+//        thrd.join();
         e=clasificadores[i]->Autoclasificacion(Data,l,false,false);
         if(e==1){
             cout<<"Error en "+clasificadores[i]->nombre+": Error en Autoclasificacion"<<endl;
+            this->running=false;
             return 1;
         }
         labels.push_back(l);
@@ -198,5 +236,6 @@ int MLT::MultiClasificador::Votacion(vector<Mat> Data, vector<float> w_clasif, v
         else
             Labels.push_back(pos+1);
     }
+    this->running=false;
     return 0;
 }

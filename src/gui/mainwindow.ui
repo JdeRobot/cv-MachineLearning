@@ -52,8 +52,135 @@
      <item>
       <widget class="QTabWidget" name="Tipo_Herr2">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>General Tools</string>
+        </attribute>
+        <widget class="QTabWidget" name="tabWidget_5">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1141</width>
+           <height>551</height>
+          </rect>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="v_data_managing_tab_2">
+          <attribute name="title">
+           <string>Data Managing</string>
+          </attribute>
+          <widget class="QComboBox" name="g_tool">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>10</y>
+             <width>281</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <item>
+            <property name="text">
+             <string>Choose Tool</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Load Dataset</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Save Results as Dataset</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Join Datasets</string>
+            </property>
+           </item>
+          </widget>
+          <widget class="QLineEdit" name="g_datapath">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>90</y>
+             <width>251</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>File, video or folder</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="g_run_datamanaging">
+           <property name="geometry">
+            <rect>
+             <x>1020</x>
+             <y>450</y>
+             <width>98</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Run</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="g_dataname">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>50</y>
+             <width>281</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Dataset Name</string>
+           </property>
+          </widget>
+          <widget class="QProgressBar" name="g_progress_datamanaging">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>490</y>
+             <width>1131</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+          <widget class="QToolButton" name="g_toolButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>90</y>
+             <width>23</width>
+             <height>25</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </widget>
+        </widget>
+       </widget>
        <widget class="QWidget" name="vectors_tab">
         <attribute name="title">
          <string>Vector Tools</string>
@@ -90,40 +217,9 @@
            </item>
            <item>
             <property name="text">
-             <string>Load Dataset</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>Synthetic Data</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>Save Results as Dataset</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Join Datasets</string>
-            </property>
-           </item>
-          </widget>
-          <widget class="QLineEdit" name="v_datapath">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>90</y>
-             <width>251</width>
-             <height>27</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>File, video or folder</string>
-           </property>
           </widget>
           <widget class="QPushButton" name="v_run_datamanaging">
            <property name="geometry">
@@ -327,22 +423,6 @@
              <double>0.100000000000000</double>
             </property>
            </widget>
-          </widget>
-          <widget class="QToolButton" name="v_toolButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>280</x>
-             <y>90</y>
-             <width>23</width>
-             <height>25</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
           </widget>
          </widget>
          <widget class="QWidget" name="v_analysis">
@@ -1162,7 +1242,7 @@
        </widget>
        <widget class="QWidget" name="images_tab">
         <attribute name="title">
-         <string>Images Tools</string>
+         <string>Image Tools</string>
         </attribute>
         <widget class="QTabWidget" name="tabWidget_2">
          <property name="geometry">
@@ -1195,11 +1275,6 @@
            <item>
             <property name="text">
              <string>Choose a Tool</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Load Dataset</string>
             </property>
            </item>
            <item>
@@ -1252,16 +1327,6 @@
              <string>Expand Dataset</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>Save Results as Dataset</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Join Datasets</string>
-            </property>
-           </item>
           </widget>
           <widget class="QGroupBox" name="i_datatype">
            <property name="enabled">
@@ -1281,7 +1346,7 @@
            <widget class="QToolButton" name="i_datamanaging_descriptortool">
             <property name="geometry">
              <rect>
-              <x>250</x>
+              <x>260</x>
               <y>30</y>
               <width>23</width>
               <height>25</height>
@@ -1296,7 +1361,7 @@
              <rect>
               <x>0</x>
               <y>30</y>
-              <width>241</width>
+              <width>251</width>
               <height>27</height>
              </rect>
             </property>
@@ -1391,7 +1456,7 @@
             <rect>
              <x>20</x>
              <y>90</y>
-             <width>261</width>
+             <width>251</width>
              <height>27</height>
             </rect>
            </property>
@@ -1405,7 +1470,7 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>290</x>
+             <x>280</x>
              <y>90</y>
              <width>23</width>
              <height>25</height>
@@ -1878,6 +1943,12 @@
            <property name="maximum">
             <number>9</number>
            </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>-1</number>
+           </property>
           </widget>
          </widget>
          <widget class="QWidget" name="i_detection">
@@ -1954,7 +2025,7 @@
              </rect>
             </property>
             <property name="text">
-             <string>Jump Scale</string>
+             <string>Jump</string>
             </property>
            </widget>
            <widget class="QSpinBox" name="i_detection_jump">
@@ -2289,17 +2360,17 @@
             </item>
             <item>
              <property name="text">
+              <string>Main Color</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>HOG</string>
              </property>
             </item>
             <item>
              <property name="text">
               <string>Keypoints</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Main Color</string>
              </property>
             </item>
            </widget>
@@ -2334,7 +2405,7 @@
              <rect>
               <x>0</x>
               <y>30</y>
-              <width>291</width>
+              <width>281</width>
               <height>27</height>
              </rect>
             </property>
@@ -2542,14 +2613,14 @@
           <widget class="QGroupBox" name="m_classifier_configuration">
            <property name="geometry">
             <rect>
-             <x>310</x>
+             <x>320</x>
              <y>10</y>
              <width>481</width>
              <height>141</height>
             </rect>
            </property>
            <property name="title">
-            <string>Configuration</string>
+            <string>Test</string>
            </property>
            <widget class="QToolButton" name="m_classifier_config_multitool">
             <property name="geometry">
@@ -2606,7 +2677,7 @@
              <string>Multiclassifier</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="m_classifier_configclassify">
+           <widget class="QPushButton" name="m_classifier_classify">
             <property name="geometry">
              <rect>
               <x>310</x>
@@ -2623,7 +2694,7 @@
           <widget class="Line" name="line_3">
            <property name="geometry">
             <rect>
-             <x>290</x>
+             <x>300</x>
              <y>10</y>
              <width>16</width>
              <height>461</height>
@@ -2633,32 +2704,32 @@
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
-          <widget class="QTextBrowser" name="Result_Clas_3">
+          <widget class="QTextBrowser" name="m_results">
            <property name="geometry">
             <rect>
-             <x>310</x>
+             <x>320</x>
              <y>160</y>
              <width>801</width>
              <height>301</height>
             </rect>
            </property>
           </widget>
-          <widget class="QGroupBox" name="m_classifier_classifiertype">
+          <widget class="QGroupBox" name="m_classifier_classifiertrain">
            <property name="geometry">
             <rect>
              <x>10</x>
              <y>50</y>
-             <width>271</width>
+             <width>291</width>
              <height>121</height>
             </rect>
            </property>
            <property name="title">
-            <string>Classifier Type</string>
+            <string>Train</string>
            </property>
            <widget class="QToolButton" name="m_classifier_typetool">
             <property name="geometry">
              <rect>
-              <x>230</x>
+              <x>260</x>
               <y>30</y>
               <width>25</width>
               <height>30</height>
@@ -2684,9 +2755,9 @@
            <widget class="QComboBox" name="m_classifier_type">
             <property name="geometry">
              <rect>
-              <x>10</x>
+              <x>0</x>
               <y>30</y>
-              <width>211</width>
+              <width>251</width>
               <height>32</height>
              </rect>
             </property>
@@ -2783,6 +2854,71 @@
             <number>0</number>
            </property>
           </widget>
+          <widget class="QGroupBox" name="m_classifier_classifieload">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>200</y>
+             <width>291</width>
+             <height>121</height>
+            </rect>
+           </property>
+           <property name="title">
+            <string>Load</string>
+           </property>
+           <widget class="QLineEdit" name="m_load_address">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>30</y>
+              <width>251</width>
+              <height>27</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Model Folder</string>
+            </property>
+           </widget>
+           <widget class="QToolButton" name="m_load_tool">
+            <property name="geometry">
+             <rect>
+              <x>260</x>
+              <y>30</y>
+              <width>23</width>
+              <height>25</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="m_load_load">
+            <property name="geometry">
+             <rect>
+              <x>160</x>
+              <y>70</y>
+              <width>98</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Load</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="Line" name="line">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>170</y>
+             <width>281</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </widget>
          <widget class="QWidget" name="i_optimize_2">
           <attribute name="title">
@@ -2817,10 +2953,10 @@
             <string>Validation (Multiclassifier)</string>
            </property>
           </widget>
-          <widget class="QToolButton" name="toolButton_24">
+          <widget class="QToolButton" name="m_optimize_svalidationtool">
            <property name="geometry">
             <rect>
-             <x>210</x>
+             <x>230</x>
              <y>94</y>
              <width>25</width>
              <height>30</height>
@@ -2873,7 +3009,7 @@
             </item>
             <item>
              <property name="text">
-              <string>ANN</string>
+              <string>KNN</string>
              </property>
             </item>
             <item>
@@ -2997,7 +3133,7 @@
              <string>Stop</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="Porcentaje_3">
+           <widget class="QSpinBox" name="m_optimize_validation_percentage">
             <property name="geometry">
              <rect>
               <x>360</x>
@@ -3087,10 +3223,10 @@
             <string>Super Cross Validation</string>
            </property>
           </widget>
-          <widget class="QToolButton" name="toolButton_13">
+          <widget class="QToolButton" name="m_optimize_validationtool">
            <property name="geometry">
             <rect>
-             <x>250</x>
+             <x>230</x>
              <y>34</y>
              <width>25</width>
              <height>30</height>

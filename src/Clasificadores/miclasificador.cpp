@@ -32,20 +32,20 @@ MLT::MiClasificador::~MiClasificador(){
   @return Control de errores (0=OK)
 */
 int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+    this->running=true;
     int e=0;
     Auxiliares ax;
     Mat lexic_data;
     e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
         cout<<"ERROR en Autoclasificacion: Error en Image2Lexic"<<endl;
+        this->running=false;
         return 1;
     }
     tam_imagen=Data[0].size();
     Mat trainingDataMat;
     lexic_data.copyTo(trainingDataMat);
     for(int i=0; i<trainingDataMat.rows; i++){
-#ifdef GUI
-        progreso++;
 
 /*******************************************************************************************/
         //Tu codigo para la barra de cargado de la GUI
@@ -56,10 +56,14 @@ int MLT::MiClasificador::Autoclasificacion(vector<Mat> Data, vector<float> &Labe
         //clasificador.total_progreso=total_progreso;
         //clasificador.window=window;
 /*****************************************************************************************/
-#endif
         float response=Clasificacion(trainingDataMat.row(i));
         Labels.push_back(response);
+
+#ifdef GUI
+        progreso++;
+#endif
     }
+    this->running=false;
     return 0;
 }
 

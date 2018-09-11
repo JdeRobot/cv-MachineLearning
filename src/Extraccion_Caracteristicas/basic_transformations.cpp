@@ -29,10 +29,7 @@ MLT::Basic_Transformations::Basic_Transformations (int inputType, int outputType
     output = outputType;
 }
 
-MLT::Basic_Transformations::~Basic_Transformations ()
-{
-
-}
+MLT::Basic_Transformations::~Basic_Transformations (){}
 
 int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &descriptores)
 {
@@ -124,7 +121,8 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                     break;
                 default:
                     cout << "ERROR en Extract: El tipo de transformacion indicado no esta contemplado" << endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 break;
             }
@@ -199,7 +197,8 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                     break;
                 default:
                     cout << "ERROR en Extract: El tipo de transformacion indicado no esta contemplado" << endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 break;
             }
@@ -239,7 +238,8 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                 //    break;
                 default:
                     cout << "ERROR en Extract: El tipo de transformacion indicado no esta contemplado" << endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 break;
             }
@@ -271,17 +271,20 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                         break;
                     default:
                         cout << "ERROR en Extract: El tipo de transformacion indicado no esta contemplado" << endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                 }
                 break;
             }
             default:
                 cout << "ERROR en Extract: El tipo de transformacion indicado no esta contemplado" << endl;
-                return 1;
+                this->error=1;
+                return this->error;
         }
 
         img_out.convertTo (img_out,CV_32F);
         descriptores.push_back (img_out);
     }
-    return 0;
+    this->error=0;
+    return this->error;
 }

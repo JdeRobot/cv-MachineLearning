@@ -1,36 +1,13 @@
-/*
-*
-* Copyright 2014-2016 Ignacio San Roman Lana
-*
-* This file is part of OpenCV_ML_Tool
-*
-* OpenCV_ML_Tool is free software: you can redistribute it and/or
-* modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* OpenCV_ML_Tool is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with OpenCV_ML_Tool. If not, see http://www.gnu.org/licenses/.
-*
-* For those usages not covered by this license please contact with
-* isanromanlana@gmail.com
-*/
-
 #include "busqueda.h"
 
-MLT::Busqueda::Busqueda(Clasificador *clasificador, int Tipo_Descriptor, Descriptor *descriptor, MultiClasificador::Multi_type */*multitipo*/){
+MLT::Busqueda::Busqueda(Clasificador *clasificador, int Tipo_Descriptor, Descriptor *descriptor, MultiClasificador::Multi_type *multitipo){
 
     this->clasificador=clasificador;
-    numero_etiquetas=clasificador->getNumeroEtiquetas();
-    ventana_x=clasificador->getVentanaOX();
-    ventana_y=clasificador->getVentanaOY();
+    numero_etiquetas=clasificador->numero_etiquetas;
+    ventana_x=clasificador->ventana_o_x;
+    ventana_y=clasificador->ventana_o_y;
     tipo_dato=Tipo_Descriptor;
-    tipo=clasificador->getTipoClasificador();
+    tipo=clasificador->tipo_clasificador;
     descrip=descriptor;
 }
 
@@ -53,30 +30,36 @@ MLT::Busqueda::Busqueda(MultiClasificador *clasificador, int Tipo_Descriptor, De
 int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int rotate, bool relleno, Mat &OUT){
     if(src.empty()){
         cout<<"ERROR en Textura: Imagen vacia"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(tam_base.height<2 || tam_base.width<2){
         cout<<"ERROR en Textura: tam_base debe ser por lo menos de 2x2"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(salto<1){
         cout<<"ERROR en Textura: salto debe ser como mínimo 1"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(rotate<0){
         cout<<"ERROR en Textura: rotate debe ser como mínimo 0"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(tipo==MULTICLASIFICADOR){
         if(tipo_dato!=Multi->tipo_dato){
             cout<<"ERROR en Textura: El clasificador no se entrenó con este tipo de dato"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else{
-        if(tipo_dato!=clasificador->getTipoDato()){
+        if(tipo_dato!=clasificador->tipo_dato){
             cout<<"ERROR en Textura: El clasificador no se entrenó con este tipo de dato"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     int e=0;
@@ -110,7 +93,8 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                 cv::resize(ROI_g,ROI,Size(ventana_x,ventana_y));
                 if(ROI.empty()){
                     cout<<"ERROR en Textura: ROI con tamaño 0"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 std::vector<cv::Mat> Imagen;
                 if(tipo_dato==RGB){
@@ -130,14 +114,16 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                         e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                     else{
                         cout<<"ERROR en Textura: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                 }
                 else
                     e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                 if(e==1){
                     cout<<"ERROR en Textura: Error en Autoclasificacion"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 if(Label[0]==-1.0)
                     negativa=true;
@@ -164,7 +150,8 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                     cv::resize(ROI_up_g,ROI_up,Size(ventana_x,ventana_y));
                     if(ROI_up.empty()){
                         cout<<"ERROR en Textura: ROI con tamaño 0"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                     std::vector<cv::Mat> Imagen;
                     if(tipo_dato==RGB){
@@ -184,14 +171,16 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                             e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                         else{
                             cout<<"ERROR en Textura: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                            return 1;
+                            this->error=1;
+                            return this->error;
                         }
                     }
                     else
                         e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                     if(e==1){
                         cout<<"ERROR en Textura: Error en Autoclasificacion"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                     if(Label[0]==-1.0)
                         negativa=true;
@@ -221,7 +210,8 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                             cv::resize(ROI_down_g,ROI_down,Size(ventana_x,ventana_y));
                             if(ROI_down.empty()){
                                 cout<<"ERROR en Textura: ROI con tamaño 0"<<endl;
-                                return 1;
+                                this->error=1;
+                                return this->error;
                             }
                             std::vector<cv::Mat> Imagen;
                             if(tipo_dato==RGB){
@@ -241,14 +231,16 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
                                     e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                                 else{
                                     cout<<"ERROR en Textura: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                                    return 1;
+                                    this->error=1;
+                                    return this->error;
                                 }
                             }
                             else
                                 e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                             if(e==1){
                                 cout<<"ERROR en Textura: Error en Autoclasificacion"<<endl;
-                                return 1;
+                                this->error=1;
+                                return this->error;
                             }
                             if(Label[0]==-1.0)
                                 negativa=true;
@@ -315,38 +307,46 @@ int MLT::Busqueda::Textura(Mat src, Size tam_base, int escalas, int salto, int r
         }
         OUT_s.copyTo(OUT);
     }
-    return e;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int rotate, bool juntar_recuadros, bool solapamiento, bool aislamiento, float distancia_recuadros, int rotacion_recuadros, vector<RotatedRect> &recuadros, vector<float> &Labels){
     if(src.empty()){
         cout<<"ERROR en Posicion: Imagen vacia"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(tam_base.height<2 || tam_base.width<2){
         cout<<"ERROR en Posicion: tam_base debe ser por lo menos de 2x2"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(salto<1){
         cout<<"ERROR en Posicion: salto debe ser como mínimo 1"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(rotate<0){
         cout<<"ERROR en Posicion: rotate debe ser como mínimo 0"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(tipo==MULTICLASIFICADOR){
         if(tipo_dato!=Multi->tipo_dato){
             cout<<"ERROR en Posicion: El clasificador no se entrenó con este tipo de dato"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else{
-        if(tipo_dato!=clasificador->getTipoDato()){
+        if(tipo_dato!=clasificador->tipo_dato){
             cout<<"ERROR en Posicion: El clasificador no se entrenó con este tipo de dato"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
+
     int e=0;
     recuadros.clear();
     Labels.clear();
@@ -378,7 +378,8 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                 cv::resize(ROI_g,ROI,Size(ventana_x,ventana_y));
                 if(ROI.empty()){
                     cout<<"ERROR en Posicion: ROI con tamaño 0"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 std::vector<cv::Mat> Imagen;
                 if(tipo_dato==RGB){
@@ -398,14 +399,16 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                         e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                     else{
                         cout<<"ERROR en Posicion: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                 }
                 else
                     e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                 if(e==1){
                     cout<<"ERROR en Posicion: Error en Autoclasificacion"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 if(Label[0]>0){
                     Mat punto_rotado(3,1,CV_32FC1);
@@ -432,7 +435,8 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                     cv::resize(ROI_up_g,ROI_up,Size(ventana_x,ventana_y));
                     if(ROI_up.empty()){
                         cout<<"ERROR en Posicion: ROI con tamaño 0"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                     std::vector<cv::Mat> Imagen;
                     if(tipo_dato==RGB){
@@ -452,14 +456,16 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                             e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                         else{
                             cout<<"ERROR en Posicion: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                            return 1;
+                            this->error=1;
+                            return this->error;
                         }
                     }
                     else
                         e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                     if(e==1){
                         cout<<"ERROR en Posicion: Error en Autoclasificacion"<<endl;
-                        return 1;
+                        this->error=1;
+                        return this->error;
                     }
                     if(Label[0]>0){
                         Mat punto_rotado(3,1,CV_32FC1);
@@ -488,7 +494,8 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                             cv::resize(ROI_down_g,ROI_down,Size(ventana_x,ventana_y));
                             if(ROI_down.empty()){
                                 cout<<"ERROR en Posicion: ROI con tamaño 0"<<endl;
-                                return 1;
+                                this->error=1;
+                                return this->error;
                             }
                             std::vector<cv::Mat> Imagen;
                             if(tipo_dato==RGB){
@@ -508,14 +515,16 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
                                     e=Multi->Votacion(Imagen,Tipo_Multi.w_clasif,Label);
                                 else{
                                     cout<<"ERROR en Posicion: Tipo_Multi con valor erroneo debe ser CASCADA O VOTACION"<<endl;
-                                    return 1;
+                                    this->error=1;
+                                    return this->error;
                                 }
                             }
                             else
                                 e=clasificador->Autoclasificacion(Imagen,Label,true,false);
                             if(e==1){
                                 cout<<"ERROR en Posicion: Error en Autoclasificacion"<<endl;
-                                return 1;
+                                this->error=1;
+                                return this->error;
                             }
                             if(Label[0]>0){
                                 Mat punto_rotado(3,1,CV_32FC1);
@@ -657,5 +666,6 @@ int MLT::Busqueda::Posicion(Mat src, Size tam_base, int escalas, int salto, int 
         recuadros=recs;
         Labels=labs;
     }
-    return e;
+    this->error=0;
+    return this->error;
 }

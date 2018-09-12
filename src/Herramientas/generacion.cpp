@@ -23,9 +23,12 @@
 
 #include "generacion.h"
 
-MLT::Generacion::Generacion(){}
+MLT::Generacion::Generacion(){
+    this->running=false;
+}
 
 int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat> &Images){
+    this->running=true;
     input_directory=input_directory+"/";
     string strPrefix;
     DIR    *dir_p = opendir (input_directory.c_str());
@@ -47,31 +50,40 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
                 img.push_back(Imagen);
         }
 #ifdef GUI
-            progreso++;
-            window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-            window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            this->progreso++;
 #endif
     }
     Images=img;
     if(Images.size()==0){
         cout<<"ERROR en Cargar_Imagenes: Resultado de tamaño 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<float> Labels, Info_Datos info){
+    this->running=true;
     if(Imagenes.size()==0){
         cout<<"ERROR en Guardar_Datos: Imagenes esta vacio"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Guardar_Datos: Labels esta vacio"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(Imagenes.size()!= Labels.size()){
         cout<<"ERROR en Guardar_Datos: El tamaño de Imagenes y Labels no coincide"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     string output_directory="../Data/Imagenes/"+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -125,11 +137,7 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
         Archivo_img<<conta.str()<<imag;
         Archivo_recortes<<conta.str()<<imag;
 #ifdef GUI
-        progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Clus->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-        window->progress_Dimensionalidad->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+        this->progreso++;
 #endif
     }
     Archivo_i<<"Tipo_Datos"<<info.Tipo_Datos;
@@ -150,22 +158,42 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vector<float> &Labels, Info_Datos &info){
+    this->running=true;
     Imagenes.clear();
     Labels.clear();
     std::ifstream input_rec(Archivo.c_str());
     if(!input_rec.is_open()){
         cout<<"ERROR en Cargar_Fichero: path ilegible"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     int pos=0;
     for(uint i=0; i<Archivo.size(); i++){
         if(Archivo[i]=='/')
             pos=i;
     }
+    string archivo_i;
+    for(int i=0; i<pos+1; i++){
+        archivo_i=archivo_i+Archivo[i];
+    }
+    archivo_i=archivo_i+"Info.xml";
+    cv::FileStorage archivo_r(archivo_i,CV_STORAGE_READ);
+    if(!archivo_r.isOpened()){
+        cout<<"ERROR en Cargar_Fichero: No se ha podido cargar el archivo Info.xml"<<endl;
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
+    int num=0;
+    archivo_r["Num_Datos"]>>num;
+    this->total_progreso=num;
     string archivo_recortes;
     for(int i=0; i<pos+1; i++){
         archivo_recortes=archivo_recortes+Archivo[i];
@@ -188,9 +216,11 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                 if(espacios.size()==1){
                     for(uint j=0; j<i; j++)
                         path_imagen=path_imagen+line[j];
-                    if(path_imagen=="" ){
+                    if(path_imagen==""){
                         cout<<"ERROR en Cargar_Fichero: nombre de imagen ilegible"<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
                 }
                 else if(espacios.size()==2){
@@ -244,7 +274,9 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                         numero=numero+line[j];
                     if(numero=="0"){
                         cout<<"ERROR en Cargar_Fichero: etiqueta erronea (igual a 0)"<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
                     Labels.push_back(atoi(numero.c_str()));
                     cont=0;
@@ -255,16 +287,16 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
                     Archivo_recortes[nombr.str()]>>imagen;
                     if(imagen.empty()){
                         cout<<"ERROR en Cargar_Fichero: No se pudo cargar Imagen"<<numero_imagenes<<endl;
-                        return 1;
+                        this->running=false;
+                        this->error=1;
+                        return this->error;
                     }
 
                     Mat Imagen;
                     imagen.convertTo(Imagen,CV_32F);
                     Imagenes.push_back(Imagen);
             #ifdef GUI
-                    progreso++;
-                    window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-                    window->progress_Cargar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+                    this->progreso++;
             #endif
                 }
             }
@@ -273,16 +305,7 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
         line.clear();
         recortes.clear();
     }
-    string archivo_i;
-    for(int i=0; i<pos+1; i++){
-        archivo_i=archivo_i+Archivo[i];
-    }
-    archivo_i=archivo_i+"Info.xml";
-    cv::FileStorage archivo_r(archivo_i,CV_STORAGE_READ);
-    if(!archivo_r.isOpened()){
-        cout<<"ERROR en Cargar_Fichero: No se ha podido cargar el archivo Info.xml"<<endl;
-        return 1;
-    }
+
     archivo_r["Tipo_Datos"]>>info.Tipo_Datos;
     archivo_r["Num_Datos"]>>info.Num_Datos;
     archivo_r["DS"]>>info.DS;
@@ -297,10 +320,14 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
     archivo_r["Tam_Orig_Y"]>>info.Tam_Orig_Y;
     archivo_r["Tam_X"]>>info.Tam_X;
     archivo_r["Tam_Y"]>>info.Tam_Y;
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
+    this->running=true;
+
     Path=Path+"/";
     string output_directory=Path+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -314,10 +341,17 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
         int er=system(command.c_str());
         if(er==1){
             cout<<"ERROR en Juntar_Recortes: Error al crear carpeta"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     DIR    *dir_p = opendir (Path.c_str());
+    if(dir_p==NULL){
+        this->running=false;
+        this->error=1;
+        return this->error;
+    }
     struct dirent *dir_entry_p;
     f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -342,6 +376,7 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     int total_recortes=0;
     int cuenta_imagenes=0;
     int cuenta_recortes=0;
+
     while((dir_entry_p = readdir(dir_p)) != NULL){
         if(strcmp(dir_entry_p->d_name, ".")!=0 && strcmp(dir_entry_p->d_name, "..")!=0 && strcmp(dir_entry_p->d_name, nombre.c_str())!=0){
             cuenta_carpetas++;
@@ -399,7 +434,9 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
                     if (er!=0){
                         cout<<"Puede que hayan quedado archivos corruptos en el path de destino"<<endl;
                     }
-                    return 1;
+                    this->running=false;
+                    this->error=1;
+                    return this->error;
                 }
             }
             std::string line, line_params, line_nombre;
@@ -447,8 +484,7 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
             Archivo_img_in.release();
             Archivo_recortes_in.release();
 #ifdef GUI
-        progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+    this->progreso++;
 #endif
         }
     }
@@ -471,13 +507,18 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Datos_Imagenes: El tamaño del recorte debe ser mayor a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     input_directory=input_directory+"/";
     string strPrefix;
@@ -497,7 +538,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -510,10 +553,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -522,7 +562,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         }
         if(er==1){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -578,7 +620,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
         }
         if(er==1){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -644,7 +688,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Datos_Imagenes: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     info.Tipo_Datos=0;
     info.Num_Datos=imagenes.size();
@@ -680,13 +726,19 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     input_directory=input_directory+"/";
     string strPrefix;
@@ -706,7 +758,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -719,10 +773,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -731,7 +782,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -787,7 +840,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -820,11 +875,11 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
                 if(z=='i'){
                     Mat most=Mat::zeros(200,200,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="ESC=Salir";
+                    string texto="ESC=Exit";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="Num=Etiquetar";
+                    texto="Num=Labeling";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="Espacio=Pasar";
+                    texto="Space=Next";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -899,7 +954,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     info.Tipo_Datos=0;
     info.Num_Datos=imagenes.size();
@@ -935,15 +992,20 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
-int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
-    Cuadrado=cuadrado;
+    this->Cuadrado=cuadrado;
     input_directory=input_directory+"/";
     string strPrefix;
     DIR    *dir_p = opendir (input_directory.c_str());
@@ -964,23 +1026,20 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
         Archivo_i.release();
 #ifdef GUI
-        total_progreso=num;
-        progreso=0;
-        base_progreso=0;
-        max_progreso=100;
+        this->total_progreso=num;
+        this->progreso=0;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -989,7 +1048,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -1045,7 +1106,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -1069,7 +1132,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
             imagen = imread(strPrefix.c_str());
             if(imagen.empty()){
                 cout<<"ERROR en Recortar_Etiquetar: Imagen vacia"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
             Mat Imagen(imagen.rows,imagen.cols,CV_32F);
             imagen.convertTo(Imagen,CV_32F);
@@ -1092,15 +1157,15 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
                     if(z=='i'){
                         Mat most=Mat::zeros(200,300,CV_8UC3);
                         most=most+Scalar(255,255,255);
-                        string texto="ESC=Salir";
+                        string texto="ESC=Exit";
                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                        texto="Num=Etiquetar";
+                        texto="Num=Labeling";
                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                        texto="Espacio=Pasar";
+                        texto="Space=Next";
                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                        texto="e=Rotar izda";
+                        texto="e=Rotate Left";
                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                        texto="r=Rotar dcha";
+                        texto="r=Rotate Right";
                         putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                         imshow("Info",most);
                         waitKey(1500);
@@ -1225,7 +1290,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Recortar_Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     info.Tipo_Datos=0;
     info.Num_Datos=imagenes.size();
@@ -1261,18 +1328,25 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, string input_directory, b
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
-int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     if(tam_recorte.width<1 || tam_recorte.height<1){
         cout<<"ERROR en Recortar_Etiquetar: El tamaño del recorte debe ser mayor a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Recortar_Etiquetar: No se ha podido cargar el video"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     std::vector<cv::Mat> img;
     std::vector<float> etiquetas;
@@ -1290,7 +1364,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -1298,14 +1374,12 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
 #ifdef GUI
         total_progreso=num;
         progreso=0;
-        base_progreso=0;
-        max_progreso=100;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1315,7 +1389,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -1372,7 +1448,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -1392,7 +1470,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
         cout<<"Imagen= "<<cont<<endl;
         if(imagen.empty()){
             cout<<"ERROR en Recortar_Etiquetar: Imagen vacia"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat Imagen(imagen.rows,imagen.cols,CV_32F);
         imagen.convertTo(Imagen,CV_32F);
@@ -1415,15 +1495,15 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
                 if(z=='i'){
                     Mat most=Mat::zeros(200,300,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="ESC=Salir";
+                    string texto="ESC=Exit";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="Num=Etiquetar";
+                    texto="Num=Labeling";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="Espacio=Pasar";
+                    texto="Space=Next";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="e=Rotar izda";
+                    texto="e=Rotate Left";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Rotar dcha";
+                    texto="r=Rotate Right";
                     putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -1548,7 +1628,9 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
     destroyAllWindows();
     if(Labels.size()==0 || imagenes.size()==0 || Labels.size()!=imagenes.size()){
         cout<<"ERROR en Recortar_Etiquetar: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     info.Tipo_Datos=0;
     info.Num_Datos=imagenes.size();
@@ -1584,29 +1666,44 @@ int MLT::Generacion::Recortar_Etiquetar(string nombre, VideoCapture cap, bool cu
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int num_data_clase, Size tam_img, float ancho, float separacion_clases, vector<Mat> &Data, vector<float> &Labels, Info_Datos &info, bool save){
+    this->running=true;
+    Data.clear();
+    Labels.clear();
     if(num_clases<1){
         cout<<"ERROR en Random_Synthetic_Data: num_clases es menor a uno";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(num_data_clase<1){
         cout<<"ERROR en Random_Synthetic_Data: num_data_clase es menor a uno";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(tam_img.height<1 || tam_img.width<1){
         cout<<"ERROR en Random_Synthetic_Data: tam_img tiene un tamaño menor a uno";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(ancho<0){
         cout<<"ERROR en Random_Synthetic_Data: ancho es menor a cero";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(separacion_clases<0){
         cout<<"ERROR en Random_Synthetic_Data: separacion_clases es menor a cero";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Data.clear();
     Labels.clear();
@@ -1642,6 +1739,9 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     }
     float separacion=0;
+#ifdef GUI
+    this->total_progreso=num_clases*num_data_clase;
+#endif
     for(int i=0; i<num_clases; i++){
         for(int j=0; j<num_data_clase; j++){
             cont++;
@@ -1681,15 +1781,18 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
                 Archivo_recortes<<nom.str()<<aux;
             }
 #ifdef GUI
-            progreso++;
-            window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            this->progreso++;
+//            this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+//            this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
         separacion=separacion+separacion_clases;
     }
     if(Labels.size()==0 || Data.size()==0 || Labels.size()!=Data.size()){
         cout<<"ERROR en Random_Synthetic_Data: El resultado de las etiquetas e imagenes no tienen el mismo tamaño o son 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     info.Tipo_Datos=1;
     info.Num_Datos=Data.size();
@@ -1725,25 +1828,36 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Random_Synthetic_Image(int num_clases, Size tam_img, float ancho, float separacion_clases,  Mat &Imagen){
+    this->running=true;
     if(num_clases<1){
         cout<<"ERROR en Random_Synthetic_Image: num_clases es menor a uno";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(tam_img.height<1 || tam_img.width<1){
         cout<<"ERROR en Random_Synthetic_Image: tam_img tiene un tamaño menor a uno";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(ancho<0){
         cout<<"ERROR en Random_Synthetic_Image: ancho es menor a cero";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(separacion_clases<0){
         cout<<"ERROR en Random_Synthetic_Image: separacion_clases es menor a cero";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Imagen=Mat::zeros(tam_img,CV_32F);
     int max_dim=tam_img.width;
@@ -1757,15 +1871,22 @@ int MLT::Generacion::Random_Synthetic_Image(int num_clases, Size tam_img, float 
     }
     if(Imagen.empty()){
         cout<<"ERROR en Random_Synthetic_Image: No se ha podido generar la imagen"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<float> inputLabels, vector<Mat> &output, vector<float> &outputLabels, int num_by_frame, float max_noise, float max_blur, float max_rot_x, float max_rot_y, float max_rot_z, Info_Datos &info, bool save){
+    this->running=true;
     if(input.size()==0){
         cout<<"ERROR en Synthethic_Data: No hay datos de entrada"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     int cont=0;
     string output_directory="../Data/Imagenes/"+nombre+"/";
@@ -1906,7 +2027,6 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
         }
 #ifdef GUI
         progreso++;
-        window->progress_generar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     info.Tipo_Datos=0;
@@ -1943,21 +2063,25 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
-
-
-
 int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Autopositivos: No se ha podido cargar el video"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(tam_recorte.height<1 || tam_recorte.width<1){
         cout<<"ERROR en Autopositivos: tamaño de recorte negativo o igual a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     string output_directory="../Data/Imagenes/"+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -1970,7 +2094,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -1978,14 +2104,12 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
 #ifdef GUI
         total_progreso=num;
         progreso=0;
-        base_progreso=0;
-        max_progreso=100;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -1995,7 +2119,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -2066,7 +2192,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -2114,13 +2242,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
             copiar=true;
             Mat most=Mat::zeros(250,400,CV_8UC3);
             most=most+Scalar(255,255,255);
-            string texto="e=Modo edicion";
+            string texto="e=Edit Mode";
             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-            texto="p=Pasar sin guardar";
+            texto="p=Not Save and Next";
             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-            texto="ESC=Salir";
+            texto="ESC=Exit";
             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-            texto="resto=Pasar guardando";
+            texto="resto=Save and Next";
             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
             imshow("Info",most);
             waitKey(1500);
@@ -2202,13 +2330,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                     copiar=true;
                     Mat most=Mat::zeros(250,400,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="n=Nuevo tracker";
+                    string texto="n=New Tracker";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Reentrenar tracker";
+                    texto="r=Retrain tracker";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="b=Borrar tracker";
+                    texto="b=Delete Tracker";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="ESC=Salir de modo edicion";
+                    texto="ESC=Exit from Mode";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -2278,13 +2406,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Recuadra y ";
+                            string texto="Square and ";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="etiqueta el ";
+                            texto="Labeling the ";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="nuevo tracker";
+                            texto="New Tracker";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2337,13 +2465,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Pincha un tracker";
+                            string texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="y despues haz";
+                            texto="and then square";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="el nuevo recorte";
+                            texto="a new box";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2388,13 +2516,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                                     if(z=='i'){
                                         Mat most=Mat::zeros(250,250,CV_8UC3);
                                         most=most+Scalar(255,255,255);
-                                        String texto="Pincha un tracker";
+                                        String texto="Click on a Tracker";
                                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                                        texto="y despues haz";
+                                        texto="and then Square";
                                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                                        texto="el nuevo recorte";
+                                        texto="a new box";
                                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                                        texto="ESC=Atras";
+                                        texto="ESC=Back";
                                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                                         imshow("Info",most);
                                         waitKey(1500);
@@ -2436,13 +2564,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Pincha el tracker";
+                            string texto="Click on the Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="que se quiera";
+                            texto="that you want";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="borrar";
+                            texto="to Delete";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=BAck";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2520,14 +2648,19 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 
-int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save){
+int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save){
+    this->running=true;
     if(num_recortes_imagen<1){
         cout<<"ERROR en Autonegativos: num_recortes_imagen es menor a 0";
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     int posicion=0;
     for(uint i=0; i<Archivo.size();i++){
@@ -2544,7 +2677,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
     }
     if(nombre_archivo!="Recortes.txt"){
         cout<<"ERROR en Autonegativos: El archivo de entrada no es del tipo esperado"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     string output_directory="../Data/Imagenes/"+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -2558,7 +2693,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -2566,15 +2703,10 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
 #ifdef GUI
         total_progreso=num;
         progreso=0;
-        base_progreso=0;
-        max_progreso=100;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,Negativos,Labels,inff);
-#ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -2583,7 +2715,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -2661,7 +2795,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         }
         if(er==1){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -2777,7 +2913,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
         Archivo_img_in[path_imagen.c_str()]>>imagen;
         if(imagen.empty()){
             cout<<"ERROR en Autonegativos: Imagen vecia"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat copy;
         imagen.copyTo(copy);
@@ -2806,7 +2944,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
                 cuenta_males++;
                 if(cuenta_males>100){
                     cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
-                    return 1;
+                    this->running=false;
+                    this->error=1;
+                    return this->error;
                 }
                 posicion.x=rand()%(imagen.cols-1-recortes[0].width);
                 posicion.y=rand()%(imagen.rows-1-recortes[0].height);
@@ -2837,15 +2977,15 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
             if(z=='i'){
                 Mat most=Mat::zeros(300,350,CV_8UC3);
                 most=most+Scalar(255,255,255);
-                string texto="r=Nuevos negativos";
+                string texto="r=New Negatives";
                 putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                texto="BORRAR= seleccioinar + b";
+                texto="DELETE= Choose + b";
                 putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                texto="p=Pasar sin guardar";
+                texto="p=Not Save and Next";
                 putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                texto="ESC=Salir";
+                texto="ESC=Exit";
                 putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                texto="resto=Guardar y pasar";
+                texto="Other=Save and Next";
                 putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                 imshow("Info",most);
                 waitKey(1500);
@@ -2886,7 +3026,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
                             cuenta_males++;
                             if(cuenta_males>100){
                                 cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
-                                return 1;
+                                this->running=false;
+                                this->error=1;
+                                return this->error;
                             }
                             posicion.x=rand()%(imagen.cols-1-recortes[0].width);
                             posicion.y=rand()%(imagen.rows-1-recortes[0].height);
@@ -2922,7 +3064,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
                             cuenta_males++;
                             if(cuenta_males>100){
                                 cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
-                                return 1;
+                                this->running=false;
+                                this->error=1;
+                                return this->error;
                             }
                             posicion.x=rand()%(imagen.cols-1-recortes[0].width);
                             posicion.y=rand()%(imagen.rows-1-recortes[0].height);
@@ -3038,18 +3182,25 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size reescalad
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_negativos_imagen, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
+    this->running=true;
     Cuadrado=cuadrado;
     if(!cap.isOpened()){
         cout<<"ERROR en Autogeneracion: No se ha podido cargar el video"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(tam_recorte.height<1 || tam_recorte.width<1){
         cout<<"ERROR en Autogeneracion: tamaño de recorte negativo o igual a 0"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     string output_directory="../Data/Imagenes/"+nombre+"/";
     string archivo_imagenes=output_directory+"Images.xml";
@@ -3062,7 +3213,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         int num;
         Archivo_i["Num_Datos"]>>num;
@@ -3070,14 +3223,12 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
 #ifdef GUI
         total_progreso=num;
         progreso=0;
-        base_progreso=0;
-        max_progreso=100;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,imagenes,Labels,inff);
 #ifdef GUI
-        window->progress_generar->setValue(0);
-        window->progress_Cargar->setValue(0);
+//        window->v_progress_datamanaging->setValue(0);
+//        window->i_progress_datamanaging->setValue(0);
 #endif
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
@@ -3087,7 +3238,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         }
         if(er==1){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
@@ -3170,7 +3323,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         }
         if(er==1){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::app);
         int num_imagen;
@@ -3219,13 +3374,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
             copiar=true;
             Mat most=Mat::zeros(250,400,CV_8UC3);
             most=most+Scalar(255,255,255);
-            String texto="e=Modo edicion";
+            String texto="e=Edition Mode";
             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-            texto="p=Pasar sin guardar";
+            texto="p=Not Save and Next";
             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-            texto="ESC=Salir";
+            texto="ESC=Exit";
             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-            texto="resto=Pasar guardando";
+            texto="resto=Save and Next";
             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
             imshow("Info",most);
             waitKey(1500);
@@ -3299,7 +3454,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         cuenta_males++;
                         if(cuenta_males>500){
                             cout<<"ERROR en Autogeneracion: No se ha podido generar negativo"<<endl;
-                            return 1;
+                            this->running=false;
+                            this->error=1;
+                            return this->error;
                         }
                         posicion_n.x=rand()%(imagen.cols-1-tam_recorte_x);
                         posicion_n.y=rand()%(imagen.rows-1-tam_recorte_y);
@@ -3332,15 +3489,15 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                     if(Z=='i'){
                         Mat most=Mat::zeros(300,350,CV_8UC3);
                         most=most+Scalar(255,255,255);
-                        String texto="r=Nuevos negativos";
+                        String texto="r=New Negatives";
                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                        texto="BORRAR= seleccioinar + b";
+                        texto="DELETE= Choose + b";
                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                        texto="p=Pasar sin guardar";
+                        texto="p=Not Save and Next";
                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                        texto="ESC=Salir";
+                        texto="ESC=Exit";
                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                        texto="resto=Guardar y pasar";
+                        texto="resto=Save and Next";
                         putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                         imshow("Info",most);
                         waitKey(1500);
@@ -3381,7 +3538,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                     cuenta_males++;
                                     if(cuenta_males>500){
                                         cout<<"ERROR en Autonegativos: No se ha podido generar negativo"<<endl;
-                                        return 1;
+                                        this->running=false;
+                                        this->error=1;
+                                        return this->error;
                                     }
                                     posicion_n.x=rand()%(imagen.cols-1-tam_recorte_x);
                                     posicion_n.y=rand()%(imagen.rows-1-tam_recorte_y);
@@ -3495,13 +3654,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                     copiar=true;
                     Mat most=Mat::zeros(250,400,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    String texto="n=Nuevo tracker";
+                    String texto="n=New Tracker";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Reentrenar tracker";
+                    texto="r=Retrain Tracker";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="b=Borrar tracker";
+                    texto="b=Detele Tracker";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="ESC=Salir de modo edicion";
+                    texto="ESC=Exit from Mode";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -3572,13 +3731,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Recuadra y ";
+                            String texto="Square and ";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="etiqueta el ";
+                            texto="Label the ";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="nuevo tracker";
+                            texto="New Tracker";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -3631,13 +3790,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Pincha un tracker";
+                            String texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="y despues haz";
+                            texto="and then Square";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="el nuevo recorte";
+                            texto="the new box";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -3682,13 +3841,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                     if(z=='i'){
                                         Mat most=Mat::zeros(250,250,CV_8UC3);
                                         most=most+Scalar(255,255,255);
-                                        String texto="Pincha un tracker";
+                                        String texto="Click on a Tracker";
                                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                                        texto="y despues haz";
+                                        texto="and then Square";
                                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                                        texto="el nuevo recorte";
+                                        texto="the new Box";
                                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                                        texto="ESC=Atras";
+                                        texto="ESC=Back";
                                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                                         imshow("Info",most);
                                         waitKey(1500);
@@ -3730,13 +3889,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Pincha el tracker";
+                            String texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="que se quiera";
+                            texto="that you want";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="borrar";
+                            texto="to Delete";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -3814,7 +3973,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
     Archivo_i.release();
     Archivo_img.release();
     Archivo_recortes.release();
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 

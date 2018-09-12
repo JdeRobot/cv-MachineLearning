@@ -38,20 +38,28 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
     e=aux.Image2Lexic(Imagenes,lexic_data);
     if(Imagenes.size()!=Labels.size()){
         cout<<"ERROR en Reducir: El numero de datos y de etiquetas no coincide"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(Imagenes.empty()){
         cout<<"ERROR en Reducir: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Reducir: Etiquetas esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Reducir: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     if(reduccion.si_lda){
@@ -59,13 +67,17 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
         e=dim.LDA_matriz(lexic_data,Labels,reduccion.tam_reduc,reduccion.LDA,save);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en LDA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat Proyectada;
         e=dim.Proyeccion(lexic_data,Proyectada,LDA_DIM,reduccion.LDA);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Proyectada.copyTo(output);
     }
@@ -74,13 +86,17 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
         e=dim.PCA_matriz(lexic_data,reduccion.tam_reduc,reduccion.PCA,save);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en PCA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat Proyectada;
         e=dim.Proyeccion(lexic_data,Proyectada,PCA_DIM,reduccion.PCA);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Proyectada.copyTo(output);
     }
@@ -89,13 +105,17 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
         e=dim.MaxDist_matriz(lexic_data,Labels,reduccion.tam_reduc,reduccion.DS,save);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en MaxDist_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat Proyectada;
         e=dim.Proyeccion(lexic_data,Proyectada,MAXDIST_DIM,reduccion.DS);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Proyectada.copyTo(output);
     }
@@ -104,13 +124,17 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
         e=dim.D_Prime_matriz(lexic_data,Labels,reduccion.tam_reduc,reduccion.D_PRIME,save);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en D_PRIME_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Mat Proyectada;
         e=dim.Proyeccion(lexic_data,Proyectada,D_PRIME_DIM,reduccion.D_PRIME);
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         Proyectada.copyTo(output);
     }
@@ -133,26 +157,36 @@ int MLT::Dimensionalidad::Reducir(vector<Mat> Imagenes, vector<Mat> &Reducidas, 
         Generacion gen;
         gen.Guardar_Datos(nombre,Reducidas,Labels,info);
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::LDA_matriz(Mat img, std::vector<float> Etiquetas, int tam_final, Mat &lda, bool guardar){
     if((uint)img.rows!=Etiquetas.size()){
         cout<<"ERROR en LDA_matriz: El numero de datos y de etiquetas no coincide"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(img.empty()){
         cout<<"ERROR en LDA_matriz: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(Etiquetas.size()==0){
         cout<<"ERROR en LDA_matriz: Etiquetas esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Etiquetas.size(); i++){
         if(Etiquetas[i]==0){
             cout<<"ERROR en LDA_matriz: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     Mat data;
@@ -176,16 +210,22 @@ int MLT::Dimensionalidad::LDA_matriz(Mat img, std::vector<float> Etiquetas, int 
     int D = data.cols;
     if(D<tam_final){
         cout<<"ERROR en LDA: tam_final es mayor que el tamaño de los datos"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     int C = (int)num2label.size();
     if(C == 1) {
         cout<<"ERROR en LDA: Solo hay un tipo de etiqueta"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if (labels.size() != static_cast<size_t>(N)) {
         cout<<"ERROR en LDA: Hay menos etiquetas que datos"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if (N < D) {
 #ifdef WARNINGS
@@ -236,7 +276,9 @@ int MLT::Dimensionalidad::LDA_matriz(Mat img, std::vector<float> Etiquetas, int 
             int er=system(command.c_str());
             if(er==1){
                 cout<<"ERROR en Read_Data: Error al crear carpeta"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
         }
         string g="../Data/Configuracion/"+nombre+"_LDA.xml";
@@ -245,14 +287,18 @@ int MLT::Dimensionalidad::LDA_matriz(Mat img, std::vector<float> Etiquetas, int 
         archivo_w<<"LDA"<<lda;
         archivo_w.release();
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 
 int MLT::Dimensionalidad::PCA_matriz(Mat img,int tam_final, Mat &pca, bool guardar){
     if(img.empty()){
         cout<<"ERROR en PCA_matriz: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat data;
     Mat img_t;
@@ -263,7 +309,9 @@ int MLT::Dimensionalidad::PCA_matriz(Mat img,int tam_final, Mat &pca, bool guard
     int n = data.cols;
     if(m<tam_final){
         cout<<"ERROR en PCA: tam_final es mayor que el tamaño de los datos"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat mean=Mat::zeros(m,1,CV_32FC1);
     for(int i=0; i<n; i++){
@@ -288,7 +336,9 @@ int MLT::Dimensionalidad::PCA_matriz(Mat img,int tam_final, Mat &pca, bool guard
             int er=system(command.c_str());
             if(er==1){
                 cout<<"ERROR en Read_Data: Error al crear carpeta"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
         }
         string g="../Data/Configuracion/"+nombre+"_PCA.xml";
@@ -297,25 +347,33 @@ int MLT::Dimensionalidad::PCA_matriz(Mat img,int tam_final, Mat &pca, bool guard
         archivo_w<<"PCA"<<pca;
         archivo_w.release();
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::MaxDist_matriz(Mat img, std::vector<float> Etiquetas, int tam_final, Mat &mat_reduc, bool guardar){
     if(img.empty()){
         cout<<"ERROR en MaxDist_matriz: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Etiquetas.size(); i++){
         if(Etiquetas[i]==0){
             cout<<"ERROR en MaxDist_matriz: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     Mat data;
     img.convertTo(data, CV_32FC1);
     if(data.cols<tam_final){
         cout<<"ERROR en MaxDist_matriz: tam_final es mayor que el tamaño de los datos"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat Media=Mat::zeros(1,data.cols,CV_32FC1);
     for(int i=0; i<data.rows; i++){
@@ -412,7 +470,9 @@ int MLT::Dimensionalidad::MaxDist_matriz(Mat img, std::vector<float> Etiquetas, 
         }
     if(contador!=tam_final){
         cout<<"ERROR en MaxDist_matriz: No se ha conseguido el tamaño final deseado"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(guardar){
         DIR    *dir_p = opendir ("../Data/Configuracion");
@@ -421,7 +481,9 @@ int MLT::Dimensionalidad::MaxDist_matriz(Mat img, std::vector<float> Etiquetas, 
             int er=system(command.c_str());
             if(er==1){
                 cout<<"ERROR en Read_Data: Error al crear carpeta"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
         }
         string g="../Data/Configuracion/"+nombre+"_MAXDIST.xml";
@@ -430,25 +492,33 @@ int MLT::Dimensionalidad::MaxDist_matriz(Mat img, std::vector<float> Etiquetas, 
         archivo_w<<"MAXDIST"<<mat_reduc;
         archivo_w.release();
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::D_Prime_matriz(Mat img, std::vector<float> Etiquetas, int tam_final, Mat &mat_reduc, bool guardar){
     if(img.empty()){
         cout<<"ERROR en D_Prime_matriz: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Etiquetas.size(); i++){
         if(Etiquetas[i]==0){
             cout<<"ERROR en D_Prime_matriz: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     Mat data;
     img.convertTo(data, CV_32FC1);
     if(data.cols<tam_final){
         cout<<"ERROR en D_Prime_matriz: tam_final es mayor que el tamaño de los datos"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat Media=Mat::zeros(1,data.cols,CV_32FC1);
     for(int i=0; i<data.rows; i++){
@@ -536,7 +606,9 @@ int MLT::Dimensionalidad::D_Prime_matriz(Mat img, std::vector<float> Etiquetas, 
         }
     if(contador!=tam_final){
         cout<<"ERROR en D_Prime_matriz: No se ha conseguido el tamaño final deseado"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(guardar){
         DIR    *dir_p = opendir ("../Data/Configuracion");
@@ -545,7 +617,9 @@ int MLT::Dimensionalidad::D_Prime_matriz(Mat img, std::vector<float> Etiquetas, 
             int er=system(command.c_str());
             if(er==1){
                 cout<<"ERROR en Read_Data: Error al crear carpeta"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
         }
         string g="../Data/Configuracion/"+nombre+"_D_PRIME.xml";
@@ -554,13 +628,17 @@ int MLT::Dimensionalidad::D_Prime_matriz(Mat img, std::vector<float> Etiquetas, 
         archivo_w<<"D_PRIME"<<mat_reduc;
         archivo_w.release();
     }
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat reduc){
     if(img.empty()){
         cout<<"ERROR en Proyeccion: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(tipo==LDA_DIM){
         if(reduc.empty()){
@@ -571,7 +649,9 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
             }
             else{
                 cout<<"ERROR en Proyeccion: Matriz lda vacía y no existe archivo LDA.xml"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
             archivo_r.release();
         }
@@ -585,7 +665,9 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
             }
             else{
                 cout<<"ERROR en Proyeccion: Matriz pca vacía y no existe archivo PCA.xml"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
             archivo_r.release();
         }
@@ -599,7 +681,9 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
             }
             else{
                 cout<<"ERROR en Proyeccion: Matriz maxdist vacía y no existe archivo MAXDIST.xml"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
             archivo_r.release();
         }
@@ -613,18 +697,24 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
             }
             else{
                 cout<<"ERROR en Proyeccion: Matriz d_prime vacía y no existe archivo D_PRIME.xml"<<endl;
-                return 1;
+                this->running=false;
+                this->error=1;
+                return this->error;
             }
             archivo_r.release();
         }
     }
     else{
         cout<<"ERROR en Proyeccion: Tipo de reduccion invalido"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     if(img.cols!=reduc.cols){
         cout<<"ERROR en Proyeccion: Los datos no tienen el mismo tamaño que en la matriz de reduccion"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     reduc.convertTo(reduc,CV_32FC1);
     img.convertTo(img,CV_32FC1);
@@ -633,20 +723,26 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
     cv::transpose(img,transpuesta);
     if(img.empty() || reduc.empty()){
         cout<<"ERROR en Proyeccion: Imagen o matriz de reduccion vacías"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     cv::Mat Proy=Mat::zeros(reduc.rows,transpuesta.cols,CV_32FC1);
     for(int i=0; i<transpuesta.cols; i++){
         Proy.col(i)=reduc*transpuesta.col(i);
     }
     cv::transpose(Proy,Proyectada);
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     if(img.empty()){
         cout<<"ERROR en Retro_Proyeccion: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat mean;
     Mat reduc;
@@ -659,7 +755,9 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
         }
         else{
             cout<<"ERROR en Retro_Proyeccion: No existe archivo LDA.xml"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         archivo_r.release();
     }
@@ -672,7 +770,9 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
         }
         else{
             cout<<"ERROR en Retro_Proyeccion:No existe archivo PCA.xml"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         archivo_r.release();
     }
@@ -685,7 +785,9 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
         }
         else{
             cout<<"ERROR en Retro_Proyeccion:No existe archivo MAXDIST.xml"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         archivo_r.release();
     }
@@ -698,13 +800,17 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
         }
         else{
             cout<<"ERROR en Retro_Proyeccion:No existe archivo D_PRIME.xml"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         archivo_r.release();
     }
     else{
         cout<<"ERROR en Retro_Proyeccion: Tipo de reduccion invalido"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     reduc.convertTo(reduc,CV_32FC1);
     img.convertTo(img,CV_32FC1);
@@ -713,26 +819,34 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     cv::transpose(img,transpuesta);
     if(img.empty() || reduc.empty()){
         cout<<"ERROR en Retro_Proyeccion: Imagen o matriz de reduccion vacías"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     cv::Mat Proy=Mat::zeros(reduc.cols,transpuesta.cols,CV_32FC1);
     for(int i=0; i<transpuesta.cols; i++){
         Proy.col(i)=(reduc.t()*transpuesta.col(i)+mean);
     }
     cv::transpose(Proy,Proyectada);
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::Calidad_dimensiones_distancia(vector<Mat> img, vector<float> Etiquetas, int tipo_reduccion, int dim_max, Mat &Separabilidad, Mat &Separabilidad_acumulada, int &dim_optim){
     int e=0;
     if(img.empty()){
         cout<<"ERROR en Calidad_dimensiones_distancia: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Etiquetas.size(); i++){
         if(Etiquetas[i]==0){
             cout<<"ERROR en Calidad_dimensiones_distancia: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     Auxiliares ax;
@@ -747,53 +861,71 @@ int MLT::Dimensionalidad::Calidad_dimensiones_distancia(vector<Mat> img, vector<
         e=LDA_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en LDA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,LDA_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==PCA_DIM){
         e=PCA_matriz(data,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en PCA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,PCA_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==MAXDIST_DIM){
         e=MaxDist_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en MaxDist_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,MAXDIST_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==D_PRIME_DIM){
         e=D_Prime_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en D_Prime_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,D_PRIME_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_distancia: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else{
         cout<<"ERROR en Calidad_dimensiones_distancia: Tipo de reduccion de dimensionalidad no valido"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     Mat Media=Mat::zeros(1,reducida.cols,CV_32FC1);
     for(int i=0; i<reducida.rows; i++){
@@ -884,19 +1016,25 @@ int MLT::Dimensionalidad::Calidad_dimensiones_distancia(vector<Mat> img, vector<
     dim_optim=cont+1;
     Sep_acum.copyTo(Separabilidad_acumulada);
     Sep.copyTo(Separabilidad);
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Dimensionalidad::Calidad_dimensiones_d_prime(vector<Mat> img, vector<float> Etiquetas, int tipo_reduccion, int dim_max, Mat &Separabilidad, Mat &Separabilidad_acumulada, int &dim_optim){
     int e=0;
     if(img.empty()){
         cout<<"ERROR en Calidad_dimensiones_d_prime: img esta vacia"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Etiquetas.size(); i++){
         if(Etiquetas[i]==0){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     Auxiliares ax;
@@ -911,53 +1049,71 @@ int MLT::Dimensionalidad::Calidad_dimensiones_d_prime(vector<Mat> img, vector<fl
         e=LDA_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en LDA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,LDA_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==PCA_DIM){
         e=PCA_matriz(data,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en PCA_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,PCA_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==MAXDIST_DIM){
         e=MaxDist_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en MaxDist_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,MAXDIST_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else if(tipo_reduccion==D_PRIME_DIM){
         e=D_Prime_matriz(data,Etiquetas,dim_max,mat_reduc,false);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en D_Prime_matriz"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
         e=Proyeccion(data,reducida,D_PRIME_DIM,mat_reduc);
         if(e==1){
             cout<<"ERROR en Calidad_dimensiones_d_prime: Error en Proyeccion"<<endl;
-            return 1;
+            this->running=false;
+            this->error=1;
+            return this->error;
         }
     }
     else{
         cout<<"ERROR en Calidad_dimensiones_d_prime: Tipo de reduccion de dimensionalidad no valido"<<endl;
-        return 1;
+        this->running=false;
+        this->error=1;
+        return this->error;
     }
     vector<Mat> Medias,Varianzas;
     bool neg;
@@ -1035,5 +1191,7 @@ int MLT::Dimensionalidad::Calidad_dimensiones_d_prime(vector<Mat> img, vector<fl
     dim_optim=cont+1;
     Sep_acum.copyTo(Separabilidad_acumulada);
     Sep.copyTo(Separabilidad);
-    return 0;
+    this->running=false;
+    this->error=0;
+    return this->error;
 }

@@ -40,18 +40,18 @@ Conf_HAAR::~Conf_HAAR()
 void Conf_HAAR::on_pushButton_clicked()
 {
     MainWindow *window=(MainWindow*) punt;
-    window->Cascada_NumPos=ui->Positivos->value();
-    window->Cascada_NumNeg=ui->Negativos->value();
-    window->Cascada_Mode=ui->Modo->currentText().toStdString();
-    window->Cascada_NumStage=ui->Etapas->value();
-    window->Cascada_MinHitRate=ui->MinHitRate->value();
-    window->Cascada_MaxFalseAlarmRate=ui->MaxFalseAlarmRate->value();
-    window->Cascada_WeightTrimRate=ui->WeightTrimRate->value();
-    window->Cascada_MaxWeakCount=ui->MaxWeakCount->value();
-    window->Cascada_MaxDepth=ui->MaxDepth->value();
-    window->Cascada_Bt=ui->Bt->currentText().toStdString();
-    window->Cascada_PrecalcValBufSize=ui->PrecalcValBufSize->value();
-    window->Cascada_PrecalcidxBufSize=ui->PrecalcidxBufSize->value();
+    window->parameters.Cascada_NumPos=ui->Positivos->value();
+    window->parameters.Cascada_NumNeg=ui->Negativos->value();
+    window->parameters.Cascada_Mode=ui->Modo->currentText().toStdString();
+    window->parameters.Cascada_NumStage=ui->Etapas->value();
+    window->parameters.Cascada_MinHitRate=ui->MinHitRate->value();
+    window->parameters.Cascada_MaxFalseAlarmRate=ui->MaxFalseAlarmRate->value();
+    window->parameters.Cascada_WeightTrimRate=ui->WeightTrimRate->value();
+    window->parameters.Cascada_MaxWeakCount=ui->MaxWeakCount->value();
+    window->parameters.Cascada_MaxDepth=ui->MaxDepth->value();
+    window->parameters.Cascada_Bt=ui->Bt->currentText().toStdString();
+    window->parameters.Cascada_PrecalcValBufSize=ui->PrecalcValBufSize->value();
+    window->parameters.Cascada_PrecalcidxBufSize=ui->PrecalcidxBufSize->value();
     window->si_entrenar=!ui->Entrenar->isChecked();
     delete this;
 }

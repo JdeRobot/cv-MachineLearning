@@ -1,26 +1,3 @@
-/*
-*
-* Copyright 2014-2016 Ignacio San Roman Lana
-*
-* This file is part of OpenCV_ML_Tool
-*
-* OpenCV_ML_Tool is free software: you can redistribute it and/or
-* modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* OpenCV_ML_Tool is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with OpenCV_ML_Tool. If not, see http://www.gnu.org/licenses/.
-*
-* For those usages not covered by this license please contact with
-* isanromanlana@gmail.com
-*/
-
 #include "clasificador_cascada.h"
 
 MLT::Clasificador_Cascada::Clasificador_Cascada(string Nombre, string FeatureType, bool ejec_script, int NumPos, int NumNeg, string Mode, int NumStage,float MinHitRate, float MaxFalseAlarmRate, float WeightTrimRate, int MaxWeakCount, int MaxDepth, string Bt, int PrecalcValBufSize, int PrecalcidxBufSize){
@@ -73,7 +50,7 @@ MLT::Clasificador_Cascada::Clasificador_Cascada(string Nombre, string FeatureTyp
 
     Parametrizar(FeatureType,ejec_script,NumPos,NumNeg,Mode,NumStage,MinHitRate,MaxFalseAlarmRate,WeightTrimRate,MaxWeakCount,MaxDepth,Bt,PrecalcValBufSize,PrecalcidxBufSize);
     nombre=Nombre;
-    tipoClasificador=CASCADA_CLAS;
+    tipo_clasificador=CASCADA_CLAS;
 }
 MLT::Clasificador_Cascada::~Clasificador_Cascada(){}
 
@@ -95,7 +72,7 @@ int MLT::Clasificador_Cascada::Parametrizar(string FeatureType, bool ejec_script
     return 0;
 }
 
-int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones /*reduc*/, Generacion::Info_Datos info, bool save){
+int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels, Dimensionalidad::Reducciones reduc, Generacion::Info_Datos info, bool save){
     int e=0;
     if(Data.size()==0){
         cout<<"ERROR en Autotrain: No hay datos"<<endl;
@@ -113,11 +90,11 @@ int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels,
         cout<<"ERROR en Autotrain: El tipo de dato no es correcto. El clasificador cascada sólo acepta datos de tipo GRAY"<<endl;
         return 1;
     }
-    ventanaX=Data[0].cols;
-    ventanaY=Data[0].rows;
+    ventana_x=Data[0].cols;
+    ventana_y=Data[0].rows;
     Auxiliares ax;
     bool negativa;
-    numeroEtiquetas=ax.numero_etiquetas(Labels,negativa);
+    numero_etiquetas=ax.numero_etiquetas(Labels,negativa);
     Mat lexic_labels(Labels.size(), 1, CV_32FC1, Labels.data());
     lexic_labels.convertTo(lexic_labels,CV_32FC1);
     Mat trainingDataMat;
@@ -129,7 +106,7 @@ int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels,
     }
     Entrenamiento(trainingDataMat, lexic_labels);
     if(save){
-        e=SaveData();
+        e=Save_Data();
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Save_Data"<<endl;
             return 1;
@@ -139,11 +116,13 @@ int MLT::Clasificador_Cascada::Autotrain(vector<Mat> Data, vector<float> Labels,
 }
 
 int MLT::Clasificador_Cascada::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+    this->running=true;
     int e=0;
     if(read){
-        e=ReadData();
+        e=Read_Data();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
+            this->running=false;
             return 1;
         }
     }
@@ -151,10 +130,11 @@ int MLT::Clasificador_Cascada::Autoclasificacion(vector<Mat> Data, vector<float>
         float response=Clasificacion(Data[i]);
         Labels.push_back(response);
 #ifdef GUI
-            _progreso++;
-            _window->progress_Clasificar->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
+            progreso++;
+//            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
+    this->running=false;
     return 0;
 }
 
@@ -216,7 +196,7 @@ void MLT::Clasificador_Cascada::Entrenamiento(Mat trainingDataMat, Mat labelsMat
     f_negativos.open(fichero_negativos.c_str());
     Auxiliares ax;
     vector<Mat> imagenes;
-    ax.Lexic2Image(trainingDataMat,Size(ventanaX,ventanaY),1,imagenes);
+    ax.Lexic2Image(trainingDataMat,Size(ventana_x,ventana_y),1,imagenes);
     vector<float> labels;
     for(int i=0; i<labelsMat.rows;i++)
         labels.push_back(labelsMat.at<float>(i,0));
@@ -314,7 +294,7 @@ void MLT::Clasificador_Cascada::Entrenamiento(Mat trainingDataMat, Mat labelsMat
 float MLT::Clasificador_Cascada::Clasificacion(Mat Data){
     Data.convertTo(Data,CV_8UC1);
     float response=0;
-    if(Data.cols*Data.rows==(ventanaX*ventanaY)){
+    if(Data.cols*Data.rows==(ventana_x*ventana_y)){
         vector<Rect> objects;
         Mat Data2;
         cv::resize(Data,Data2,Size(Data.rows*1.1,Data.cols*1.1));
@@ -328,7 +308,7 @@ float MLT::Clasificador_Cascada::Clasificacion(Mat Data){
 }
 
 
-int MLT::Clasificador_Cascada::SaveData(){
+int MLT::Clasificador_Cascada::Save_Data(){
     DIR    *dir_p = opendir ("../Data/Configuracion");
     if(dir_p == NULL) {
         string command = "mkdir ../Data/Configuracion";
@@ -351,10 +331,10 @@ int MLT::Clasificador_Cascada::SaveData(){
     string g="../Data/Configuracion/"+nombre+"/HAAR2.xml";
     cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
     if(archivo_w.isOpened()){
-        archivo_w<<"ventana_x"<<ventanaX;
-        archivo_w<<"ventana_y"<<ventanaY;
-        archivo_w<<"numero_etiquetas"<<numeroEtiquetas;
-        archivo_w<<"tam_reduc"<<ventanaX*ventanaY;
+        archivo_w<<"ventana_x"<<ventana_x;
+        archivo_w<<"ventana_y"<<ventana_y;
+        archivo_w<<"numero_etiquetas"<<numero_etiquetas;
+        archivo_w<<"tam_reduc"<<ventana_x*ventana_y;
         archivo_w<<"lda"<<false;
         archivo_w<<"LDA"<<Mat();
         archivo_w<<"pca"<<false;
@@ -377,13 +357,13 @@ int MLT::Clasificador_Cascada::SaveData(){
     return 0;
 }
 
-int MLT::Clasificador_Cascada::ReadData(){
+int MLT::Clasificador_Cascada::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/HAAR2.xml";
     cv::FileStorage archivo_r(g,CV_STORAGE_READ);
     if(archivo_r.isOpened()){
-        archivo_r["ventana_x"]>>ventanaX;
-        archivo_r["ventana_y"]>>ventanaY;
-        archivo_r["numero_etiquetas"]>>numeroEtiquetas;
+        archivo_r["ventana_x"]>>ventana_x;
+        archivo_r["ventana_y"]>>ventana_y;
+        archivo_r["numero_etiquetas"]>>numero_etiquetas;
     }
     else
         return 1;

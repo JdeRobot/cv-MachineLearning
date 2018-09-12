@@ -40,8 +40,10 @@ namespace MLT
         int Extract(vector<cv::Mat> images, vector<cv::Mat>& descriptores) override;
 
         void Mostrar(vector<Mat> images);
+
+        int error=0;
     private:
-        std::vector<vector<cv::KeyPoint>> keypointsI;
+        std::vector<vector<cv::KeyPoint> > keypointsI;
         cv::String detectorType;
         cv::String extractorType;
         float paramDetector;

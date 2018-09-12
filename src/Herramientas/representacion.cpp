@@ -74,17 +74,17 @@ int MLT::Representacion::Color(Mat Result_Etiq, vector<cv::Scalar> Colores, Mat 
         for(int i=0; i<num_etiq; i++){
             if(i==0 && negativa){
                 String texto;
-                texto="Etiqueta -1";
+                texto="Label -1";
                 putText(most,texto,Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
             else if(negativa){
                 stringstream tex;
-                tex<<"Etiqueta "<<i;
+                tex<<"Label "<<i;
                 putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
             else{
                 stringstream tex;
-                tex<<"Etiqueta "<<i+1;
+                tex<<"Label "<<i+1;
                 putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
         }
@@ -92,8 +92,8 @@ int MLT::Representacion::Color(Mat Result_Etiq, vector<cv::Scalar> Colores, Mat 
         double minval,maxval;
         cv::minMaxLoc(Colored,&minval,&maxval);
         Colored=(Colored-minval)/(maxval-minval);
-        imshow("Leyenda",most);
-        imshow("Coloreada",Colored);
+        imshow("Legend",most);
+        imshow("Coloured",Colored);
         waitKey(0);
     }
     return 0;
@@ -167,17 +167,17 @@ int MLT::Representacion::Recuadros(Mat imagen, vector<RotatedRect> recuadros, ve
         for(int i=0; i<num_etiq; i++){
             if(i==0 && negativa){
                 String texto;
-                texto="Etiqueta -1";
+                texto="Label -1";
                 putText(most,texto,Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
             else if(negativa){
                 stringstream tex;
-                tex<<"Etiqueta "<<i;
+                tex<<"Label "<<i;
                 putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
             else{
                 stringstream tex;
-                tex<<"Etiqueta "<<i+1;
+                tex<<"Label "<<i+1;
                 putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
             }
         }
@@ -185,7 +185,7 @@ int MLT::Representacion::Recuadros(Mat imagen, vector<RotatedRect> recuadros, ve
         double minval,maxval;
         cv::minMaxLoc(mostrar,&minval,&maxval);
         mostrar=(mostrar-minval)/(maxval-minval);
-        imshow("Leyenda",most);
+        imshow("Legend",most);
         cv::imshow("Imagen Clasificada",mostrar);
         cv::waitKey(0);
     }
@@ -462,21 +462,21 @@ int MLT::Representacion::Data_represent(string nombre, vector<Mat> Data, vector<
     for(int i=0; i<num_etiq; i++){
         if(i==0 && negativa){
             String texto;
-            texto="Etiqueta -1";
+            texto="Label -1";
             putText(most,texto,Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else if(negativa){
             stringstream tex;
-            tex<<"Etiqueta "<<i;
+            tex<<"Label "<<i;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else{
             stringstream tex;
-            tex<<"Etiqueta "<<i+1;
+            tex<<"Label "<<i+1;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
     }
-    imshow("Leyenda",most);
+    imshow("Legend",most);
     imshow(nombre,represent);
     waitKey(0);
     return 0;
@@ -688,21 +688,21 @@ int MLT::Representacion::Ellipse_represent(string nombre, vector<Mat> Data, vect
     for(int i=0; i<num_etiq; i++){
         if(i==0 && negativa){
             String texto;
-            texto="Etiqueta -1";
+            texto="Label -1";
             putText(most,texto,Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else if(negativa){
             stringstream tex;
-            tex<<"Etiqueta "<<i;
+            tex<<"Label "<<i;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else{
             stringstream tex;
-            tex<<"Etiqueta "<<i+1;
+            tex<<"Label "<<i+1;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
     }
-    imshow("Leyenda",most);
+    imshow("Legend",most);
     imshow(nombre,represent);
     waitKey(0);
     return 0;
@@ -934,21 +934,21 @@ int MLT::Representacion::Data_Ellipse_represent(string nombre, vector<Mat> Data,
     for(int i=0; i<num_etiq; i++){
         if(i==0 && negativa){
             String texto;
-            texto="Etiqueta -1";
+            texto="Label -1";
             putText(most,texto,Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else if(negativa){
             stringstream tex;
-            tex<<"Etiqueta "<<i;
+            tex<<"Label "<<i;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
         else{
             stringstream tex;
-            tex<<"Etiqueta "<<i+1;
+            tex<<"Label "<<i+1;
             putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
         }
     }
-    imshow("Leyenda",most);
+    imshow("Legend",most);
     imshow(nombre,represent);
     waitKey(0);
     return 0;
@@ -1165,7 +1165,7 @@ int MLT::Representacion::Continuous_data_represent(string nombre, Mat Data, vect
     QApplication::restoreOverrideCursor();
 #endif
     imshow(nombre,represent);
-    waitKey(0);
+//    waitKey(0);
     return 0;
 }
 
@@ -1355,17 +1355,26 @@ int MLT::Representacion::Histogram_represent(string nombre, vector<vector<Mat> >
     most=most+Scalar(255,255,255);
     for(uint i=0; i<Histograma.size(); i++){
         stringstream tex;
-        tex<<"Etiqueta "<<i+1;
+        tex<<"Label "<<i+1;
         putText(most,tex.str(),Point(10,50*(i+1)),1,1.5,Colores[i],2);
     }
-    imshow("Leyenda",most);
+    imshow("Legend",most);
     imshow(nombre,represent);
     waitKey(0);
     return 0;
 }
 
-int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
-    string nombre="IMAGEN";
+int MLT::Representacion::Imagen(vector<Mat> Imagenes, vector<float> etiquetas, int etiqueta){
+    Auxiliares aux;
+    bool negativa;
+    int n=aux.numero_etiquetas(etiquetas,negativa);
+
+    if(etiqueta>n || etiqueta==0 || etiqueta< -1 || etiqueta>9){
+        cout<<"ERROR en Imagen: Etiqueta fuera de rango"<<endl;
+        return 1;
+    }
+
+    string nombre="IMAGE";
     double minimo=999999999,maximo=0;
     double minval, maxval;
     for(uint i=0; i<Imagenes.size(); i++){
@@ -1375,15 +1384,17 @@ int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
         if(maxval>maximo)
             maximo=maxval;
     }
-    if(numero>(int)Imagenes.size()-1 || numero<0){
-        cout<<"ERROR en Imagen: El numero esta fuera del rango de las Imagenes"<<endl;
-        return 1;
+
+    int numero=0;
+    for(int i=0; i<etiquetas.size(); i++){
+        if(etiquetas[i]==etiqueta)
+            numero=i;
+        if(numero>(int)Imagenes.size()-1){
+            cout<<"ERROR en Imagen: Etiqueta fuera de rango"<<endl;
+            return 1;
+        }
     }
     while(true){
-        if(numero>(int)Imagenes.size()-1)
-            numero=(int)Imagenes.size()-1;
-        if(numero<0)
-            numero=0;
         Mat Mostrar=Mat::zeros(Imagenes[numero].rows,Imagenes[numero].cols,CV_32FC1);
         Mostrar=((Imagenes[numero]-minimo)/(maximo-minimo));
         Muestra:
@@ -1393,21 +1404,37 @@ int MLT::Representacion::Imagen(vector<Mat> Imagenes, int numero){
         if(z=='i'){
             Mat most=Mat::zeros(200,200,CV_8UC3);
             most=most+Scalar(255,255,255);
-            String texto="s=Siguiente";
+            String texto="s=Next";
             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-            texto="a=Anterior";
+            texto="a=Back";
             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-            texto="ESC=Salir";
+            texto="ESC=Exist";
             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
             imshow("Info",most);
             waitKey(1500);
             destroyWindow("Info");
             goto Muestra;
         }
-        else if(z=='s')
-            numero++;
-        else if(z=='a')
-            numero--;
+        else if(z=='s'){
+            bool sigue=true;
+            while(sigue){
+                numero++;
+                if(numero>(int)Imagenes.size()-1)
+                    numero=0;
+                if(etiquetas[numero]==etiqueta)
+                    sigue=false;
+            }
+        }
+        else if(z=='a'){
+            bool sigue=true;
+            while(sigue){
+                numero--;
+                if(numero<0)
+                    numero=(int)Imagenes.size()-1;
+                if(etiquetas[numero]==etiqueta)
+                    sigue=false;
+            }
+        }
         else if(a==27){
             cv::destroyWindow(nombre);
             break;

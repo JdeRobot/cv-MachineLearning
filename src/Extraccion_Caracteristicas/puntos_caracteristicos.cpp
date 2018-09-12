@@ -116,9 +116,11 @@ int MLT::Puntos_Caracteristicos::Extract(vector<cv::Mat> images, vector<cv::Mat>
     if(descriptores.empty())
     {
         cout << "ERROR en Extract: descriptores vacio" << endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 void MLT::Puntos_Caracteristicos::Mostrar(vector<Mat> images)

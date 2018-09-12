@@ -84,7 +84,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Matriz Covarianza</string>
+     <string>Covariance Matrix</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Aceptar">
@@ -97,7 +97,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
   </widget>
@@ -107,7 +107,7 @@
      <x>0</x>
      <y>0</y>
      <width>416</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

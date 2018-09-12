@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -248,7 +248,7 @@
      <x>0</x>
      <y>0</y>
      <width>566</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

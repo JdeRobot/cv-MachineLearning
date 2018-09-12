@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Histograma</string>
+     <string>Histogram</string>
     </property>
     <widget class="QDoubleSpinBox" name="Tam_Celda">
      <property name="geometry">
@@ -70,7 +70,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Tamaño Celda</string>
+      <string>Cell Size</string>
      </property>
     </widget>
    </widget>
@@ -166,7 +166,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Método</string>
+      <string>Method</string>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="rp_dw_max">
@@ -249,7 +249,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Función</string>
+      <string>Function</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -262,7 +262,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Neuronas intermedias</string>
+      <string>Neurons and Layers</string>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="rp_dw_minus">
@@ -617,7 +617,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Tipo Entrenamiento</string>
+      <string>Train type</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_18">
@@ -649,7 +649,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Tipo SVM</string>
+      <string>SVM Type</string>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="nu">
@@ -1628,7 +1628,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Matriz Covarianza</string>
+      <string>Covariance Matrix</string>
      </property>
     </widget>
     <widget class="QSpinBox" name="Num_Clus">
@@ -1702,7 +1702,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
   </widget>

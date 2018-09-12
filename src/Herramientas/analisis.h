@@ -73,15 +73,24 @@ namespace MLT {
 
         Analisis();
 
-        int Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &Confusion, float &error);
+        int Confusion(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error);
         int Ratios(std::vector<float> Etiquetas, std::vector<float> Resultados, vector<Ratios_data> &Rat);
+        int Confusion_Ratios(std::vector<float> Etiquetas, std::vector<float> Resultados, Mat &confusion, float &error, vector<Ratios_data> &Rat);
         int Ratios_Histograma(std::vector<Mat> Datos, std::vector<float> Etiquetas, std::vector<float> Resultados, int num_barras, vector<vector<Ratios_data> > &Hist_Rat);
         int Estadisticos(vector<Mat> Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_prime);
         int Estadisticos(Mat Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_prime);
         int Covarianza(vector<Mat> Datos, vector<float> Etiquetas, vector<Mat> &Covarianzas);
         int Covarianza(Mat Datos, vector<float> Etiquetas, vector<Mat> &Covarianzas);
+        int Estadisticos_Covarianzas(vector<Mat> Datos, vector<float> Etiquetas, vector<Mat> &Medias, vector<Mat> &Des_Tipics, vector<vector<Mat> > &D_Prime, vector<Mat> &Covarianzas, bool &negativa, vector<int> &numero);
         int Histograma(vector<Mat> Datos, vector<float> Etiquetas, int Num_Barras, vector<vector<Mat> > &His, vector<vector<int> > &pos_barra);
-        int Ellipse_Error(vector<Mat> Datos, vector<float> Etiquetas, vector<int> dimensiones, vector<Ellipse_data> &Elipses);
+        int Ellipse_Error(vector<Mat> Datos, vector<float> Etiquetas, vector<int> dimensiones, vector<Ellipse_data> &Elipses);   
+
+#ifdef GUI
+    int progreso;
+    int total_progreso;
+    bool error;
+    bool running;
+#endif
     };
 }
 

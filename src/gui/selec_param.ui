@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Hist_tam_celda</string>
+     <string>Hist_cell_size</string>
     </property>
     <property name="checked">
      <bool>true</bool>

@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QComboBox" name="Detector">
@@ -152,7 +152,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Parámetro</string>
+     <string>Parameter</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -165,7 +165,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tipo de detector</string>
+     <string>Detector Type</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -178,7 +178,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tipo de descriptor </string>
+     <string>Descriptor Type</string>
     </property>
    </widget>
   </widget>

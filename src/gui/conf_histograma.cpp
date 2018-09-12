@@ -40,6 +40,6 @@ Conf_Histograma::~Conf_Histograma()
 void Conf_Histograma::on_Aceptar_clicked()
 {
     MainWindow *window=(MainWindow*) punt;
-    window->Hist_tam_celda=ui->Tam_Celda->value();
+    window->parameters.Hist_tam_celda=ui->Tam_Celda->value();
     delete this;
 }

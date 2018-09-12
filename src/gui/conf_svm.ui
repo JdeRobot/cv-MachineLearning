@@ -115,7 +115,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tipo Entrenamiento</string>
+     <string>Train Type</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -128,7 +128,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Tipo SVM</string>
+     <string>SVM Type</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -318,7 +318,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Aceptar</string>
+     <string>Accept</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="nu">
@@ -350,7 +350,7 @@
      <x>0</x>
      <y>0</y>
      <width>545</width>
-     <height>30</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -40,6 +40,6 @@ Conf_KNN::~Conf_KNN()
 void Conf_KNN::on_Aceptar_clicked()
 {
     MainWindow *window=(MainWindow*) punt;
-    window->KNN_k=ui->K->value();
+    window->parameters.KNN_k=ui->K->value();
     delete this;
 }

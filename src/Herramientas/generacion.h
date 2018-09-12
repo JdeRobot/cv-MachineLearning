@@ -31,7 +31,7 @@
 #include "auxiliares.h"
 
 #ifdef GUI
-#include <ui_mainwindow.h>
+#include "ui_mainwindow.h"
 #endif
 
 using namespace std;
@@ -85,13 +85,13 @@ namespace MLT {
         int Juntar_Recortes(string nombre, string Path);
         int Datos_Imagenes(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
         int Etiquetar(string nombre, string input_directory, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
-        int Recortar_Etiquetar(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
-        int Recortar_Etiquetar(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
+        int Recortar_Etiquetar_imagenes(string nombre, string input_directory, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
+        int Recortar_Etiquetar_video(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
         int Random_Synthetic_Data(string nombre, int num_clases, int num_data_clase, Size tam_img, float ancho, float separacion_clases, vector<Mat> &Data, vector<float> &Labels, Info_Datos &info, bool save);
         int Random_Synthetic_Image(int num_clases, Size tam_img, float ancho, float separacion_clases,  Mat &Imagen);
         int Synthethic_Data(string nombre, vector<Mat> input, vector<float> inputLabels, vector<Mat> &output, vector<float> &outputLabels, int num_by_frame, float max_noise, float max_blur, float max_rot_x, float max_rot_y, float max_rot_z, Info_Datos &info, bool save);
         int Autopositivos(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
-        int Autonegativos(string nombre, string Archivo, Size reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info,bool save);
+        int Autonegativos(string nombre, string Archivo, Size2i reescalado, int num_recortes_imagen, vector<Mat> &Negativos, vector<float> &Labels, Info_Datos &info, bool save);
         int Autogeneracion(string nombre, VideoCapture cap, int num_negativos_imagen, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save);
 
         int pos_x, pos_y, pos_x2, pos_y2, tam_x, tam_y, p_x,p_y, tam_ag_x,tam_ag_y;
@@ -101,11 +101,9 @@ namespace MLT {
 
     #ifdef GUI
         int progreso;
-        int max_progreso;
-        int base_progreso;
         int total_progreso;
-
-        Ui::MainWindow *window;
+        int error;
+        bool running;
     #endif
 
     };

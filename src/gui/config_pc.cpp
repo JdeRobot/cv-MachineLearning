@@ -43,8 +43,8 @@ void Config_PC::on_Aceptar_clicked()
     QString descriptor,detector;
     descriptor=ui->Descriptor->currentText();
     detector=ui->Detector->currentText();
-    window->Tipo_Des=descriptor.toStdString();
-    window->Tipo_Ext=detector.toStdString();
-    window->Parametro=(float)ui->Parametro->value();
+    window->descriptor=descriptor.toStdString();
+    window->extractor=detector.toStdString();
+    window->descriptor_parameter=(float)ui->Parametro->value();
     delete this;
 }

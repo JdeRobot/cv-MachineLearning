@@ -71,19 +71,22 @@ int MLT::HOG::Extract(vector<Mat> imagenes, vector<Mat> &descriptores)
     if (imagenes.size() == 0)
     {
         cout << "ERROR en Extract: imagenes esta vacio" << endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
 
     if (hog.winSize.height > imagenes[0].rows || hog.winSize.width > imagenes[0].cols)
     {
         cout << "ERROR en Extract: El tamaño de win_Size es mayor que el de las imagenes" << endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
 
     if (hog.winSize.height < 0 || hog.winSize.width < 0)
     {
         cout << "ERROR en Extract: El tamaño de win_Size es negativo" << endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
 
     descriptores.clear();
@@ -113,10 +116,12 @@ int MLT::HOG::Extract(vector<Mat> imagenes, vector<Mat> &descriptores)
     if (descriptores.empty())
     {
         cout << "ERROR en Extract: descriptores vacio" << endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     valores = descriptores;
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::HOG::Mostrar(vector<Mat> images, int scaleimage, int scalelines)
@@ -217,7 +222,8 @@ int MLT::HOG::Mostrar(vector<Mat> images, int scaleimage, int scalelines)
 
         waitKey(0);
     }
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 

@@ -41,7 +41,7 @@ Conf_Parametros::~Conf_Parametros()
 
 void Conf_Parametros::on_pushButton_clicked()
 {
-    Optimizacion::Parametros *param=(Optimizacion::Parametros*) punt;
+    Clasificadores::Parametros *param=(Clasificadores::Parametros*) punt;
     param->Hist_tam_celda=ui->Tam_Celda->value();
 
     param->KNN_k=ui->K->value();

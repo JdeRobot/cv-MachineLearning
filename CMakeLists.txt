@@ -4,9 +4,9 @@ project(MachineLearning_OpenCV)
 add_definitions( -DGUI )
 add_definitions( -DWARNINGS )
 
-if(COMPILER_SUPPORTS_CXX11)
+#if(COMPILER_SUPPORTS_CXX11)
 	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
-endif()
+#endif()
 
 ##CMake will search packages in /usr/local first. This avoids ROS OpenCV package.
 set(CMAKE_PREFIX_PATH /usr/local)
@@ -93,6 +93,7 @@ SET(SOURCES
 	src/gui/config_pc
 	src/gui/mainwindow
 	src/gui/selec_param
+        src/gui/running
 	src/Extraccion_Caracteristicas/basic_transformations
 	src/Extraccion_Caracteristicas/Caracteristicas.h
 	src/Extraccion_Caracteristicas/descriptor.h
@@ -128,6 +129,7 @@ TARGET_LINK_LIBRARIES(MachineLearning_OpenCV
 	${OpenCV_LIBRARIES}
 	${Qt5Widgets_LIBRARIES}
 	${Qt5Core_LIBRARIES}
-	${Qt5Gui_LIBRARIES}
+        ${Qt5Gui_LIBRARIES}
+        -lpthread
 
 )

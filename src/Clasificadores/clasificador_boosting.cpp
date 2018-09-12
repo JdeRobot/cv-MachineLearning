@@ -1,26 +1,3 @@
-/*
-*
-* Copyright 2014-2016 Ignacio San Roman Lana
-*
-* This file is part of OpenCV_ML_Tool
-*
-* OpenCV_ML_Tool is free software: you can redistribute it and/or
-* modify it under the terms of the GNU General Public License as
-* published by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* OpenCV_ML_Tool is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with OpenCV_ML_Tool. If not, see http://www.gnu.org/licenses/.
-*
-* For those usages not covered by this license please contact with
-* isanromanlana@gmail.com
-*/
-
 #include "clasificador_boosting.h"
 
 MLT::Clasificador_Boosting::Clasificador_Boosting(string Nombre,int boost_type, int weak_count, double weight_trim_rate, int max_depth, bool use_surrogates, Mat priors){
@@ -36,13 +13,10 @@ MLT::Clasificador_Boosting::Clasificador_Boosting(string Nombre,int boost_type, 
 //weight_trim_rate – A threshold between 0 and 1 used to save computational time. Samples with summary weight \leq 1 - weight\_trim\_rate do not participate in the next iteration of training. Set this parameter to 0 to turn off this functionality.
     Parametrizar(boost_type,weak_count,weight_trim_rate,max_depth,use_surrogates,priors);
     nombre=Nombre;
-    tipoClasificador=BOOSTING;
+    tipo_clasificador=BOOSTING;
 }
 
-MLT::Clasificador_Boosting::~Clasificador_Boosting()
-{
-
-}
+MLT::Clasificador_Boosting::~Clasificador_Boosting(){}
 
 int MLT::Clasificador_Boosting::Parametrizar(int boost_type, int weak_count, double weight_trim_rate, int max_depth, bool use_surrogates, Mat priors){
     BOOST=ml::Boost::create();
@@ -80,11 +54,11 @@ int MLT::Clasificador_Boosting::Autotrain(vector<Mat> Data, vector<float> Labels
         cout<<"ERROR en Autotrain: si_lda=true o si_pca=true o si_dist=true o si_d_prime=true pero t_reduc es igual o menor a 0"<<endl;
         return 1;
     }
-    ventanaOX=info.Tam_Orig_X;
-    ventanaOY=info.Tam_Orig_Y;
-    ventanaX=info.Tam_X;
-    ventanaY=info.Tam_Y;
-    tipoDato=info.Tipo_Datos;
+    ventana_o_x=info.Tam_Orig_X;
+    ventana_o_y=info.Tam_Orig_Y;
+    ventana_x=info.Tam_X;
+    ventana_y=info.Tam_Y;
+    tipo_dato=info.Tipo_Datos;
     if((reduc.si_dist==true || reduc.si_d_prime==true || reduc.si_lda==true || reduc.si_pca==true)&&(info.si_dist==true || info.si_d_prime==true || info.si_lda==true || info.si_pca==true)){
         cout<<"ERROR en Autotrain: Ya se le ha hecho una reduccion anteriormente a los datos"<<endl;
         return 1;
@@ -92,7 +66,7 @@ int MLT::Clasificador_Boosting::Autotrain(vector<Mat> Data, vector<float> Labels
     reduccion=reduc;
     Auxiliares ax;
     bool negativa;
-    numeroEtiquetas=ax.numero_etiquetas(Labels,negativa);
+    numero_etiquetas=ax.numero_etiquetas(Labels,negativa);
     Mat lexic_data;
     e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
@@ -176,10 +150,10 @@ int MLT::Clasificador_Boosting::Autotrain(vector<Mat> Data, vector<float> Labels
         reduccion.PCA=info.PCA;
         reduccion.tam_reduc=info.Tam_X*info.Tam_Y;
     }
-    BOOST->setMaxCategories(numeroEtiquetas);
+    BOOST->setMaxCategories(numero_etiquetas);
     Entrenamiento(trainingDataMat, lexic_labels);
     if(save){
-        e=SaveData();
+        e=Save_Data();
         if(e==1){
             cout<<"ERROR en Autotrain: Error en Save_Data"<<endl;
             return 1;
@@ -189,11 +163,13 @@ int MLT::Clasificador_Boosting::Autotrain(vector<Mat> Data, vector<float> Labels
 }
 
 int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float> &Labels, bool reducir, bool read){
+    this->running=true;
     int e=0;
     if(read){
-        e=ReadData();
+        e=Read_Data();
         if(e==1){
             cout<<"ERROR en Autoclasificacion: Error en Read_Data"<<endl;
+            this->running=false;
             return 1;
         }
     }
@@ -202,6 +178,7 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
     e=ax.Image2Lexic(Data,lexic_data);
     if(e==1){
         cout<<"ERROR en Autoclasificacion: Error en Image2Lexic"<<endl;
+        this->running=false;
         return 1;
     }
     Mat trainingDataMat;
@@ -212,6 +189,7 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,LDA_DIM,reduccion.LDA);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -222,6 +200,7 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,PCA_DIM,reduccion.PCA);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -232,6 +211,7 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,MAXDIST_DIM,reduccion.DS);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -242,6 +222,7 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
             e=dim.Proyeccion(lexic_data,Proyectada,D_PRIME_DIM,reduccion.D_PRIME);
             if(e==1){
                 cout<<"ERROR en Autoclasificacion: Error en Proyeccion"<<endl;
+                this->running=false;
                 return 1;
             }
             Proyectada.copyTo(trainingDataMat);
@@ -255,10 +236,11 @@ int MLT::Clasificador_Boosting::Autoclasificacion(vector<Mat> Data, vector<float
         float response=Clasificacion(trainingDataMat.row(i));
         Labels.push_back(response);
 #ifdef GUI
-            _progreso++;
-            _window->progress_Clasificar->setValue(_baseProgreso+(_maxProgreso*_progreso/_totalProgreso));
+            progreso++;
+//            window->progress_Clasificar->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
+    this->running=false;
     return 0;
 }
 
@@ -271,12 +253,12 @@ void MLT::Clasificador_Boosting::Entrenamiento(Mat trainingDataMat, Mat labelsMa
 float MLT::Clasificador_Boosting::Clasificacion(Mat Data){
     Data.convertTo(Data,CV_32FC1);
     float response=0;
-    if(Data.cols==(ventanaX*ventanaY) || Data.cols==reduccion.tam_reduc)
+    if(Data.cols==(ventana_x*ventana_y) || Data.cols==reduccion.tam_reduc)
         response = BOOST->predict(Data);
     return response;
 }
 
-int MLT::Clasificador_Boosting::SaveData(){
+int MLT::Clasificador_Boosting::Save_Data(){
     DIR    *dir_p = opendir ("../Data/Configuracion");
     if(dir_p == NULL) {
         string command = "mkdir ../Data/Configuracion";
@@ -299,12 +281,12 @@ int MLT::Clasificador_Boosting::SaveData(){
     string g="../Data/Configuracion/"+nombre+"/BOOST2.xml";
     cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
     if(archivo_w.isOpened()){
-        archivo_w<<"ventana_x"<<ventanaX;
-        archivo_w<<"ventana_y"<<ventanaY;
-        archivo_w<<"ventana_o_x"<<ventanaOX;
-        archivo_w<<"ventana_o_y"<<ventanaOY;
-        archivo_w<<"numero_etiquetas"<<numeroEtiquetas;
-        archivo_w<<"tipo_dato"<<tipoDato;
+        archivo_w<<"ventana_x"<<ventana_x;
+        archivo_w<<"ventana_y"<<ventana_y;
+        archivo_w<<"ventana_o_x"<<ventana_o_x;
+        archivo_w<<"ventana_o_y"<<ventana_o_y;
+        archivo_w<<"numero_etiquetas"<<numero_etiquetas;
+        archivo_w<<"tipo_dato"<<tipo_dato;
         archivo_w<<"tam_reduc"<<reduccion.tam_reduc;
         archivo_w<<"lda"<<reduccion.si_lda;
         archivo_w<<"LDA"<<reduccion.LDA;
@@ -330,16 +312,16 @@ int MLT::Clasificador_Boosting::SaveData(){
     return 0;
 }
 
-int MLT::Clasificador_Boosting::ReadData(){
+int MLT::Clasificador_Boosting::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/BOOST2.xml";
     cv::FileStorage archivo_r(g,CV_STORAGE_READ);
     if(archivo_r.isOpened()){
-        archivo_r["ventana_x"]>>ventanaX;
-        archivo_r["ventana_y"]>>ventanaY;
-        archivo_r["ventana_o_x"]>>ventanaOX;
-        archivo_r["ventana_o_y"]>>ventanaOY;
-        archivo_r["numero_etiquetas"]>>numeroEtiquetas;
-        archivo_r["tipo_dato"]>>tipoDato;
+        archivo_r["ventana_x"]>>ventana_x;
+        archivo_r["ventana_y"]>>ventana_y;
+        archivo_r["ventana_o_x"]>>ventana_o_x;
+        archivo_r["ventana_o_y"]>>ventana_o_y;
+        archivo_r["numero_etiquetas"]>>numero_etiquetas;
+        archivo_r["tipo_dato"]>>tipo_dato;
         archivo_r["tam_reduc"]>>reduccion.tam_reduc;
         archivo_r["lda"]>>reduccion.si_lda;
         archivo_r["LDA"]>>reduccion.LDA;

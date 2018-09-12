@@ -200,6 +200,8 @@ private slots:
 
     void on_g_run_datamanaging_clicked();
 
+    void on_g_analysis_analyse_clicked();
+
     void on_v_tool_activated(int index);
 
     void on_v_run_datamanaging_clicked();
@@ -273,7 +275,6 @@ private slots:
     void on_m_optimize_crossvalidation_clicked();
 
     void on_m_optimize_supercross_clicked();
-
 
 private:
     void error_control(QString error);

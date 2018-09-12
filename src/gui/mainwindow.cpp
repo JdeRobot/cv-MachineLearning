@@ -161,6 +161,7 @@ void MainWindow::error_control(QString error){
     msgBox.exec();
     QApplication::restoreOverrideCursor();
     this->ui->g_progress_datamanaging->setValue(0);
+    this->ui->g_progress_Analysis->setValue(0);
     this->ui->v_progress_datamanaging->setValue(0);
     this->ui->v_progress_Analysis->setValue(0);
     this->ui->m_progress_classifiers->setValue(0);
@@ -286,6 +287,35 @@ void MainWindow::on_g_run_datamanaging_clicked()
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::on_g_analysis_analyse_clicked()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    this->ui->g_progress_Analysis->setValue(1);
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+
+    QStandardItemModel *model=new QStandardItemModel(0,0);
+    int er=0;
+
+    if(this->run.result_labels.empty()){
+        error_control("ERROR: There is not labels loaded");
+        return;
+    }
+    er=this->run.analyse_result(model);
+
+    if(er==1){
+        error_control("ERROR: Statistics could not be calculated");
+        return;
+    }
+
+    this->ui->g_analysis_statistics->setModel(model);
+    this->ui->g_progress_Analysis->setValue(100);
+    this->ui->g_progress_Analysis->setValue(0);
+    QApplication::restoreOverrideCursor();
+}
+
 void MainWindow::on_v_tool_activated(int index)
 {
     if(index==1){
@@ -363,25 +393,16 @@ void MainWindow::on_v_analysis_analyse_clicked()
 
     QStandardItemModel *model=new QStandardItemModel(0,0);
     int er=0;
-    if(this->ui->v_analysis_dataset->isChecked()){
-        if(this->run.org_labels.empty()){
-            error_control("ERROR: There is not labels loaded");
-            return;
-        }
-        if(!this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels()>1024){
-            QMessageBox msgBox;
-            msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
-            msgBox.exec();
-        }
-        er=this->run.analyse_data(model);
+    if(this->run.org_labels.empty()){
+        error_control("ERROR: There is not labels loaded");
+        return;
     }
-    else if(this->ui->v_analysis_results->isChecked()){
-        if(this->run.result_labels.empty()){
-            error_control("ERROR: There is not labels loaded");
-            return;
-        }
-        er=this->run.analyse_result(model);
+    if(!this->run.org_images[0].cols*this->run.org_images[0].rows*this->run.org_images[0].channels()>1024){
+        QMessageBox msgBox;
+        msgBox.setText("The number of dimensions is over 1024, so covariance is not calculated");
+        msgBox.exec();
     }
+    er=this->run.analyse_data(model);
 
     if(er==1){
         error_control("ERROR: Statistics could not be calculated");
@@ -397,6 +418,10 @@ void MainWindow::on_v_analysis_analyse_clicked()
 void MainWindow::on_v_plotting_represent_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
     int type_plot=-1;
     vector<int> dim;
     if(this->ui->v_plotting_data->isChecked()){
@@ -515,7 +540,11 @@ void MainWindow::on_v_clustering_generate_clicked()
     else if(this->ui->v_clustering_method->currentIndex()==5 && this->ui->v_clustering_covariance->currentIndex()==2)
         type=8;
 
-    this->run.clustering(ref,type,k,repetitions,max_dist,cell_size);
+    int e=this->run.clustering(ref,type,k,repetitions,max_dist,cell_size);
+    if(e==1){
+        error_control("ERROR: Clustering could not be done");
+        return;
+    }
 
     QString reference=QString::fromStdString(ref);
     this->ui->results_lab->setText("Results: "+reference);
@@ -550,7 +579,11 @@ void MainWindow::on_v_dimensionality_generate_clicked()
     else if(this->ui->v_dimensionality_dprime->isChecked())
         type=D_PRIME_DIM;
 
-    run.dimensionality(ref,this->ui->v_dimensionality_dimensions->value(),type);
+    int e=run.dimensionality(ref,this->ui->v_dimensionality_dimensions->value(),type);
+    if(e==1){
+        error_control("ERROR: Dimensionality reduction could not be done");
+        return;
+    }
 
     QString reference=QString::fromStdString(ref);
     this->ui->results_lab->setText("Results: "+reference);
@@ -563,6 +596,10 @@ void MainWindow::on_v_dimensionality_quality_clicked()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     if(this->run.org_images.empty()){
         error_control("ERROR: There is not data loaded");
+        return;
+    }
+    if(this->run.org_labels.empty()){
+        error_control("ERROR: There is not labels loaded");
         return;
     }
     QString name=this->ui->v_dimensionality_dataname->displayText();
@@ -585,7 +622,12 @@ void MainWindow::on_v_dimensionality_quality_clicked()
         measure=1;
 
     string result;
-    run.dimension_cuality(ref,this->ui->v_dimensionality_dimensions->value(),type, measure, result);
+    int e=run.dimension_cuality(ref,this->ui->v_dimensionality_dimensions->value(),type, measure, result);
+    if(e==1){
+        error_control("ERROR: Dimensionality reduction could not be done");
+        return;
+    }
+
     QMessageBox msgBox;
     msgBox.setText(QString::fromStdString(result));
     msgBox.exec();
@@ -882,6 +924,14 @@ void MainWindow::on_i_run_datamanaging_clicked()
             error_control("ERROR: Data could not be created");
             return;
         }
+        else if(er==2){
+            error_control("ERROR: Hog size bigger than images");
+            return;
+        }
+        else if(er==3){
+            error_control("ERROR: Choose a descriptor");
+            return;
+        }
         QString reference=QString::fromStdString(ref);
         this->ui->results_lab->setText("Results: "+reference);
     }
@@ -929,7 +979,14 @@ void MainWindow::on_i_represent_clicked()
         type=1;
     if((int)this->ui->i_plotting_label->value()==0)
         this->ui->i_plotting_label->setValue(-1);
-    this->run.represent_images(type,(int)this->ui->i_plotting_label->value());
+    int e=this->run.represent_images(type,(int)this->ui->i_plotting_label->value());
+
+    if(e==1)
+        error_control("ERROR: An Error occured while showing the images");
+    else if(e==2)
+        error_control("ERROR: There is not data loaded");
+    else if(e==3)
+        error_control("ERROR: There is not result dataset");
 }
 
 void MainWindow::on_i_detection_postprocess_clicked(bool checked)
@@ -1122,13 +1179,28 @@ void MainWindow::on_i_detection_run_clicked()
     float dist_boxes=this->ui->i_detection_distance->value();
     int dist_rotation=this->ui->i_detection_angle->value();
 
-    this->run.detect_image(type_running, input_type,path,transform_type, this->multi_type,
+    int e=this->run.detect_image(type_running, input_type,path,transform_type, this->multi_type,
                            n_classes,variance,interclass,window_x,window_y,jump,pyramid,rotation,
                            postprocess,overlap,isolated,dist_boxes,dist_rotation,this->descriptor,this->extractor,
                            this->win_size_x,this->win_size_y,this->block_x,this->block_y,this->sigma,this->threhold_l2hys,
                            this->gamma,this->nlevels, this->descriptor_parameter,
                            image,labels,detections,labels_detections);
-
+    if(e==1){
+        error_control("ERROR: Image could not be loaded");
+        return;
+    }
+    else if(e==2){
+            error_control("ERROR: Window bigger thatn image");
+            return;
+    }
+    else if(e==3){
+        error_control("ERROR: How size bigger than images");
+        return;
+    }
+    else if(e==4){
+        error_control("ERROR: Detection didn't work");
+        return;
+    }
     QApplication::restoreOverrideCursor();
 
     cv::Mat show;
@@ -1209,6 +1281,14 @@ void MainWindow::on_m_classifier_typetool_clicked()
 
 void MainWindow::on_m_classifier_train_clicked()
 {
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    if(this->run.org_labels.empty()){
+        error_control("ERROR: There is not labels loaded");
+        return;
+    }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     string ref=ui->m_classifier_name->displayText().toStdString();
     int classifier_type=ui->m_classifier_type->currentIndex();
@@ -1261,6 +1341,10 @@ void MainWindow::on_m_classifier_config_multitool_clicked()
 void MainWindow::on_m_classifier_classify_clicked()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
     this->ui->m_progress_classifiers->setValue(1);
     string ref=ui->m_classifier_configname->displayText().toStdString();
     for(uint i=0; i<ref.size(); i++){
@@ -1277,7 +1361,11 @@ void MainWindow::on_m_classifier_classify_clicked()
         type=2;
     int er=this->run.classify(ref,type,txt,this->multi_type);
     if(er==1){
-        error_control("ERROR: Data could not be classified");
+        error_control("ERROR: There is not classifier loaded");
+        return;
+    }
+    else if(er==2){
+        error_control("ERROR: Labels with 0. Wrong classification");
         return;
     }
     ui->m_results->setText(QString::fromStdString(txt.str()));
@@ -1374,6 +1462,14 @@ void MainWindow::on_m_optimize_stop_clicked()
 
 void MainWindow::on_m_optimize_run_clicked()
 {
+    if(this->run.org_images.empty()){
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    if(this->run.org_labels.empty()){
+        error_control("ERROR: There is not labels loaded");
+        return;
+    }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     stringstream text;
 
@@ -1428,10 +1524,36 @@ void MainWindow::on_m_optimize_run_clicked()
 
     this->ui->m_optimize_text->setText(QString::fromStdString((text.str())));
     if(e==1){
-        error_control("ERROR: Optimization didn't work");
+        error_control("ERROR: There is not data loaded");
+        return;
+    }
+    else if(e==2){
+        error_control("ERROR: There is not labels loaded");
+        return;
+    }
+    else if(e==3){
+        error_control("ERROR: Neural Network classififer wrong configuration");
+        return;
+    }
+    else if(e==4){
+        error_control("ERROR: Optimizacion didn't work");
+        return;
+    }
+    else if(e==5){
+        error_control("ERROR: This classifier hasn't got parameters");
+        return;
+    }
+    else if(e==6){
+        error_control("ERROR: Not implemented");
+        return;
+    }
+    else if(e==7){
+        error_control("ERROR: num_folds*size_fold > number of images");
+        return;
+    }
+    else if(e==8){
+        error_control("ERROR: Neural Network classififer wrong configuration");
+        return;
     }
     QApplication::restoreOverrideCursor();
 }
-
-
-

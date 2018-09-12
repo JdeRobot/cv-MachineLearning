@@ -50,9 +50,7 @@ int MLT::Generacion::Cargar_Imagenes(string input_directory, std::vector<cv::Mat
                 img.push_back(Imagen);
         }
 #ifdef GUI
-            progreso++;
-//            window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//            window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
+            this->progreso++;
 #endif
     }
     Images=img;
@@ -140,10 +138,6 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
         Archivo_recortes<<conta.str()<<imag;
 #ifdef GUI
         this->progreso++;
-//        this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//        this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//        this->window->v_progress_clustering->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//        this->window->v_progress_dimensionality->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     Archivo_i<<"Tipo_Datos"<<info.Tipo_Datos;
@@ -382,8 +376,7 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     int total_recortes=0;
     int cuenta_imagenes=0;
     int cuenta_recortes=0;
-//    Auxiliares aux;
-//    this->total_progreso=aux.numero_imagenes(Path);
+
     while((dir_entry_p = readdir(dir_p)) != NULL){
         if(strcmp(dir_entry_p->d_name, ".")!=0 && strcmp(dir_entry_p->d_name, "..")!=0 && strcmp(dir_entry_p->d_name, nombre.c_str())!=0){
             cuenta_carpetas++;
@@ -492,8 +485,6 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
             Archivo_recortes_in.release();
 #ifdef GUI
     this->progreso++;
-//    this->window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//    this->window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
         }
     }
@@ -562,10 +553,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-//        window->v_progress_datamanaging->setValue(0);
-//        window->i_progress_datamanaging->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -785,10 +773,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-//        window->v_progress_datamanaging->setValue(0);
-//        window->i_progress_datamanaging->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -890,11 +875,11 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
                 if(z=='i'){
                     Mat most=Mat::zeros(200,200,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="ESC=Salir";
+                    string texto="ESC=Exit";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="Num=Etiquetar";
+                    texto="Num=Labeling";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="Espacio=Pasar";
+                    texto="Space=Next";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -1020,7 +1005,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
         this->error=1;
         return this->error;
     }
-    Cuadrado=cuadrado;
+    this->Cuadrado=cuadrado;
     input_directory=input_directory+"/";
     string strPrefix;
     DIR    *dir_p = opendir (input_directory.c_str());
@@ -1049,15 +1034,12 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
         Archivo_i["Num_Datos"]>>num;
         Archivo_i.release();
 #ifdef GUI
-        total_progreso=num;
-        progreso=0;
+        this->total_progreso=num;
+        this->progreso=0;
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,img,Labels,inff);
-#ifdef GUI
-//        window->v_progress_datamanaging->setValue(0);
-//        window->i_progress_datamanaging->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -1175,15 +1157,15 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
                     if(z=='i'){
                         Mat most=Mat::zeros(200,300,CV_8UC3);
                         most=most+Scalar(255,255,255);
-                        string texto="ESC=Salir";
+                        string texto="ESC=Exit";
                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                        texto="Num=Etiquetar";
+                        texto="Num=Labeling";
                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                        texto="Espacio=Pasar";
+                        texto="Space=Next";
                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                        texto="e=Rotar izda";
+                        texto="e=Rotate Left";
                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                        texto="r=Rotar dcha";
+                        texto="r=Rotate Right";
                         putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                         imshow("Info",most);
                         waitKey(1500);
@@ -1513,15 +1495,15 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
                 if(z=='i'){
                     Mat most=Mat::zeros(200,300,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="ESC=Salir";
+                    string texto="ESC=Exit";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="Num=Etiquetar";
+                    texto="Num=Labeling";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="Espacio=Pasar";
+                    texto="Space=Next";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="e=Rotar izda";
+                    texto="e=Rotate Left";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Rotar dcha";
+                    texto="r=Rotate Right";
                     putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -2045,8 +2027,6 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
         }
 #ifdef GUI
         progreso++;
-//        window->v_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
-//        window->i_progress_datamanaging->setValue(base_progreso+(max_progreso*progreso/total_progreso));
 #endif
     }
     info.Tipo_Datos=0;
@@ -2087,9 +2067,6 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
     this->error=0;
     return this->error;
 }
-
-
-
 
 int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrado, cv::Size2i tam_recorte, vector<float> &Labels, vector<Mat> &imagenes, Info_Datos &info, bool save){
     this->running=true;
@@ -2265,13 +2242,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
             copiar=true;
             Mat most=Mat::zeros(250,400,CV_8UC3);
             most=most+Scalar(255,255,255);
-            string texto="e=Modo edicion";
+            string texto="e=Edit Mode";
             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-            texto="p=Pasar sin guardar";
+            texto="p=Not Save and Next";
             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-            texto="ESC=Salir";
+            texto="ESC=Exit";
             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-            texto="resto=Pasar guardando";
+            texto="resto=Save and Next";
             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
             imshow("Info",most);
             waitKey(1500);
@@ -2353,13 +2330,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                     copiar=true;
                     Mat most=Mat::zeros(250,400,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    string texto="n=Nuevo tracker";
+                    string texto="n=New Tracker";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Reentrenar tracker";
+                    texto="r=Retrain tracker";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="b=Borrar tracker";
+                    texto="b=Delete Tracker";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="ESC=Salir de modo edicion";
+                    texto="ESC=Exit from Mode";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -2429,13 +2406,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Recuadra y ";
+                            string texto="Square and ";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="etiqueta el ";
+                            texto="Labeling the ";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="nuevo tracker";
+                            texto="New Tracker";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2488,13 +2465,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Pincha un tracker";
+                            string texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="y despues haz";
+                            texto="and then square";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="el nuevo recorte";
+                            texto="a new box";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2539,13 +2516,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                                     if(z=='i'){
                                         Mat most=Mat::zeros(250,250,CV_8UC3);
                                         most=most+Scalar(255,255,255);
-                                        String texto="Pincha un tracker";
+                                        String texto="Click on a Tracker";
                                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                                        texto="y despues haz";
+                                        texto="and then Square";
                                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                                        texto="el nuevo recorte";
+                                        texto="a new box";
                                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                                        texto="ESC=Atras";
+                                        texto="ESC=Back";
                                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                                         imshow("Info",most);
                                         waitKey(1500);
@@ -2587,13 +2564,13 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            string texto="Pincha el tracker";
+                            string texto="Click on the Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="que se quiera";
+                            texto="that you want";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="borrar";
+                            texto="to Delete";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=BAck";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -2729,10 +2706,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
 #endif
         Info_Datos inff;
         Cargar_Fichero(archivo_recortes,Negativos,Labels,inff);
-#ifdef GUI
-//        window->v_progress_datamanaging->setValue(0);
-//        window->i_progress_datamanaging->setValue(0);
-#endif
+
         string command = "cp "+archivo_imagenes+" "+output_directory+"aux_Images.xml";
         int er=system(command.c_str());
         if(er==0){
@@ -3003,15 +2977,15 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
             if(z=='i'){
                 Mat most=Mat::zeros(300,350,CV_8UC3);
                 most=most+Scalar(255,255,255);
-                string texto="r=Nuevos negativos";
+                string texto="r=New Negatives";
                 putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                texto="BORRAR= seleccioinar + b";
+                texto="DELETE= Choose + b";
                 putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                texto="p=Pasar sin guardar";
+                texto="p=Not Save and Next";
                 putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                texto="ESC=Salir";
+                texto="ESC=Exit";
                 putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                texto="resto=Guardar y pasar";
+                texto="Other=Save and Next";
                 putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                 imshow("Info",most);
                 waitKey(1500);
@@ -3400,13 +3374,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
             copiar=true;
             Mat most=Mat::zeros(250,400,CV_8UC3);
             most=most+Scalar(255,255,255);
-            String texto="e=Modo edicion";
+            String texto="e=Edition Mode";
             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-            texto="p=Pasar sin guardar";
+            texto="p=Not Save and Next";
             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-            texto="ESC=Salir";
+            texto="ESC=Exit";
             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-            texto="resto=Pasar guardando";
+            texto="resto=Save and Next";
             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
             imshow("Info",most);
             waitKey(1500);
@@ -3515,15 +3489,15 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                     if(Z=='i'){
                         Mat most=Mat::zeros(300,350,CV_8UC3);
                         most=most+Scalar(255,255,255);
-                        String texto="r=Nuevos negativos";
+                        String texto="r=New Negatives";
                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                        texto="BORRAR= seleccioinar + b";
+                        texto="DELETE= Choose + b";
                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                        texto="p=Pasar sin guardar";
+                        texto="p=Not Save and Next";
                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                        texto="ESC=Salir";
+                        texto="ESC=Exit";
                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
-                        texto="resto=Guardar y pasar";
+                        texto="resto=Save and Next";
                         putText(most,texto,Point(10,250),1,1.5,Scalar(0,0,255),2);
                         imshow("Info",most);
                         waitKey(1500);
@@ -3680,13 +3654,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                     copiar=true;
                     Mat most=Mat::zeros(250,400,CV_8UC3);
                     most=most+Scalar(255,255,255);
-                    String texto="n=Nuevo tracker";
+                    String texto="n=New Tracker";
                     putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                    texto="r=Reentrenar tracker";
+                    texto="r=Retrain Tracker";
                     putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                    texto="b=Borrar tracker";
+                    texto="b=Detele Tracker";
                     putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                    texto="ESC=Salir de modo edicion";
+                    texto="ESC=Exit from Mode";
                     putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                     imshow("Info",most);
                     waitKey(1500);
@@ -3757,13 +3731,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Recuadra y ";
+                            String texto="Square and ";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="etiqueta el ";
+                            texto="Label the ";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="nuevo tracker";
+                            texto="New Tracker";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -3816,13 +3790,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Pincha un tracker";
+                            String texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="y despues haz";
+                            texto="and then Square";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="el nuevo recorte";
+                            texto="the new box";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);
@@ -3867,13 +3841,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                                     if(z=='i'){
                                         Mat most=Mat::zeros(250,250,CV_8UC3);
                                         most=most+Scalar(255,255,255);
-                                        String texto="Pincha un tracker";
+                                        String texto="Click on a Tracker";
                                         putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                                        texto="y despues haz";
+                                        texto="and then Square";
                                         putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                                        texto="el nuevo recorte";
+                                        texto="the new Box";
                                         putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                                        texto="ESC=Atras";
+                                        texto="ESC=Back";
                                         putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                                         imshow("Info",most);
                                         waitKey(1500);
@@ -3915,13 +3889,13 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                         if(z=='i'){
                             Mat most=Mat::zeros(250,250,CV_8UC3);
                             most=most+Scalar(255,255,255);
-                            String texto="Pincha el tracker";
+                            String texto="Click on a Tracker";
                             putText(most,texto,Point(10,50),1,1.5,Scalar(0,0,255),2);
-                            texto="que se quiera";
+                            texto="that you want";
                             putText(most,texto,Point(10,100),1,1.5,Scalar(0,0,255),2);
-                            texto="borrar";
+                            texto="to Delete";
                             putText(most,texto,Point(10,150),1,1.5,Scalar(0,0,255),2);
-                            texto="ESC=Atras";
+                            texto="ESC=Back";
                             putText(most,texto,Point(10,200),1,1.5,Scalar(0,0,255),2);
                             imshow("Info",most);
                             waitKey(1500);

@@ -43,7 +43,7 @@ namespace MLT {
         Optimizacion();
 
         int Validation(vector<Mat> Datos, vector<float> Labels, int Porcentaje_validation, int id_clasificador, Clasificadores::Parametros parame, float &Error, Mat &Confusion, vector<Analisis::Ratios_data> &Ratios);
-        int Validation(vector<Mat> Datos, vector<float> Labels, int Porcentaje_validation, vector<int> id_clasif, Clasificadores::Parametros parame, MultiClasificador::Multi_type multi, float &Error, Mat &Confusion, vector<Analisis::Ratios_data> &Ratios);
+        int Validation_multi(vector<Mat> Datos, vector<float> Labels, int Porcentaje_validation, vector<int> id_clasif, Clasificadores::Parametros parame, MultiClasificador::Multi_type multi, float &Error, Mat &Confusion, vector<Analisis::Ratios_data> &Ratios);
         int Cross_Validation(vector<Mat> Datos, vector<float> Labels, int Num_Folds, int Tam_Fold, int id_clasificador, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, Clasificadores::Parametros &parametros, float &Error, cv::Mat &Confus);
         int Super_Cross_Validation(vector<Mat> Datos, vector<float> Labels, int Num_Folds, int Tam_Fold, vector<int> &id_clasificador, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, Clasificadores::Parametros &parametros, float &Error, Mat &Confus);
         int Ratios_parametro(vector<Mat> Datos, vector<float> Labels, int porcentaje_validacion, string parametro, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, vector<vector<Analisis::Ratios_data> > &Ratios);

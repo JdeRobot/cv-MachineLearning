@@ -29,20 +29,24 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     int e=0;
     if(Datos.size()==0){
         cout<<"ERROR en Validation: No hay datos"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Validation: No hay Etiquetas"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Datos.size()!=Labels.size()){
         cout<<"ERROR en Validation: Numero de datos y etiquetas distinto"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Validation: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     Dimensionalidad::Reducciones reduc;
@@ -77,12 +81,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=D.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Distancias"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=D.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Distancias"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==GAUSSIANO){
@@ -94,12 +100,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=G.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Gaussiano"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=G.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Gaussiano"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
 //    else if(id_clasificador==CASCADA_CLAS){
@@ -114,12 +122,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
 //        e=HA.Autotrain(datos_entrena,labels_entrena,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //        e=HA.Autoclasificacion(datos_valida,result,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Histograma"<<endl;
-//            return 1;
+//            this->error=1;
+//             return this->error;
 //        }
 //    }
     else if(id_clasificador==HISTOGRAMA){
@@ -131,12 +141,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=H.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=H.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Histograma"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==KNN){
@@ -148,12 +160,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=K.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_KNN"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=K.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_KNN"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==NEURONAL){
@@ -167,12 +181,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=N.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Neuronal"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=N.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Neuronal"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==C_SVM){
@@ -185,12 +201,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=S.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_SVM"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=S.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_SVM"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==RTREES){
@@ -204,13 +222,15 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=T.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         vector<float> result;
         e=T.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Tree"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==DTREES){
@@ -224,12 +244,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=T2.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree2"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=T2.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Tree2"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     else if(id_clasificador==BOOSTING){
@@ -241,12 +263,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=B.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Boosting"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=B.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_Boosting"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
 //    else if(id_clasificador==GBT){
@@ -261,12 +285,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
 //        e=GB.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autotrain en Clasificador_GBT"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //        e=GB.Autoclasificacion(datos_valida,result,false,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_GBT"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //    }
     else if(id_clasificador==EXP_MAX){
@@ -278,12 +304,14 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=E.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autotrain en Clasificador_EM"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         e=E.Autoclasificacion(datos_valida,result,false,false);
         if(e==1){
             cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_EM"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
 //    else if(id_clasificador==ERTREES){
@@ -298,17 +326,20 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
 //        e=ER.Autotrain(datos_entrena,labels_entrena,reduc,info,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autotrain en Clasificador_ERTrees"<<endl;
-//            return 1;
+//            this->error=1;
+//           return this->error;
 //        }
 //        e=ER.Autoclasificacion(datos_valida,result,false,false);
 //        if(e==1){
 //            cout<<"ERROR en Validation: Error en Autoclasificacion en Clasificador_ERTrees"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //    }
 //    else {
 //        cout<<"ERROR en Validation: id_clasificador erroneo"<<endl;
-//        return 1;
+//        this->error=1;
+//       return this->error;
 //    }
     Analisis an;
     Mat Conf;
@@ -316,7 +347,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     e=an.Confusion(labels_valida,result,Conf,error);
     if(e==1){
         cout<<"ERROR en Validation: Error en Confusion"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     vector<Analisis::Ratios_data> ratios;
     an.Ratios(labels_valida,result,ratios);
@@ -351,38 +383,45 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     Conf.copyTo(Confusion);
     cout<<"Error= "<<error<<endl;
     cout<<"Matriz Confusion= "<<endl<<Conf<<endl;
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 
-int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int Porcentaje_validation, vector<int> id_clasif, Clasificadores::Parametros parame, MultiClasificador::Multi_type multi, float &Error, Mat &Confusion, vector<Analisis::Ratios_data> &Ratios){
+int MLT::Optimizacion::Validation_multi(vector<Mat> Datos, vector<float> Labels, int Porcentaje_validation, vector<int> id_clasif, Clasificadores::Parametros parame, MultiClasificador::Multi_type multi, float &Error, Mat &Confusion, vector<Analisis::Ratios_data> &Ratios){
     int e=0;
     if(Datos.size()==0){
         cout<<"ERROR en Validation: No hay datos"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Validation: No hay Etiquetas"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Datos.size()!=Labels.size()){
         cout<<"ERROR en Validation: Numero de datos y etiquetas distinto"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(id_clasif.size()==0){
         cout<<"ERROR en Validation: id_clasif vacio"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<id_clasif.size(); i++){
         if(id_clasif[i]<0 || id_clasif[i]>NUM_CLASIF){
             cout<<"ERROR en Validation: id_clasif erroneo"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Validation: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     Dimensionalidad::Reducciones reduc;
@@ -420,7 +459,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=D->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Distancias"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(D);
 #ifdef GUI
@@ -433,7 +473,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=G->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Gaussiano"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(G);
 #ifdef GUI
@@ -446,7 +487,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=H->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(H);
 #ifdef GUI
@@ -459,7 +501,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=K->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_KNN"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(K);
 #ifdef GUI
@@ -474,7 +517,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=N->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Neuronal"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(N);
 #ifdef GUI
@@ -488,7 +532,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=S->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_SVM"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(S);
 #ifdef GUI
@@ -503,7 +548,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=T->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(T);
 #ifdef GUI
@@ -518,7 +564,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=T2->Autotrain(datos_entrena,labels_entrena,reduc,info,true);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Tree2"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(T2);
 #ifdef GUI
@@ -532,7 +579,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=B->Autotrain(datos_entrena,labels_entrena,reduc,info,false);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_Boosting"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(B);
 #ifdef GUI
@@ -545,7 +593,8 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
             e=E->Autotrain(datos_entrena,labels_entrena,reduc,info,false);
             if(e==1){
                 cout<<"ERROR en Validation: Error en Autotrain en Clasificador_EM"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             clasificadores.push_back(E);
 #ifdef GUI
@@ -566,13 +615,15 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
         e=mul.Cascada(datos_valida,multi.tipo_regla,multi.label_ref,result);
     if(e==1){
         cout<<"ERROR en Validation: Error en Cascada"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     else if(multi.tipo==VOTACION)
         e=mul.Votacion(datos_valida,multi.w_clasif,result);
     if(e==1){
         cout<<"ERROR en Validation: Error en Votacion"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     Analisis an;
     vector<Analisis::Ratios_data> ratios;
@@ -609,13 +660,15 @@ int MLT::Optimizacion::Validation(vector<Mat> Datos, vector<float> Labels, int P
     e=an.Confusion(labels_valida,result,Conf,error);
     if(e==1){
         cout<<"ERROR en Validation: Error en Confusion"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     Error=error;
     Conf.copyTo(Confusion);
     cout<<"Error= "<<error<<endl;
     cout<<"Matriz Confusion= "<<endl<<Conf<<endl;
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels, int Num_Folds, int Tam_Fold, int id_clasificador, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, Clasificadores::Parametros &parametros, float &Error, cv::Mat &Confus){
@@ -623,24 +676,29 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
     Auxiliares ax;
     if(Datos.size()==0){
         cout<<"ERROR en Cross_Validation: No hay datos"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Cross_Validation: No hay Etiquetas"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Datos.size()!=Labels.size()){
         cout<<"ERROR en Cross_Validation: Numero de datos y etiquetas distinto"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if((uint)Num_Folds*Tam_Fold>Datos.size()){
         cout<<"ERROR en Cross_Validation: Numero de datos menor de lo que se pide para el proceso"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Cross_Validation: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     Dimensionalidad::Reducciones reduc;
@@ -719,7 +777,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
         //tam_celda
         if(inicio.Hist_tam_celda>=fin.Hist_tam_celda){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -737,19 +796,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=H.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Histograma"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=H.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_Histograma"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -773,7 +839,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
         //K
         if(inicio.KNN_k>=fin.KNN_k){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -791,19 +858,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=KNN.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_KNN"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=KNN.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_KNN"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -828,7 +902,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
         if(inicio.Neuronal_bp_dw_scale>=fin.Neuronal_bp_dw_scale && inicio.Neuronal_bp_moment_scale>=fin.Neuronal_bp_moment_scale && inicio.Neuronal_rp_dw0>=fin.Neuronal_rp_dw0 && inicio.Neuronal_rp_dw_max>=fin.Neuronal_rp_dw_max
                 && inicio.Neuronal_rp_dw_min>=fin.Neuronal_rp_dw_min && inicio.Neuronal_rp_dw_minus>=fin.Neuronal_rp_dw_minus && inicio.Neuronal_rp_dw_plus>=fin.Neuronal_rp_dw_plus && inicio.Neuronal_fparam1>=fin.Neuronal_fparam1 && inicio.Neuronal_fparam2>=fin.Neuronal_fparam2){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -847,19 +922,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=Neur.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Neuronal"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=Neur.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_Neuronal"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -926,7 +1008,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 #endif
         if(inicio.SVM_C>=fin.SVM_C && inicio.SVM_gamma>=fin.SVM_gamma && inicio.SVM_p>=fin.SVM_p && inicio.SVM_nu>=fin.SVM_nu && inicio.SVM_coef0>=fin.SVM_coef0 && inicio.SVM_degree>=fin.SVM_degree){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -945,19 +1028,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=SVM.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_SVM"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=SVM.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_SVM"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -1007,7 +1097,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
         if(inicio.RTrees_max_depth>=fin.RTrees_max_depth && inicio.RTrees_min_sample_count>=fin.RTrees_min_sample_count && inicio.RTrees_regression_accuracy>=fin.RTrees_regression_accuracy && inicio.RTrees_max_categories>=fin.RTrees_max_categories
                 && inicio.RTrees_cv_folds>=fin.RTrees_cv_folds && inicio.RTrees_native_vars>=fin.RTrees_native_vars){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1026,19 +1117,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=Trees.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_RTrees"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=Trees.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_RTrees"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -1088,7 +1186,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
         if(inicio.DTrees_max_depth>=fin.DTrees_max_depth && inicio.DTrees_min_sample_count>=fin.DTrees_min_sample_count && inicio.DTrees_regression_accuracy>=fin.DTrees_regression_accuracy && inicio.DTrees_max_categories>=fin.DTrees_max_categories
                 && inicio.DTrees_cv_folds>=fin.DTrees_cv_folds){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1107,19 +1206,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=DT.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_DTrees"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=DT.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_DTrees"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -1163,7 +1269,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //        max_depth, weak_count
         if(inicio.Boosting_max_depth>=fin.Boosting_max_depth && inicio.Boosting_weak_count>=fin.Boosting_weak_count){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1182,19 +1289,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=B.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_Boosting"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=B.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_Boosting"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -1223,7 +1337,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 ////        weak_count, shrinkage, max_depth
 //        if(inicio.GBT_weak_count>=fin.GBT_weak_count && inicio.GBT_shrinkage>=fin.GBT_shrinkage && inicio.GBT_max_depth>=fin.GBT_max_depth){
 //            cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //        bool negativa;
 //        int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1245,19 +1360,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //                e=GB.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_GBT"<<endl;
-//                    return 1;
+//                    this->error=1;
+//                    return this->error;
 //                }
 //                vector<float> result;
 //                e=GB.Autoclasificacion(datos_valida[i],result,false,false);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_GBT"<<endl;
-//                    return 1;
+//                    this->error=1;
+//                    return this->error;
 //                }
 //                Mat Conf;
 //                float error=0;
 //                e=an.Confusion(labels_valida[i],result,Conf,error);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+//                    this->error=1;
+//                    return this->error;
+//                }
+//                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+//                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
 //                    return 1;
 //                }
 //                Total_Confusion=Total_Confusion+Conf;
@@ -1292,7 +1414,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //        nclusters
         if(inicio.EM_nclusters>=fin.EM_nclusters){
             cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         bool negativa;
         int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1310,19 +1433,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
                 e=E.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_EM"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 vector<float> result;
                 e=E.Autoclasificacion(datos_valida[i],result,false,false);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_EM"<<endl;
-                    return 1;
+                    this->error=1;
+                    return this->error;
                 }
                 Mat Conf;
                 float error=0;
                 e=an.Confusion(labels_valida[i],result,Conf,error);
                 if(e==1){
                     cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+                    this->error=1;
+                    return this->error;
+                }
+                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
                     return 1;
                 }
                 Total_Confusion=Total_Confusion+Conf;
@@ -1347,7 +1477,8 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //        if(inicio.ERTrees_max_depth>=fin.ERTrees_max_depth && inicio.ERTrees_min_sample_count>=fin.ERTrees_min_sample_count && inicio.ERTrees_regression_accuracy>=fin.ERTrees_regression_accuracy && inicio.ERTrees_max_categories>=fin.ERTrees_max_categories
 //                && inicio.ERTrees_cv_folds>=fin.ERTrees_cv_folds && inicio.ERTrees_native_vars>=fin.ERTrees_native_vars){
 //            cout<<"ERROR en Cross_Validation: Los parametros de inicio y fin son los mismos o los de inicio son mayores a los de fin"<<endl;
-//            return 1;
+//            this->error=1;
+//            return this->error;
 //        }
 //        bool negativa;
 //        int num_etiq=ax.numero_etiquetas(Labels,negativa);
@@ -1369,19 +1500,26 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //                e=ERT.Autotrain(datos_entrena[i],labels_entrena[i],reduc,info,false);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Autotrain en Clasificador_ERTrees"<<endl;
-//                    return 1;
+//                    this->error=1;
+//                     return this->error;
 //                }
 //                vector<float> result;
 //                e=ERT.Autoclasificacion(datos_valida[i],result,false,false);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Autoclasificacion en Clasificador_ERTrees"<<endl;
-//                    return 1;
+//                    this->error=1;
+//                    return this->error;
 //                }
 //                Mat Conf;
 //                float error=0;
 //                e=an.Confusion(labels_valida[i],result,Conf,error);
 //                if(e==1){
 //                    cout<<"ERROR en Cross_Validation: Error en Confusion"<<endl;
+//                    this->error=1;
+//                    return this->error;
+//                }
+//                if(Total_Confusion.rows != Conf.rows || Total_Confusion.cols!=Conf.cols){
+//                    cout<<"ERROR en Cross_Validation: Tamaño de matriz de confusión no encaja con las anteriores. ¿Pocos datos?"<<endl;
 //                    return 1;
 //                }
 //                Total_Confusion=Total_Confusion+Conf;
@@ -1428,37 +1566,45 @@ int MLT::Optimizacion::Cross_Validation(vector<Mat> Datos, vector<float> Labels,
 //    }
     else{
         cout<<"ERROR en Cross_Validation: id_clasificador erroneo"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Optimizacion::Super_Cross_Validation(vector<Mat> Datos, vector<float> Labels, int Num_Folds, int Tam_Fold, vector<int> &id_clasificador, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, Clasificadores::Parametros &parametros, float &Error, Mat &Confus){
     int e=0;
     if(Datos.size()==0){
         cout<<"ERROR en Super_Cross_Validation: No hay datos"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Super_Cross_Validation: No hay Etiquetas"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Datos.size()!=Labels.size()){
         cout<<"ERROR en Super_Cross_Validation: Numero de datos y etiquetas distinto"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if((uint)Num_Folds*Tam_Fold>Datos.size()){
         cout<<"ERROR en Super_Cross_Validation: Numero de datos menor de lo que se pide para el proceso"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(id_clasificador.size()==0){
         cout<<"ERROR en Super_Cross_Validation: Numero de clasificadores elegido igual a cero"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Super_Cross_Validation: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     vector<bool> clasificadores(NUM_CLASIF);
@@ -1467,7 +1613,8 @@ int MLT::Optimizacion::Super_Cross_Validation(vector<Mat> Datos, vector<float> L
     for(uint i=0; i<id_clasificador.size(); i++){
         if(id_clasificador[i]<0 || id_clasificador[i]>NUM_CLASIF){
             cout<<"ERROR en Super_Cross_Validation: id_clasificador erroneo"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
         clasificadores[id_clasificador[i]]=true;
     }
@@ -1803,27 +1950,32 @@ int MLT::Optimizacion::Super_Cross_Validation(vector<Mat> Datos, vector<float> L
 //        cout<<"Error= "<<Error<<endl;
 //        cout<<"Matriz Confusion= "<<endl<<Confus<<endl;
 //    }
-    return 0;
+    this->error=0;
+    return this->error;
 }
 
 int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels, int porcentaje_validacion, string parametro, Clasificadores::Parametros inicio, Clasificadores::Parametros fin, Clasificadores::Parametros salto, vector<vector<Analisis::Ratios_data> > &Ratios){
     int e=0;
     if(Datos.size()==0){
         cout<<"ERROR en Ratios_parametro: No hay datos"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Labels.size()==0){
         cout<<"ERROR en Ratios_parametro: No hay Etiquetas"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     if(Datos.size()!=Labels.size()){
         cout<<"ERROR en Ratios_parametro: Numero de datos y etiquetas distinto"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
     for(uint i=0; i<Labels.size(); i++){
         if(Labels[i]==0){
             cout<<"ERROR en Cross_Validation: Etiquetas con valor 0"<<endl;
-            return 1;
+            this->error=1;
+            return this->error;
         }
     }
     if(parametro=="Hist_tam_celda"){
@@ -1834,7 +1986,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,HISTOGRAMA,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Hist_tam_celda=inicio.Hist_tam_celda+salto.Hist_tam_celda;
             Ratios.push_back(Rat);
@@ -1849,7 +2002,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,KNN,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.KNN_k=inicio.KNN_k+salto.KNN_k;
             Ratios.push_back(Rat);
@@ -1864,7 +2018,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_bp_dw_scale=inicio.Neuronal_bp_dw_scale+salto.Neuronal_bp_dw_scale;
             Ratios.push_back(Rat);
@@ -1878,7 +2033,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_bp_moment_scale=inicio.Neuronal_bp_moment_scale+salto.Neuronal_bp_moment_scale;
             Ratios.push_back(Rat);
@@ -1892,7 +2048,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_fparam1=inicio.Neuronal_fparam1+salto.Neuronal_fparam1;
             Ratios.push_back(Rat);
@@ -1906,7 +2063,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_fparam2=inicio.Neuronal_fparam2+salto.Neuronal_fparam2;
             Ratios.push_back(Rat);
@@ -1920,7 +2078,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_rp_dw0=inicio.Neuronal_rp_dw0+salto.Neuronal_rp_dw0;
             Ratios.push_back(Rat);
@@ -1934,7 +2093,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_rp_dw_max=inicio.Neuronal_rp_dw_max+salto.Neuronal_rp_dw_max;
             Ratios.push_back(Rat);
@@ -1948,7 +2108,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_rp_dw_min=inicio.Neuronal_rp_dw_min+salto.Neuronal_rp_dw_min;
             Ratios.push_back(Rat);
@@ -1962,7 +2123,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_rp_dw_minus=inicio.Neuronal_rp_dw_minus+salto.Neuronal_rp_dw_minus;
             Ratios.push_back(Rat);
@@ -1976,7 +2138,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,NEURONAL,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Neuronal_rp_dw_plus=inicio.Neuronal_rp_dw_plus+salto.Neuronal_rp_dw_plus;
             Ratios.push_back(Rat);
@@ -1990,7 +2153,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_degree=inicio.SVM_degree+salto.SVM_degree;
             Ratios.push_back(Rat);
@@ -2004,7 +2168,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_gamma=inicio.SVM_gamma+salto.SVM_gamma;
             Ratios.push_back(Rat);
@@ -2018,7 +2183,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_coef0=inicio.SVM_coef0+salto.SVM_coef0;
             Ratios.push_back(Rat);
@@ -2032,7 +2198,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_C=inicio.SVM_C+salto.SVM_C;
             Ratios.push_back(Rat);
@@ -2046,7 +2213,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_nu=inicio.SVM_nu+salto.SVM_nu;
             Ratios.push_back(Rat);
@@ -2060,7 +2228,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,C_SVM,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.SVM_p=inicio.SVM_p+salto.SVM_p;
             Ratios.push_back(Rat);
@@ -2074,7 +2243,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_cv_folds=inicio.RTrees_cv_folds+salto.RTrees_cv_folds;
             Ratios.push_back(Rat);
@@ -2088,7 +2258,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_max_categories=inicio.RTrees_max_categories+salto.RTrees_max_categories;
             Ratios.push_back(Rat);
@@ -2102,7 +2273,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_max_depth=inicio.RTrees_max_depth+salto.RTrees_max_depth;
             Ratios.push_back(Rat);
@@ -2116,7 +2288,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_min_sample_count=inicio.RTrees_min_sample_count+salto.RTrees_min_sample_count;
             Ratios.push_back(Rat);
@@ -2130,7 +2303,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_native_vars=inicio.RTrees_native_vars+salto.RTrees_native_vars;
             Ratios.push_back(Rat);
@@ -2144,7 +2318,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,RTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.RTrees_regression_accuracy=inicio.RTrees_regression_accuracy+salto.RTrees_regression_accuracy;
             Ratios.push_back(Rat);
@@ -2158,7 +2333,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,DTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.DTrees_cv_folds=inicio.DTrees_cv_folds+salto.DTrees_cv_folds;
             Ratios.push_back(Rat);
@@ -2172,7 +2348,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,DTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.DTrees_max_categories=inicio.DTrees_max_categories+salto.DTrees_max_categories;
             Ratios.push_back(Rat);
@@ -2186,7 +2363,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,DTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.DTrees_max_depth=inicio.DTrees_max_depth+salto.DTrees_max_depth;
             Ratios.push_back(Rat);
@@ -2200,7 +2378,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,DTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.DTrees_min_sample_count=inicio.DTrees_min_sample_count+salto.DTrees_min_sample_count;
             Ratios.push_back(Rat);
@@ -2214,7 +2393,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,DTREES,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.DTrees_regression_accuracy=inicio.DTrees_regression_accuracy+salto.DTrees_regression_accuracy;
             Ratios.push_back(Rat);
@@ -2228,7 +2408,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,BOOSTING,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Boosting_max_depth=inicio.Boosting_max_depth+salto.Boosting_max_depth;
             Ratios.push_back(Rat);
@@ -2242,7 +2423,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,BOOSTING,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.Boosting_weak_count=inicio.Boosting_weak_count+salto.Boosting_weak_count;
             Ratios.push_back(Rat);
@@ -2256,7 +2438,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,GBT,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.GBT_weak_count=inicio.GBT_weak_count+salto.GBT_weak_count;
 //            Ratios.push_back(Rat);
@@ -2270,7 +2453,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,GBT,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.GBT_shrinkage=inicio.GBT_shrinkage+salto.GBT_shrinkage;
 //            Ratios.push_back(Rat);
@@ -2284,7 +2468,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,GBT,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.GBT_max_depth=inicio.GBT_max_depth+salto.GBT_max_depth;
 //            Ratios.push_back(Rat);
@@ -2298,7 +2483,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
             e=Validation(Datos,Labels,porcentaje_validacion,EXP_MAX,inicio,Error,Confusion,Rat);
             if(e==1){
                 cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-                return 1;
+                this->error=1;
+                return this->error;
             }
             inicio.EM_nclusters=inicio.EM_nclusters+salto.EM_nclusters;
             Ratios.push_back(Rat);
@@ -2312,7 +2498,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_cv_folds=inicio.ERTrees_cv_folds+salto.ERTrees_cv_folds;
 //            Ratios.push_back(Rat);
@@ -2326,7 +2513,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_max_categories=inicio.ERTrees_max_categories+salto.ERTrees_max_categories;
 //            Ratios.push_back(Rat);
@@ -2340,7 +2528,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_max_depth=inicio.ERTrees_max_depth+salto.ERTrees_max_depth;
 //            Ratios.push_back(Rat);
@@ -2354,7 +2543,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_min_sample_count=inicio.ERTrees_min_sample_count+salto.ERTrees_min_sample_count;
 //            Ratios.push_back(Rat);
@@ -2368,7 +2558,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_native_vars=inicio.ERTrees_native_vars+salto.ERTrees_native_vars;
 //            Ratios.push_back(Rat);
@@ -2382,7 +2573,8 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //            e=Validation(Datos,Labels,porcentaje_validacion,ERTREES,inicio,Error,Confusion,Rat);
 //            if(e==1){
 //                cout<<"ERROR en Ratios_parametro: Error en Validation"<<endl;
-//                return 1;
+//                this->error=1;
+//                return this->error;
 //            }
 //            inicio.ERTrees_regression_accuracy=inicio.ERTrees_regression_accuracy+salto.ERTrees_regression_accuracy;
 //            Ratios.push_back(Rat);
@@ -2390,8 +2582,10 @@ int MLT::Optimizacion::Ratios_parametro(vector<Mat> Datos, vector<float> Labels,
 //    }
     else{
         cout<<"ERROR en Ratios_parametro: El parámetro no existe"<<endl;
-        return 1;
+        this->error=1;
+        return this->error;
     }
-    return 0;
+    this->error=0;
+    return this->error;
 }
 

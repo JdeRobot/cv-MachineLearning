@@ -34,6 +34,7 @@ void MLT::Running::update_gen(){
 
 void MLT::Running::update_analysis(){
     this->window->v_progress_Analysis->setValue(this->ana.progreso);
+    this->window->g_progress_Analysis->setValue(this->ana.progreso);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
@@ -290,6 +291,7 @@ int MLT::Running::analyse_data(QStandardItemModel *model){
         }
         model->appendRow(Lab);
     }
+    return 0;
 }
 
 int MLT::Running::analyse_result(QStandardItemModel *model){
@@ -503,7 +505,7 @@ int MLT::Running::dimensionality(string ref, int size_reduc, int type){
 
     thrd.join();
 
-    if(this->gen.error==1)
+    if(dim.error==1)
         return 1;
 
     this->result_labels.clear();
@@ -530,12 +532,6 @@ int MLT::Running::dimensionality(string ref, int size_reduc, int type){
 }
 
 int MLT::Running::dimension_cuality(string ref, int size_reduc, int type_reduc, int type_measure, string &result){
-    int e=0;
-    if(this->org_images.empty())
-        return 1;
-    if(this->org_labels.empty())
-        return 1;
-
     Representacion rep;
     Dimensionalidad dim(ref);
     Mat separability,accumulative;
@@ -577,7 +573,9 @@ int MLT::Running::dimension_cuality(string ref, int size_reduc, int type_reduc, 
     text="ACCUMULATIVE SEPARABILITY";
     putText(most,text,Point(10,100),1,1.5,colors[1],2);
     imshow("LEGEND",most);
-    rep.Continuous_data_represent("DIMENSION QUALITY "+this->org_ref, sep, graphic, colors);
+    int e=rep.Continuous_data_represent("DIMENSION QUALITY "+this->org_ref, sep, graphic, colors);
+    if(e==1)
+        return 1;
 
     return 0;
 }
@@ -619,7 +617,9 @@ int MLT::Running::generate_data(string ref, string input_directory, int type, in
     }
 
     this->org_ref=ref;
+    return gen.error;
 }
+
 
 int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y, double sigma, double threshold, bool gamma, int n_levels, bool descriptor_parameter){
     this->result_images.clear();
@@ -635,7 +635,7 @@ int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor,
         cv::Size size=cv::Size(size_x,size_y);
         cv::Size block=cv::Size(block_x,block_y);
         if(size.height>this->org_images[0].rows || size.width>this->org_images[0].cols){
-            return 1;
+            return 2;
         }
         HOG hog(size,block, sigma,threshold, gamma, n_levels);
         std::thread thrd(&MLT::HOG::Extract,hog,this->org_images,std::ref(this->result_images));
@@ -653,7 +653,7 @@ int MLT::Running::descriptors(string &ref, int descriptor, string pc_descriptor,
             return 1;
     }
     else
-        return 1;
+        return 3;
 
     if(descriptor==0){
         this->result_ref=this->org_ref+"_RGB";
@@ -772,12 +772,12 @@ int MLT::Running::represent_images(int type, int label){
     Representacion rep;
     if(type==0){
         if(this->org_images.empty() || this->org_labels.empty())
-            return 1;
+            return 2;
         e=rep.Imagen(this->org_images,this->org_labels,label);
     }
     else if(type==1){
         if(this->result_images.empty() || this->result_labels.empty())
-            return 1;
+            return 3;
         e=rep.Imagen(this->result_images,this->result_labels,label);
     }
     return e;
@@ -790,11 +790,6 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
                                string pc_descriptor, string extractor, int size_x, int size_y, int block_x, int block_y,
                                double sigma, double threhold_l2hys, bool gamma, int n_levels, bool descriptor_parameter,
                                cv::Mat &image, cv::Mat &output, vector<cv::RotatedRect> &detections, vector<float> &labels_detections){
-
-
-
-
-
 
     int e=0;
     int current_type=-1;
@@ -809,7 +804,7 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
         }
         image.convertTo(image,CV_32F);
         if(image.cols<window_x || image.rows<window_y){
-            return 1;
+            return 2;
         }
         current_type=RGB;
     }
@@ -859,7 +854,7 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
         cv::Size size=cv::Size(size_x,size_y);
         cv::Size block=cv::Size(block_x,block_y);
         if(size.height>window_y || size.width>window_x){
-            return 1;
+            return 3;
         }
         HOG *hog=new HOG(size,block, sigma, threhold_l2hys, gamma, n_levels);
         descriptor= hog;
@@ -869,22 +864,32 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
         descriptor= des;
     }
     else{
-        return 1;
+        return 4;
     }
 
     if(type_running==1){
         if(this->classifier->nombre!=""){
             Busqueda bus(this->classifier,current_type,descriptor);
-            e=bus.Posicion(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,detections,labels_detections);
+            std::thread thrd(&MLT::Busqueda::Posicion,&bus,image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,std::ref(detections),std::ref(labels_detections));
+            thrd.join();
+
+            if(bus.error==1){
+                return 4;
+            }
         }
     }
     else if(type_running==2){
         Busqueda bus(this->classifier,current_type,descriptor);
-        e=bus.Textura(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,output);
+        std::thread thrd(&MLT::Busqueda::Textura,&bus,image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,std::ref(output));
+        thrd.join();
+
+        if(bus.error==1){
+            return 4;
+        }
     }
     else if(type_running==3 || type_running==4){
         if(multi_params.identificadores.empty())
-            return 1;
+            return 4;
         vector<Clasificador*> classifiers;
         for(uint i=0; i<multi_params.identificadores.size(); i++){
             if(multi_params.identificadores[i]==DISTANCIAS){
@@ -958,15 +963,23 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
             this->base_progreso=1;
             multi.total_progreso=this->org_images.size();
 
-
-
             if(type_running==3){
                 Busqueda bus(&multi,current_type,descriptor,&multi_params);
-                e=bus.Posicion(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,detections,labels_detections);
+                std::thread thrd(&MLT::Busqueda::Posicion,&bus,image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,overlap,isolated,dist_boxes,dist_rotation,std::ref(detections),std::ref(labels_detections));
+                thrd.join();
+
+                if(bus.error==1){
+                    return 4;
+                }
             }
             else if(type_running==4){
                 Busqueda bus(&multi,current_type,descriptor,&multi_params);
-                e=bus.Textura(image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,output);
+                std::thread thrd(&MLT::Busqueda::Textura,&bus,image,cv::Size(window_x,window_y),pyramid,jump,rotation,postprocess,std::ref(output));
+                thrd.join();
+
+                if(bus.error==1){
+                    return 4;
+                }
             }
         }
     }
@@ -980,9 +993,6 @@ int MLT::Running::detect_image(int type_running, int input_type, string input_pa
 }
 
 int MLT::Running::train(string ref, int classifier_type, Clasificadores::Parametros params){
-    if(this->org_images.empty()){
-        return 1;
-    }
     if(this->org_images.empty()){
         return 1;
     }
@@ -1228,14 +1238,14 @@ int MLT::Running::load_model(string path, string &name){
 }
 
 int MLT::Running::classify(string ref, int type_classification, stringstream &txt, MultiClasificador::Multi_type multi_params){
-    if(this->org_images.empty()){
-        return 1;
-    }
-    for(uint i=0; i<ref.size(); i++){
-        if(ref[i]==' '){
-            return 2;
-        }
-    }
+//    if(this->org_images.empty()){
+//        return 1;
+//    }
+//    for(uint i=0; i<ref.size(); i++){
+//        if(ref[i]==' '){
+//            return 2;
+//        }
+//    }
     int e=0;
 
     this->result_labels.clear();
@@ -1329,12 +1339,9 @@ int MLT::Running::classify(string ref, int type_classification, stringstream &tx
         this->base_progreso=1;
         multi.total_progreso=this->org_images.size();
         if(multi_params.tipo==CASCADA){
-//            e=multi.Cascada(this->org_images,multi_params.tipo_regla,multi_params.label_ref,this->result_labels);
-
             std::thread thrd(&MLT::MultiClasificador::Cascada,multi,this->org_images,multi_params.tipo_regla,multi_params.label_ref,std::ref(this->result_labels));
             bool running=true;
             while(running==true){
-//                update_classifier(multi.progreso,multi.total_progreso);
                 int progress=0;
                 running=false;
                 for(int j=0; j<classifiers.size(); j++){
@@ -1348,11 +1355,9 @@ int MLT::Running::classify(string ref, int type_classification, stringstream &tx
             thrd.join();
         }
         else if(multi_params.tipo==VOTACION){
-//            e=multi.Votacion(this->org_images,multi_params.w_clasif,this->result_labels);
             std::thread thrd(&MLT::MultiClasificador::Votacion,multi,this->org_images,multi_params.w_clasif,std::ref(this->result_labels));
             bool running=true;
             while(running==true){
-//                update_classifier(multi.progreso,multi.total_progreso);
                 int progress=0;
                 running=false;
                 for(int j=0; j<classifiers.size(); j++){
@@ -1372,7 +1377,7 @@ int MLT::Running::classify(string ref, int type_classification, stringstream &tx
         for(uint i=0; i<this->result_labels.size(); i++){
             txt<<i+1<<"                               "<<this->org_labels[i]<<"                       "<<this->result_labels[i]<<endl;
             if(this->result_labels[i]==0)
-                e=1;
+                e=2;
         }
     }
     else{
@@ -1380,7 +1385,7 @@ int MLT::Running::classify(string ref, int type_classification, stringstream &tx
         for(uint i=0; i<this->result_labels.size(); i++){
             txt<<i+1<<"                       "<<this->result_labels[i]<<endl;
             if(this->result_labels[i]==0)
-                e=1;
+                e=2;
         }
     }
 
@@ -1398,9 +1403,8 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
                            int percentage, int num_folds, int size_fold){
     if(this->org_images.empty())
         return 1;
-    if(this->org_images.empty())
-        return 1;
-    int e=0;
+    if(this->org_labels.empty())
+        return 2;
     Optimizacion op;
     op.total_progreso=this->org_images.size();
     op.progreso=0;
@@ -1419,19 +1423,22 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
 
             if(id_classifier==NEURONAL){
                 if(start.Neuronal_layerSize.rows<3){
-                    return 1;
+                    return 3;
                 }
                 start.Neuronal_layerSize.row(0)=this->org_images[0].cols*this->org_images[0].rows*this->org_images[0].channels();
                 start.Neuronal_layerSize.row(start.Neuronal_layerSize.rows-1)=num;
             }
-            e=op.Validation(this->org_images,this->org_labels,percentage,id_classifier,start,error,confusion,rates);
-            if(e==1)
-                return 1;
+            std::thread thrd(&MLT::Optimizacion::Validation,&op,this->org_images,this->org_labels,percentage,id_classifier,start,std::ref(error),std::ref(confusion),std::ref(rates));
+            thrd.join();
+
+            if(op.error==1)
+                return 4;
         }
         else if(type==2){
-            e=op.Validation(this->org_images,this->org_labels,percentage,multi_type.identificadores,start,multi_type,error,confusion,rates);
-            if(e==1)
-                return 1;
+            std::thread thrd(&MLT::Optimizacion::Validation_multi,&op, this->org_images,this->org_labels,percentage,multi_type.identificadores,start,multi_type,std::ref(error),std::ref(confusion),std::ref(rates));
+            thrd.join();
+            if(op.error==1)
+                return 4;
         }
         text<<"Error=";
         text<<error;
@@ -1485,25 +1492,16 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
         if(num_folds*size_fold>this->org_images.size())
             return 1;
         Clasificadores::Parametros parameters;
-        e=op.Cross_Validation(this->org_images,this->org_labels,num_folds,size_fold,id_classifier,start,stop,leap,parameters,error,confusion);
-        if(e==1){
-            return 2;
+        std::thread thrd(&MLT::Optimizacion::Cross_Validation,&op, this->org_images,this->org_labels,num_folds,size_fold,id_classifier,start,stop,leap,std::ref(parameters),std::ref(error),std::ref(confusion));
+        thrd.join();
+        if(op.error==1){
+            return 4;
         }
         if(id_classifier==DISTANCIAS){
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: El clasificador Distancias no tiene parametros");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            ui->progress_Clasificar->setValue(0);
-            return 3;
+            return 5;
         }
         else if(id_classifier==GAUSSIANO){
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: El clasificador Bayesiano(Gauss) no tiene parametros");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            ui->progress_Clasificar->setValue(0);
-            return 4;
+            return 5;
         }
         else if(id_classifier==CASCADA_CLAS){
 //            QMessageBox msgBox;
@@ -1511,7 +1509,7 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
 //            msgBox.exec();
 //            QApplication::restoreOverrideCursor();
 //            ui->progress_Clasificar->setValue(0);
-            return 5;
+            return 6;
         }
         else if(id_classifier==HISTOGRAMA){
             text<<"Best Parameters"<<endl;
@@ -1606,32 +1604,23 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
     }
     else if(type==4){
         if(num_folds*size_fold>this->org_images.size()){
-            return 1;
+            return 7;
         }
         Clasificadores::Parametros parameters;
-        e=op.Super_Cross_Validation(this->org_images,this->org_labels,num_folds,size_fold,multi_type.identificadores,start,stop,leap,parameters,error,confusion);
-        if(e==1){
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: No se han podido obtener los datos estadisticos");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            ui->progress_Clasificar->setValue(0);
-            return 1;
+        std::thread thrd(&MLT::Optimizacion::Super_Cross_Validation,&op, this->org_images,this->org_labels,num_folds,size_fold,std::ref(multi_type.identificadores),start,stop,leap,std::ref(parameters),std::ref(error),std::ref(confusion));
+        thrd.join();
+        if(op.error==1){
+            return 4;
         }
+
         if(multi_type.identificadores[0]==DISTANCIAS){
             text<<"El mejor clasificador es Clasificador_Distancias"<<endl;
         }
         else if(multi_type.identificadores[0]==GAUSSIANO){
             text<<"El mejor clasificador es Clasificador_Gaussiano"<<endl;
         }
-        else if(multi_type.identificadores[0]==CASCADA_CLAS){
-//            QMessageBox msgBox;
-//            msgBox.setText("ERROR: No implementado");
-//            msgBox.exec();
-//            QApplication::restoreOverrideCursor();
-//            ui->progress_Clasificar->setValue(0);
-            return 1;
-        }
+        else if(multi_type.identificadores[0]==CASCADA_CLAS)
+            return 6;
         else if(multi_type.identificadores[0]==HISTOGRAMA){
             text<<"El mejor clasificador es Clasificador_Histograma"<<endl;
             text<<"Best Parameters"<<endl;
@@ -1733,22 +1722,8 @@ int MLT::Running::optimize(int type, int id_classifier, MultiClasificador::Multi
 //            text<<"Matriz Confusion= "<<endl<<confusion<<endl;
 //        }
     }
-    else{
-//        QMessageBox msgBox;
-//        msgBox.setText("ERROR: No se ha podido ejecutar");
-//        msgBox.exec();
-//        QApplication::restoreOverrideCursor();
-//        ui->progress_Clasificar->setValue(0);
-        return 1;
-    }
-    if(e==1){
-//        QMessageBox msgBox;
-//        msgBox.setText("ERROR: No se ha podido ejecutar la herramienta");
-//        msgBox.exec();
-//        QApplication::restoreOverrideCursor();
-//        ui->progress_Clasificar->setValue(0);
-        return 1;
-    }
+    else
+        return 4;
     text<<endl;
     return 0;
 }

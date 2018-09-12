@@ -22,6 +22,8 @@ namespace MLT {
         int Posicion(Mat src, Size tam_base, int escalas, int salto, int rotate, bool juntar_recuadros, bool solapamiento, bool aislamiento, float distancia_recuadros, int rotacion_recuadros, vector<RotatedRect> &recuadros, vector<float> &Labels);
         Descriptor *descrip;
 
+        int error;
+
     private:
         Clasificador *clasificador;
         MultiClasificador *Multi;

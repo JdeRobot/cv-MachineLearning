@@ -52,7 +52,7 @@ void Con_Multi::on_Anadir_clicked()
     for(uint i=pos+1; i<Dir.size(); i++)
         nombre=nombre+Dir[i];
     string archivo=Dir+"/Clasificador.xml";
-    cv::FileStorage archivo_r(archivo,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(archivo,FileStorage::READ);
     int id;
     if(archivo_r.isOpened()){
         archivo_r["Tipo"]>>id;

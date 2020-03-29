@@ -261,7 +261,7 @@ int MLT::Clasificador_Gaussiano::Save_Data(){
         }
     }
     string g="../Data/Configuracion/"+nombre+"/GAUSS2.xml";
-    cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+    cv::FileStorage archivo_w(g,FileStorage::WRITE);
     if(archivo_w.isOpened()){
         archivo_w<<"ventana_x"<<ventana_x;
         archivo_w<<"ventana_y"<<ventana_y;
@@ -283,7 +283,7 @@ int MLT::Clasificador_Gaussiano::Save_Data(){
     g="../Data/Configuracion/"+nombre+"/GAUSS.xml";
     GAUSS->save(g.c_str());
     g="../Data/Configuracion/"+nombre+"/Clasificador.xml";
-    cv::FileStorage clas(g,CV_STORAGE_WRITE);
+    cv::FileStorage clas(g,FileStorage::WRITE);
     if(clas.isOpened()){
         int id=GAUSSIANO;
         clas<<"Tipo"<<id;
@@ -296,7 +296,7 @@ int MLT::Clasificador_Gaussiano::Save_Data(){
 
 int MLT::Clasificador_Gaussiano::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/GAUSS2.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
         archivo_r["ventana_x"]>>ventana_x;
         archivo_r["ventana_y"]>>ventana_y;

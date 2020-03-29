@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     string g="../Data/Config_Data/Initial.xml";
-    cv::FileStorage fs(g,CV_STORAGE_READ);
+    cv::FileStorage fs(g,FileStorage::READ);
     fs["Colors"]>>Col;
 
     fs["Tipo_Des"]>>descriptor;

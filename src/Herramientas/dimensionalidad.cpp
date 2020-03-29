@@ -282,7 +282,7 @@ int MLT::Dimensionalidad::LDA_matriz(Mat img, std::vector<float> Etiquetas, int 
             }
         }
         string g="../Data/Configuracion/"+nombre+"_LDA.xml";
-        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+        cv::FileStorage archivo_w(g,FileStorage::WRITE);
         archivo_w<<"mean"<<meanTotal.t();
         archivo_w<<"LDA"<<lda;
         archivo_w.release();
@@ -342,7 +342,7 @@ int MLT::Dimensionalidad::PCA_matriz(Mat img,int tam_final, Mat &pca, bool guard
             }
         }
         string g="../Data/Configuracion/"+nombre+"_PCA.xml";
-        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+        cv::FileStorage archivo_w(g,FileStorage::WRITE);
         archivo_w<<"mean"<<mean;
         archivo_w<<"PCA"<<pca;
         archivo_w.release();
@@ -487,7 +487,7 @@ int MLT::Dimensionalidad::MaxDist_matriz(Mat img, std::vector<float> Etiquetas, 
             }
         }
         string g="../Data/Configuracion/"+nombre+"_MAXDIST.xml";
-        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+        cv::FileStorage archivo_w(g,FileStorage::WRITE);
         archivo_w<<"mean"<<Media.t();
         archivo_w<<"MAXDIST"<<mat_reduc;
         archivo_w.release();
@@ -623,7 +623,7 @@ int MLT::Dimensionalidad::D_Prime_matriz(Mat img, std::vector<float> Etiquetas, 
             }
         }
         string g="../Data/Configuracion/"+nombre+"_D_PRIME.xml";
-        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+        cv::FileStorage archivo_w(g,FileStorage::WRITE);
         archivo_w<<"mean"<<Media.t();
         archivo_w<<"D_PRIME"<<mat_reduc;
         archivo_w.release();
@@ -643,7 +643,7 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
     if(tipo==LDA_DIM){
         if(reduc.empty()){
             string g="../Data/Configuracion/"+nombre+"_LDA.xml";
-            cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+            cv::FileStorage archivo_r(g,FileStorage::READ);
             if(archivo_r.isOpened()){
                 archivo_r["LDA"]>>reduc;
             }
@@ -659,7 +659,7 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
     else if(tipo==PCA_DIM){
         if(reduc.empty()){
             string g="../Data/Configuracion/"+nombre+"_PCA.xml";
-            cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+            cv::FileStorage archivo_r(g,FileStorage::READ);
             if(archivo_r.isOpened()){
                 archivo_r["PCA"]>>reduc;
             }
@@ -675,7 +675,7 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
     else if(tipo==MAXDIST_DIM){
         if(reduc.empty()){
             string g="../Data/Configuracion/"+nombre+"_MAXDIST.xml";
-            cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+            cv::FileStorage archivo_r(g,FileStorage::READ);
             if(archivo_r.isOpened()){
                 archivo_r["MAXDIST"]>>reduc;
             }
@@ -691,7 +691,7 @@ int MLT::Dimensionalidad::Proyeccion(Mat img, Mat &Proyectada,int tipo, Mat redu
     else if(tipo==D_PRIME_DIM){
         if(reduc.empty()){
             string g="../Data/Configuracion/"+nombre+"_D_PRIME.xml";
-            cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+            cv::FileStorage archivo_r(g,FileStorage::READ);
             if(archivo_r.isOpened()){
                 archivo_r["D_PRIME"]>>reduc;
             }
@@ -748,7 +748,7 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     Mat reduc;
     if(tipo==LDA_DIM){
         string g="../Data/Configuracion/"+nombre+"_LDA.xml";
-        cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+        cv::FileStorage archivo_r(g,FileStorage::READ);
         if(archivo_r.isOpened()){
             archivo_r["mean"]>>mean;
             archivo_r["LDA"]>>reduc;
@@ -763,7 +763,7 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     }
     else if(tipo==PCA_DIM){
         string g="../Data/Configuracion/"+nombre+"_PCA.xml";
-        cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+        cv::FileStorage archivo_r(g,FileStorage::READ);
         if(archivo_r.isOpened()){
             archivo_r["mean"]>>mean;
             archivo_r["PCA"]>>reduc;
@@ -778,7 +778,7 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     }
     else if(tipo==MAXDIST_DIM){
         string g="../Data/Configuracion/"+nombre+"_MAXDIST.xml";
-        cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+        cv::FileStorage archivo_r(g,FileStorage::READ);
         if(archivo_r.isOpened()){
             archivo_r["mean"]>>mean;
             archivo_r["MAXDIST"]>>reduc;
@@ -793,7 +793,7 @@ int MLT::Dimensionalidad::Retro_Proyeccion(Mat img, Mat &Proyectada,int tipo){
     }
     else if(tipo==D_PRIME_DIM){
         string g="../Data/Configuracion/"+nombre+"_D_PRIME.xml";
-        cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+        cv::FileStorage archivo_r(g,FileStorage::READ);
         if(archivo_r.isOpened()){
             archivo_r["mean"]>>mean;
             archivo_r["D_PRIME"]>>reduc;

@@ -92,7 +92,7 @@ float MLT::MiClasificador::Clasificacion(Mat Data){
 
 int MLT::MiClasificador::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/MiClasificador.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
         archivo_r["ventana_o_x"]>>ventana_o_x;
         archivo_r["ventana_o_y"]>>ventana_o_y;

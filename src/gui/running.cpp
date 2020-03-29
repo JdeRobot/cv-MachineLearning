@@ -1155,7 +1155,7 @@ int MLT::Running::load_model(string path, string &name){
     for(uint i=pos+1; i<path.size(); i++)
         name=name+path[i];
     string archivo=path+"/Clasificador.xml";
-    cv::FileStorage archivo_r(archivo,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(archivo,FileStorage::READ);
     int id;
     if(archivo_r.isOpened()){
         archivo_r["Tipo"]>>id;

@@ -299,7 +299,10 @@ float MLT::Clasificador_Neuronal::Clasificacion(Mat Data){
     float response=0;
     cv :: Mat resp;
     if(Data.cols==(ventana_x*ventana_y) || Data.cols==reduccion.tam_reduc){
-        response=MLP->predict(Data,resp);
+        MLP->predict(Data,resp);
+	cv::Point max_loc;
+	cv::minMaxLoc(resp, NULL, NULL, NULL, &max_loc);
+	response=max_loc.x;
         if(negativa && response==0)
             response=-1;
         else if(!negativa)
@@ -329,7 +332,7 @@ int MLT::Clasificador_Neuronal::Save_Data(){
         }
     }
     string g="../Data/Configuracion/"+nombre+"/NEURONAL2.xml";
-    cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+    cv::FileStorage archivo_w(g,FileStorage::WRITE);
     if(archivo_w.isOpened()){
         archivo_w<<"ventana_x"<<ventana_x;
         archivo_w<<"ventana_y"<<ventana_y;
@@ -351,7 +354,7 @@ int MLT::Clasificador_Neuronal::Save_Data(){
     g="../Data/Configuracion/"+nombre+"/NEURONAL.xml";
     MLP->save(g.c_str());
     g="../Data/Configuracion/"+nombre+"/Clasificador.xml";
-    cv::FileStorage clas(g,CV_STORAGE_WRITE);
+    cv::FileStorage clas(g,FileStorage::WRITE);
     if(clas.isOpened()){
         int id=NEURONAL;
         clas<<"Tipo"<<id;
@@ -364,7 +367,7 @@ int MLT::Clasificador_Neuronal::Save_Data(){
 
 int MLT::Clasificador_Neuronal::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/NEURONAL2.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
         archivo_r["ventana_x"]>>ventana_x;
         archivo_r["ventana_y"]>>ventana_y;

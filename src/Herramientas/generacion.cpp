@@ -107,9 +107,9 @@ int MLT::Generacion::Guardar_Datos(string nombre, vector<Mat> Imagenes, vector<f
             dir_p_i = opendir (output_directory.c_str());
     }
     f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     for(uint i=0; i<Imagenes.size(); i++){
         stringstream conta;
         ostringstream datos;
@@ -184,7 +184,7 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
         archivo_i=archivo_i+Archivo[i];
     }
     archivo_i=archivo_i+"Info.xml";
-    cv::FileStorage archivo_r(archivo_i,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(archivo_i,FileStorage::READ);
     if(!archivo_r.isOpened()){
         cout<<"ERROR en Cargar_Fichero: No se ha podido cargar el archivo Info.xml"<<endl;
         this->running=false;
@@ -199,7 +199,7 @@ int MLT::Generacion::Cargar_Fichero(string Archivo, vector<Mat> &Imagenes, vecto
         archivo_recortes=archivo_recortes+Archivo[i];
     }
     archivo_recortes=archivo_recortes+"Recortes.xml";
-    cv::FileStorage Archivo_recortes(archivo_recortes,CV_STORAGE_READ);
+    cv::FileStorage Archivo_recortes(archivo_recortes,FileStorage::READ);
     std::string line;
     line.clear();
     string path_imagen;
@@ -354,9 +354,9 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
     }
     struct dirent *dir_entry_p;
     f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     int cuenta_carpetas=0;
     Info_Datos info;
     Archivo_i["Tipo_Datos"]>>info.Tipo_Datos;
@@ -386,9 +386,9 @@ int MLT::Generacion::Juntar_Recortes(string nombre,string Path){
             string archivo_recortes_in=input_directory+"Recortes.txt";
             string archivo_info_in=input_directory+"Info.xml";
             std::ifstream f_in(archivo_recortes_in.c_str());
-            cv::FileStorage Archivo_img_in(archivo_imagenes_in,CV_STORAGE_READ);
-            cv::FileStorage Archivo_recortes_in(archivo_imagenes_recortes_in,CV_STORAGE_READ);
-            cv::FileStorage Archivo_i_in(archivo_info_in,CV_STORAGE_READ);
+            cv::FileStorage Archivo_img_in(archivo_imagenes_in,FileStorage::READ);
+            cv::FileStorage Archivo_recortes_in(archivo_imagenes_recortes_in,FileStorage::READ);
+            cv::FileStorage Archivo_i_in(archivo_info_in,FileStorage::READ);
             Info_Datos info_in;
             Archivo_i_in["Tipo_Datos"]>>info_in.Tipo_Datos;
             Archivo_i_in["Num_Datos"]>>info_in.Num_Datos;
@@ -533,9 +533,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Datos_Imagenes: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -567,9 +567,9 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -587,12 +587,12 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -601,7 +601,7 @@ int MLT::Generacion::Datos_Imagenes(string nombre, string input_directory, cv::S
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -753,9 +753,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -787,9 +787,9 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -807,12 +807,12 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -821,7 +821,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -889,7 +889,7 @@ int MLT::Generacion::Etiquetar(string nombre, string input_directory, cv::Size2i
                 int a=z;
                 if(a!=-1){
                     if(a==27){
-                        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+                        cv::FileStorage archivo_w(g,FileStorage::WRITE);
                         archivo_w<<"num_imagen"<<cont;
                         archivo_w.release();
                         break;
@@ -1021,9 +1021,9 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -1053,9 +1053,9 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -1073,12 +1073,12 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -1087,7 +1087,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -1189,7 +1189,7 @@ int MLT::Generacion::Recortar_Etiquetar_imagenes(string nombre, string input_dir
                     a=z;
                     if(a!=-1){
                         if(a==27){
-                            cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+                            cv::FileStorage archivo_w(g,FileStorage::WRITE);
                             archivo_w<<"num_imagen"<<cont;
                             archivo_w.release();
                             salir=true;
@@ -1359,9 +1359,9 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -1394,9 +1394,9 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -1414,13 +1414,13 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     Mat imagen;
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -1429,7 +1429,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -1527,7 +1527,7 @@ int MLT::Generacion::Recortar_Etiquetar_video(string nombre, VideoCapture cap, b
                 a=z;
                 if(a!=-1){
                     if(a==27){
-                        cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+                        cv::FileStorage archivo_w(g,FileStorage::WRITE);
                         archivo_w<<"num_imagen"<<cont;
                         archivo_w.release();
                         salir=true;
@@ -1713,9 +1713,9 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
     string archivo_imagenes_recortes=output_directory+"Recortes.xml";
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -1733,9 +1733,9 @@ int MLT::Generacion::Random_Synthetic_Data(string nombre, int num_clases, int nu
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
         f.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     }
     float separacion=0;
@@ -1894,9 +1894,9 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
     string archivo_imagenes_recortes=output_directory+"Recortes.xml";
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f_a;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -1914,9 +1914,9 @@ int MLT::Generacion::Synthethic_Data(string nombre, vector<Mat> input, vector<fl
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
         f_a.open(archivo_recortes.c_str(),ofstream::out | ofstream::trunc);
     }
     for(uint i=0; i<input.size(); i++){
@@ -2089,9 +2089,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -2124,9 +2124,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -2144,9 +2144,9 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     vector<Ptr<Tracker> > trackers;
     Mat imagen;
@@ -2164,7 +2164,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
     int conta=0;
     int cont=0;
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -2173,7 +2173,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -2257,7 +2257,7 @@ int MLT::Generacion::Autopositivos(string nombre, VideoCapture cap, bool cuadrad
         }
         int a=z;
         if(a==27){
-            cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+            cv::FileStorage archivo_w(g,FileStorage::WRITE);
             archivo_w<<"num_imagen"<<conta;
             archivo_w.release();
             f.close();
@@ -2688,9 +2688,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
     string archivo_info=output_directory+"Info.xml";
     string archivo_imagenes_in=input_directory+"Images.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Etiquetar: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -2720,10 +2720,10 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_img_in(archivo_imagenes_in,CV_STORAGE_READ);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_img_in(archivo_imagenes_in,FileStorage::READ);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -2741,9 +2741,9 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     Negativos.clear();
     Labels.clear();
@@ -2767,7 +2767,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
     int conta=0;
     int cuenta_recortes=0;
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -2776,7 +2776,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -3133,7 +3133,7 @@ int MLT::Generacion::Autonegativos(string nombre, string Archivo, Size2i reescal
             }
         }
         if(a==27){
-            cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+            cv::FileStorage archivo_w(g,FileStorage::WRITE);
             conta++;
             archivo_w<<"num_imagen"<<conta;
             archivo_w.release();
@@ -3208,9 +3208,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
     string archivo_recortes=output_directory+"Recortes.txt";
     string archivo_info=output_directory+"Info.xml";
     string g=output_directory+"Config.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
-        cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_READ);
+        cv::FileStorage Archivo_i(archivo_info,FileStorage::READ);
         if(!Archivo_i.isOpened()){
             cout<<"ERROR en Autogeneracion: No se han podido recuperar los datos generados con anterioridad"<<endl;
             this->running=false;
@@ -3243,9 +3243,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
             return this->error;
         }
     }
-    cv::FileStorage Archivo_img(archivo_imagenes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-    cv::FileStorage Archivo_i(archivo_info,CV_STORAGE_WRITE);
+    cv::FileStorage Archivo_img(archivo_imagenes,FileStorage::WRITE);
+    cv::FileStorage Archivo_recortes(archivo_imagenes_recortes,FileStorage::WRITE);
+    cv::FileStorage Archivo_i(archivo_info,FileStorage::WRITE);
     ofstream f;
     if(save){
         string dir_img="../Data/Imagenes";
@@ -3263,9 +3263,9 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
             if(er==0)
                 dir_p_i = opendir (output_directory.c_str());
         }
-        Archivo_img.open(archivo_imagenes,CV_STORAGE_WRITE);
-        Archivo_recortes.open(archivo_imagenes_recortes,CV_STORAGE_WRITE);
-        Archivo_i.open(archivo_info,CV_STORAGE_WRITE);
+        Archivo_img.open(archivo_imagenes,FileStorage::WRITE);
+        Archivo_recortes.open(archivo_imagenes_recortes,FileStorage::WRITE);
+        Archivo_i.open(archivo_info,FileStorage::WRITE);
     }
     vector<Ptr<Tracker> > trackers;
     Scalar Rojo;
@@ -3295,7 +3295,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
     int conta=0;
     int cuenta_recortes=0;
     if(archivo_r.isOpened()){
-        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Images(output_directory+"aux_Images.xml",FileStorage::READ);
         FileNode nodo1 = aux_Images.root();
         for (FileNodeIterator current = nodo1.begin(); current != nodo1.end(); current++) {
                 FileNode item = *current;
@@ -3304,7 +3304,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                 aux_Images[nom.c_str()]>>v;
                 Archivo_img<<nom<<v;
         }
-        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",CV_STORAGE_READ);
+        cv::FileStorage aux_Recortes(output_directory+"aux_Recortes.xml",FileStorage::READ);
         FileNode nodo2 = aux_Recortes.root();
         for (FileNodeIterator current = nodo2.begin(); current != nodo2.end(); current++) {
                 FileNode item = *current;
@@ -3389,7 +3389,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
         }
         int a=z;
         if(a==27){
-            cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+            cv::FileStorage archivo_w(g,FileStorage::WRITE);
             archivo_w<<"num_imagen"<<conta;
             archivo_w.release();
             f.close();
@@ -3627,7 +3627,7 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
                     }
                 }
                 if(A==27){
-                    cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+                    cv::FileStorage archivo_w(g,FileStorage::WRITE);
                     archivo_w<<"num_imagen"<<conta+1;
                     archivo_w.release();
                     f.close();
@@ -3995,17 +3995,17 @@ int MLT::Generacion::Autogeneracion(string nombre, VideoCapture cap, int num_neg
 void mouseEvent(int evt, int x, int y, int flags, void* param){
     MLT::Generacion* C=(MLT::Generacion*) param;
     C->frame.copyTo(C->frame2);
-    if(evt==CV_EVENT_LBUTTONDOWN){
+    if(evt==EVENT_LBUTTONDOWN){
         C->pos_x=x;
         C->pos_y=y;
         C->tam_x=0;
         C->tam_y=0;
         C->flag=true;
     }
-    if(evt==CV_EVENT_LBUTTONUP){
+    if(evt==EVENT_LBUTTONUP){
         C->flag=false;
     }
-    if(evt==CV_EVENT_MOUSEMOVE && C->flag==true){
+    if(evt==EVENT_MOUSEMOVE && C->flag==true){
         if(C->pos_x>x){
             C->p_x=x;
             if(C->p_x<0)
@@ -4040,7 +4040,7 @@ void mouseEvent(int evt, int x, int y, int flags, void* param){
 
 void mouseEvent2(int evt, int x, int y, int flags, void* param){
     MLT::Generacion* C=(MLT::Generacion*) param;
-    if(evt==CV_EVENT_LBUTTONDOWN){
+    if(evt==EVENT_LBUTTONDOWN){
         C->pos_x2=x;
         C->pos_y2=y;
         C->flag2=true;

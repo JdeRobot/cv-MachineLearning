@@ -280,7 +280,7 @@ int MLT::Clasificador_EM::Save_Data(){
         }
     }
     string g="../Data/Configuracion/"+nombre+"/EXP_MAX2.xml";
-    cv::FileStorage archivo_w(g,CV_STORAGE_WRITE);
+    cv::FileStorage archivo_w(g,FileStorage::WRITE);
     if(archivo_w.isOpened()){
         archivo_w<<"ventana_x"<<ventana_x;
         archivo_w<<"ventana_y"<<ventana_y;
@@ -300,14 +300,14 @@ int MLT::Clasificador_EM::Save_Data(){
         return 1;
     archivo_w.release();
     g="../Data/Configuracion/"+nombre+"/EXP_MAX.xml";
-    cv::FileStorage archivo_w2(g,CV_STORAGE_WRITE);
+    cv::FileStorage archivo_w2(g,FileStorage::WRITE);
     if(archivo_w2.isOpened())
         EXP_M->write(archivo_w2);
     else
         return 1;
     archivo_w2.release();
     g="../Data/Configuracion/"+nombre+"/Clasificador.xml";
-    cv::FileStorage clas(g,CV_STORAGE_WRITE);
+    cv::FileStorage clas(g,FileStorage::WRITE);
     if(clas.isOpened()){
         int id=EXP_MAX;
         clas<<"Tipo"<<id;
@@ -320,7 +320,7 @@ int MLT::Clasificador_EM::Save_Data(){
 
 int MLT::Clasificador_EM::Read_Data(){
     string g="../Data/Configuracion/"+nombre+"/EXP_MAX2.xml";
-    cv::FileStorage archivo_r(g,CV_STORAGE_READ);
+    cv::FileStorage archivo_r(g,FileStorage::READ);
     if(archivo_r.isOpened()){
         archivo_r["ventana_x"]>>ventana_x;
         archivo_r["ventana_y"]>>ventana_y;

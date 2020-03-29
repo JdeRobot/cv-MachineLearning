@@ -57,45 +57,45 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                     imagenes[i].copyTo(img_out);
                     break;
                 case GRAY:
-                    cvtColor(imagenes[i], img_out, CV_BGR2GRAY);
+                    cvtColor(imagenes[i], img_out, COLOR_BGR2GRAY);
                     break;
                 case THRESHOLD:
                     imagenes[i].convertTo(img8u,CV_8U);
-                    cvtColor(img8u, gray, CV_BGR2GRAY);
-                    cv::threshold(gray, img_out, 0, 1, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    cvtColor(img8u, gray, COLOR_BGR2GRAY);
+                    cv::threshold(gray, img_out, 0, 1, THRESH_BINARY | THRESH_OTSU);
                     break;
                 case CANNY:
-                    cvtColor(imagenes[i], gray, CV_BGR2GRAY);
+                    cvtColor(imagenes[i], gray, COLOR_BGR2GRAY);
                     gray.convertTo(img8u,CV_8U);
-                    level = cv::threshold (img8u, aux, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    level = cv::threshold (img8u, aux, 0, 255, THRESH_BINARY | THRESH_OTSU);
                     cv::Canny(img8u, img_out, 0.5 * level, level);
                     break;
                 case SOBEL:
-                    cvtColor(imagenes[i], gray, CV_BGR2GRAY);
+                    cvtColor(imagenes[i], gray, COLOR_BGR2GRAY);
                     cv::Sobel(gray, imgOutA, CV_32F, 1, 0);
                     cv::Sobel(gray, imgOutB, CV_32F, 0, 1);
                     convertScaleAbs(imgOutA + imgOutB, img_out);
                     break;
                 case HSV:
-                    cvtColor(imagenes[i], img_out, CV_BGR2HSV);
+                    cvtColor(imagenes[i], img_out, COLOR_BGR2HSV);
                     break;
                 case H_CHANNEL:
-                    cvtColor(imagenes[i], imgOutHsv, CV_BGR2HSV);
+                    cvtColor(imagenes[i], imgOutHsv, COLOR_BGR2HSV);
                     split(imgOutHsv, channels);
                     channels[0].copyTo(img_out);
                     break;
                 case S_CHANNEL:
-                    cvtColor(imagenes[i], imgOutHsv, CV_BGR2HSV);
+                    cvtColor(imagenes[i], imgOutHsv, COLOR_BGR2HSV);
                     split(imgOutHsv, channels);
                     channels[1].copyTo(img_out);
                     break;
                 case V_CHANNEL:
-                    cvtColor(imagenes[i], imgOutHsv, CV_BGR2HSV);
+                    cvtColor(imagenes[i], imgOutHsv, COLOR_BGR2HSV);
                     split(imgOutHsv, channels);
                     channels[2].copyTo(img_out);
                     break;
                 case COLOR_PREDOMINANTE:
-                    cvtColor (imagenes[i], imgOutHsv, CV_BGR2HSV);
+                    cvtColor (imagenes[i], imgOutHsv, COLOR_BGR2HSV);
                     img_out = Mat::zeros(imgOutHsv.rows, imgOutHsv.cols, CV_32FC1);
 
                     for (int y = 0;y < imgOutHsv.rows; y++)
@@ -131,7 +131,7 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                 switch (output)
                 {
                 case RGB:
-                    cvtColor(imagenes[i], img_out, CV_HSV2BGR);
+                    cvtColor(imagenes[i], img_out, COLOR_HSV2BGR);
                     break;
                 case GRAY:
                     split(imagenes[i], channels);
@@ -141,13 +141,13 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                     split(imagenes[i], channels);
                     channels[2].copyTo(gray);
                     gray.convertTo(img8u,CV_8U);
-                    cv::threshold(img8u, img_out, 0, 1, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    cv::threshold(img8u, img_out, 0, 1, THRESH_BINARY | THRESH_OTSU);
                     break;
                 case CANNY:
                     split(imagenes[i], channels);
                     channels[2].copyTo(gray);
                     imagenes[i].convertTo(img8u, CV_8U);
-                    level = cv::threshold(img8u, aux, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    level = cv::threshold(img8u, aux, 0, 255, THRESH_BINARY | THRESH_OTSU);
                     cv::Canny(img8u, img_out, 0.5 * level, level);
                     break;
                 case SOBEL:
@@ -213,11 +213,11 @@ int MLT::Basic_Transformations::Extract (vector<Mat> imagenes, vector<Mat> &desc
                     break;
                 case THRESHOLD:
                     imagenes[i].convertTo(img8u,CV_8U);
-                    cv::threshold(img8u, img_out, 0, 1, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    cv::threshold(img8u, img_out, 0, 1, THRESH_BINARY | THRESH_OTSU);
                     break;
                 case CANNY:
                     imagenes[i].convertTo(img8u,CV_8U);
-                    level = cv::threshold(img8u, aux, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+                    level = cv::threshold(img8u, aux, 0, 255, THRESH_BINARY | THRESH_OTSU);
                     cv::Canny(img8u, img_out, 0.5 * level, level);
                     break;
                 case SOBEL:

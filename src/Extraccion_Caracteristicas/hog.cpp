@@ -99,7 +99,7 @@ int MLT::HOG::Extract(vector<Mat> imagenes, vector<Mat> &descriptores)
         imagenes[i].copyTo(imagen);
 
         if (imagen.channels() == 3)
-            cvtColor(imagen, img_gray, CV_BGR2GRAY);
+            cvtColor(imagen, img_gray, COLOR_BGR2GRAY);
         else
             imagen.copyTo(img_gray);
 

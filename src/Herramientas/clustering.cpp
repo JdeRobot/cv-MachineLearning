@@ -66,7 +66,7 @@ int MLT::Clustering::K_mean(vector<Mat> Data, int K, vector<float> &Labels, Mat 
         return 1;
     }
     Mat lab;
-    TermCriteria crit=TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10000, 0.0001);
+    TermCriteria crit=TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 10000, 0.0001);
     kmeans(Datos, K, lab, crit, attempts, inicializacion, Centers);
     Labels.clear();
     for(int i=0; i<lab.rows; i++)

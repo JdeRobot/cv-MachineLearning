@@ -46,8 +46,8 @@ int MLT::Puntos_Caracteristicos::Extract(vector<cv::Mat> images, vector<cv::Mat>
     Ptr<MSER> mser = MSER::create(paramDetector);
     Ptr<ORB> orb = ORB::create(paramDetector);
     Ptr<BRISK> brisk = BRISK::create(paramDetector);
-    Ptr<KAZE> kaze = KAZE::create(paramDetector);
-    Ptr<AKAZE> akaze = AKAZE::create(paramDetector);
+    Ptr<KAZE> kaze = KAZE::create(/*paramDetector*/);
+    Ptr<AKAZE> akaze = AKAZE::create(/*paramDetector*/);
     Ptr<xfeatures2d::SIFT> sift = xfeatures2d::SIFT::create((int)paramDetector);
     Ptr<xfeatures2d::SURF> surf = xfeatures2d::SURF::create((int)paramDetector);
 
@@ -57,7 +57,7 @@ int MLT::Puntos_Caracteristicos::Extract(vector<cv::Mat> images, vector<cv::Mat>
         Mat image, descriptors;
 
         if(images[k].channels() == 3)
-            cvtColor(images[k], image, CV_BGR2GRAY);
+            cvtColor(images[k], image, COLOR_BGR2GRAY);
 
         image.convertTo(image,CV_8UC1);
 
